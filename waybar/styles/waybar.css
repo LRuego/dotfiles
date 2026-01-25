@@ -1,0 +1,35 @@
+#waybar {
+	background-color: @outline;
+  margin: 8px; 
+}
+#waybar > box {
+	margin: 4px;
+	background-color: @main-bg;
+}
+
+/*--------------
+    tooltips
+--------------*/
+
+tooltip {
+	border: 2px solid @main-br;
+	border-radius: 10px;
+	background-color: @main-bg;
+}
+tooltip > box {
+	padding: 0 6px;
+}
+
+menu {
+	border: 2px solid @main-br;
+	border-radius: 10px;
+	background-color: @main-bg;
+  padding: 4px;
+}
+
+/* Reset styles for submenus to prevent visual glitches */
+menu menu {
+  background: none;
+	border: none;
+	border-radius: 0px;
+}

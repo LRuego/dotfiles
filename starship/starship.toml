@@ -1,0 +1,65 @@
+# Starship Configuration for "Bridge/Double-Decker" Style
+# Matches Tokyo Night Colors
+
+add_newline = true
+
+# Define the order of modules
+# Removed explicit lines '─' between modules
+format = """
+ ${custom.badge}$username$directory${custom.git_transition}$git_branch$git_status${custom.end_git}${custom.end_no_git}"""
+
+right_format = """$time"""
+
+# --- MODULES ---
+[fill]
+symbol = "─"
+style = "blue"
+
+[time]
+disabled = false
+time_format = "%H:%M"
+style = "fg:#1a1b26 bg:#7aa2f7"
+format = '[](fg:#7aa2f7)[  $time ]($style)[](fg:#7aa2f7)'
+
+[custom.badge]
+when = "true"
+style = "fg:#1a1b26 bg:#7aa2f7"
+format = '[](fg:#7aa2f7)[]($style)'
+
+# Smart Transitions
+[custom.git_transition]
+when = "git rev-parse --is-inside-work-tree"
+command = "echo"
+format = '[](fg:#3B4261 bg:#bb9af7)'
+
+[custom.end_git]
+when = "git rev-parse --is-inside-work-tree"
+command = "echo"
+format = '[](fg:#bb9af7)'
+
+[custom.end_no_git]
+when = "! git rev-parse --is-inside-work-tree"
+command = "echo"
+format = '[](fg:#3B4261)'
+
+[username]
+style_user = "fg:#1a1b26 bg:#7aa2f7"
+style_root = "fg:#f7768e"
+format = '[ $user ]($style)[](fg:#7aa2f7 bg:#3B4261)'
+disabled = false
+show_always = true
+
+[directory]
+style = "fg:#7aa2f7 bg:#3B4261"
+format = '[ $path ]($style)'
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+symbol = " "
+style = "fg:#1a1b26 bg:#bb9af7"
+format = '[ $symbol$branch ]($style)'
+
+[git_status]
+style = "fg:#1a1b26 bg:#bb9af7"
+format = '[](fg:#1a1b26 bg:#bb9af7)[ $all_status$ahead_behind ]($style)'

@@ -1,0 +1,25 @@
+{
+	"group/tray": {
+		"orientation": "horizontal",
+		"modules": [
+			"custom/tray-toggle",
+			"tray"
+		],
+		"drawer": {
+			"transition-duration": 300,
+			"transition-left-to-right": false,
+			"children-class": "tray-children",
+			"click-to-reveal": false
+		}
+	},
+
+  "custom/tray-toggle": {
+    "format": "‎"
+  },
+
+  "tray": {
+    "icon-size": 14,
+    "spacing": 4,
+    "cursor": true
+  }
+}

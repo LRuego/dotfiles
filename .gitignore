@@ -1,0 +1,27 @@
+# --- General System Junk ---
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# --- Neovim ---
+# Do NOT ignore init.lua or lua/ folders!
+# Ignore session files or local logs if you store them here
+*.log
+
+# --- Python (if you have python scripts) ---
+__pycache__/
+*.pyc
+
+# --- Git ---
+# Ignore nested git folders if you accidentally cloned something inside
+.git/
+
+# --- Secrets ---
+# Always ignore files with keys/passwords
+secrets.sh
+private.zsh
+*.local.lua

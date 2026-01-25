@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Directory where Helium stores its user data
+USER_DATA_DIR="$HOME/.config/net.imput.helium"
+
+# Find all "Preferences" files (Default, Profile 1, etc.)
+# We use a glob to catch any folder inside USER_DATA_DIR
+# redirects stderr to /dev/null in case no files are found
+find "$USER_DATA_DIR" -mindepth 2 -maxdepth 2 -name "Preferences" 2>/dev/null | while read -r prefs_file; do
+    # 1. Set "exited_cleanly" to true
+    # 2. Set "exit_type" to "Normal" (instead of "Crashed")
+    # We use temporary files to ensure atomic writes avoid corruption
+    sed -i 's/"exited_cleanly":false/"exited_cleanly":true/g' "$prefs_file"
+    sed -i 's/"exit_type":"Crashed"/"exit_type":"Normal"/g' "$prefs_file"
+    sed -i 's/"exit_type":"SessionCrashed"/"exit_type":"Normal"/g' "$prefs_file"
+done
+
+# Launch Helium with Wayland flags and pass through any arguments
+exec uwsm app -- helium-browser --enable-features=UseOzonePlatform --ozone-platform-hint=auto "$@"

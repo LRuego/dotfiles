@@ -1,0 +1,25 @@
+* {
+	all: initial; /* ignore GTK theme */
+}
+
+@import "styles/modules-center.css";
+@import "styles/modules-left.css";
+@import "styles/modules-right.css";
+@import "styles/states.css";
+@import "styles/typeface.css";
+@import "styles/waybar.css";
+@import "colors.css";
+
+
+@define-color card-bg #c0caf5;
+@define-color fg #1a1b26;
+/*
+#clock
+ {
+    background-color: @card-bg;
+    color: @fg;
+    margin: 8px 4px;
+    padding: 0 8px;
+    border-radius: 10px;
+}
+*/

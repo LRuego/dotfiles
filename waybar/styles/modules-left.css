@@ -1,0 +1,33 @@
+
+/*----------------
+    workspaces
+----------------*/
+
+#workspaces {
+	padding: 0 1px;
+	background-color: @workspaces;
+}
+
+#workspaces button {
+	border-radius: 16px;
+	min-width: 16px;
+	padding: 0 10px;
+}
+
+#workspaces button:hover {
+	background-color: @hover-bg;
+	color: @hover-fg;
+}
+
+#workspaces button.active label {
+	color: @accent;
+  font-size: 16px;
+}
+
+/*------------------
+    window title
+------------------*/
+
+#window {
+	margin-left: 12px;
+}

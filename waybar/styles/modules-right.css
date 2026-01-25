@@ -1,0 +1,44 @@
+/*----------------
+    media info
+----------------*/
+
+#custom-music {
+  padding: 0 12px;
+}
+
+/*------------
+    volume
+------------*/
+
+#pulseaudio,
+#wireplumber {
+	background-color: @volume;
+}
+
+/*------------
+    network
+------------*/
+
+#network {
+	padding: 0 4px;
+}
+
+/*------------
+    clock
+------------*/
+#clock.time {
+	padding: 0 8px;
+}
+
+/*------------
+    tray
+------------*/
+
+#tray { 
+  padding: 0 4px;
+}
+
+#custom-tray-toggle {
+  background-color: @accent;
+  padding: 2px;
+}

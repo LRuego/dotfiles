@@ -1,0 +1,166 @@
+/*******************************************************************************
+ * ROFI Color theme
+ * User: Avasz
+ * Copyleft: Avasz <avasz@protonmail.com>
+ *******************************************************************************/
+
+configuration {
+    modes: 			                "drun,run";
+    display-run:		            "";
+    display-ssh:		            "󰍹";
+    display-drun:	            	"";
+    font:                       "FiraMono Nerd Font 12";
+}
+
+* {
+    background-color:           #1a1b26;
+    text-color:                 #c0caf5;
+    selbg:                      #c0caf5;
+    actbg:                      #c0caf5;
+    urgbg:                      #c0caf5;
+    winbg:                      #0F1212;
+
+    selected-normal-foreground: @winbg;
+    normal-foreground:          @text-color;
+    selected-normal-background: @actbg;
+    normal-background:          @background-color;
+    alternate-normal-background:@background-color;
+    alternate-normal-foreground:@text-color;
+
+    alternate-urgent-background:@urgent-background;
+    alternate-urgent-foreground:@urgent-foreground;
+
+    alternate-active-background:@active-background;
+    alternate-active-foreground:@active-foreground;
+
+    selected-urgent-foreground: @background-color;
+    urgent-foreground:          @text-color;
+    selected-urgent-background: @urgbg;
+    urgent-background:          @background-color;
+
+    selected-active-foreground: @background-color;
+    active-foreground:          @background-color;
+    selected-active-background: @actbg;
+    active-background:          @selbg;
+    separator-style:            "none";
+    margin:                     0;
+}
+
+#window {
+    background-color:           @background-color;
+    border:               			1;
+    border-radius:              5px;
+    border-color:		            #7aa2f7ee;
+    transparency:               "real";
+    children:                   [mainbox];
+    width:                      25%;
+}
+
+#mainbox {
+    border:                     0;
+    orientation:                vertical;
+    children:                   [ inputbar, message, listview, mode-switcher ];
+    padding:                    10px 0px;
+}
+
+#inputbar {
+    children:                   [ prompt, entry ];
+    expand:                     false;
+    margin:                     10px 20px;
+}
+
+#prompt {
+    padding:                    0px 15px 0px 0px;
+    text-color:                 @normal-foreground;
+}
+
+#entry {
+    expand:                     true;
+    text-color:                 @normal-foreground;
+    placeholder:                "search...";
+    placeholder-color:          #c0caf5bf;
+}
+
+#sidebar {
+    expand: false;
+}
+
+#listview {
+    border:                     0;
+    padding:                    0px 20px;
+    lines:                      6;
+}
+
+#scrollbar {
+    handle-color:               none;
+}
+
+#mode-switcher {
+    margin:                     10px 10px 10px 10px;
+    padding:                    0px 30px;
+}
+
+button {
+    padding:                    10px 5px;
+    border-radius:              5px;
+    background-color:           #2c2e40;
+    margin:                     0px 5px;
+    text-color:                 @normal-foreground;
+    font:                       "FiraMono Nerd Font 14";
+}
+
+button.selected {
+    background-color:           #7aa2f7ee;
+    text-color:                 @selected-normal-foreground;
+}
+
+element {
+    padding:                    10px 5px 10px 5px;
+    border-radius:              5;
+}
+
+element.normal.normal {
+    background-color:           @normal-background;
+    text-color:                 @normal-foreground;
+}
+
+element.normal.urgent {
+    background-color:           @urgent-background;
+    text-color:                 @urgent-foreground;
+}
+
+#element.normal.active {
+    background-color:           @active-background;
+    text-color:                 @active-foreground;
+}
+
+#element.selected.urgent {
+    background-color:           @selected-urgent-background;
+    text-color:                 @selected-urgent-foreground;
+}
+
+#element.selected.active {
+    background-color:           @selected-active-background;
+    text-color:                 @selected-active-foreground;
+}
+
+element.alternate.normal {
+    background-color:           @alternate-normal-background;
+    text-color:                 @alternate-normal-foreground;
+}
+
+#element.alternate.urgent {
+    background-color:           @alternate-urgent-background;
+    text-color:                 @alternate-urgent-foreground;
+}
+
+#element.alternate.active {
+    background-color:           @alternate-active-background;
+    text-color:                 @alternate-active-foreground;
+}
+
+element.selected.normal {
+    background-color:           @selected-active-background;
+    text-color:                 @selected-active-foreground;
+}
+

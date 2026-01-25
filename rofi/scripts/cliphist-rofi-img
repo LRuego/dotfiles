@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+tmp_dir="/tmp/cliphist"
+rm -rf "$tmp_dir"
+
+if [[ -n "$1" ]]; then
+    # Log the exact selection to /tmp/cliphist_selection.log
+    echo "SELECTED_ENTRY: $1" > /tmp/cliphist_selection.log
+    
+    id_space=$(echo "$1" | awk '{print $NF}')
+    clean_id=$(echo "$id_space" | tr -d '[:space:]')
+    
+    # Check if it's binary
+    if [[ "$1" == *"[[ binary data"* ]]; then
+        echo "TYPE: BINARY" >> /tmp/cliphist_selection.log
+        # Attempt auto-detect mime
+        mime=""
+        if [[ "$1" == *"png"* ]]; then mime="image/png"; fi
+        if [[ "$1" == *"jpg"* ]] || [[ "$1" == *"jpeg"* ]]; then mime="image/jpeg"; fi
+        
+        if [[ -n "$mime" ]]; then
+             echo -n "$clean_id" | cliphist decode | wl-copy --type "$mime"
+        else
+             echo -n "$clean_id" | cliphist decode | wl-copy
+        fi
+    else
+        echo "TYPE: TEXT" >> /tmp/cliphist_selection.log
+        echo -n "$clean_id" | cliphist decode | wl-copy
+    fi
+    exit
+fi
+
+mkdir -p "$tmp_dir"
+
+read -r -d '' prog <<EOF
+/^[0-9]+\s<meta http-equiv=/ { next }
+match(\$0, /^([0-9]+)\s(\[\[\s)?binary.*(jpg|jpeg|png|bmp)/, grp) {
+    system("echo -n " grp[1] " | cliphist decode > " tmp_dir "/" grp[1] "." grp[3])
+    content = substr(\$0, length(grp[1])+2)
+    print content "\t" grp[1] "\0icon\x1f" tmp_dir "/" grp[1] "." grp[3]
+    next
+}
+{
+    content = substr(\$0, length(\$1)+2)
+    print content "\t" \$1
+}
+EOF
+
+cliphist list | gawk -v tmp_dir="$tmp_dir" "$prog"

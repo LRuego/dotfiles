@@ -1,0 +1,8 @@
+{
+  "custom/user": {
+    "format": "{}",
+    "exec": "echo \"$(whoami)@$(hostname)\"",
+    "return-type": "text",
+    "interval": 300
+  }
+}

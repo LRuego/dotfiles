@@ -1,0 +1,14 @@
+* {
+	font-family: "FiraMono Nerd Font";
+	font-weight: bold;
+	font-size: 12px;
+	color: @main-fg;
+}
+
+#custom-music,
+#custom-user,
+#window label,
+#mpris,
+tooltip label {
+	font-weight: normal;
+}

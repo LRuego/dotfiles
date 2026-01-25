@@ -1,0 +1,8 @@
+{
+  "custom/music": {
+    "format": "{}",
+    "return-type": "json",
+    "exec": "waybar-module-music --whitelist \"spotify\" --marquee --title-width 15 --effect-speed 300 --format '%icon%  %artist% - %title%' ",
+    "cursor": true
+  }
+}

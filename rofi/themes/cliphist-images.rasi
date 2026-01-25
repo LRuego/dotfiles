@@ -1,0 +1,43 @@
+@import "../config.rasi"
+
+#window {
+    width: 50%;
+}
+
+#mainbox {
+    children: [ inputbar, listview ];
+}
+
+#listview {
+    columns: 3;
+    lines: 3;
+    cycle: true;
+    scrollbar: false;
+    layout: vertical;
+    flow: horizontal;
+    spacing: 0;
+    padding: 20px;
+    margin: 0;
+}
+
+#element {
+    orientation: vertical;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+    children: [ element-icon ];
+}
+
+#element selected {
+    background-color: @actbg;
+    border-radius: 8px;
+}
+
+element-icon {
+    size: 15em;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    horizontal-align: 0.5;
+    vertical-align: 0.5;
+}

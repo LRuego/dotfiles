@@ -1,0 +1,84 @@
+
+//░██╗░░░░░░░██╗░█████╗░██╗░░░██╗██████╗░░█████╗░██████╗░
+//░██║░░██╗░░██║██╔══██╗╚██╗░██╔╝██╔══██╗██╔══██╗██╔══██╗
+//░╚██╗████╗██╔╝███████║░╚████╔╝░██████╦╝███████║██████╔╝
+//░░████╔═████║░██╔══██║░░╚██╔╝░░██╔══██╗██╔══██║██╔══██╗
+//░░╚██╔╝░╚██╔╝░██║░░██║░░░██║░░░██████╦╝██║░░██║██║░░██║
+//░░░╚═╝░░░╚═╝░░╚═╝░░╚═╝░░░╚═╝░░░╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝
+
+{
+  "include": [
+		// modules-left
+    "~/.config/waybar/modules/hyprland/workspaces.jsonc",
+    "~/.config/waybar/modules/hyprland/window.jsonc",
+
+		// modules-center
+    "~/.config/waybar/modules/custom/user.jsonc",
+    
+		// modules-left
+    "~/.config/waybar/modules/custom/music.jsonc",
+    "~/.config/waybar/modules/pulseaudio.jsonc",
+    "~/.config/waybar/modules/network.jsonc",
+    "~/.config/waybar/modules/clock.jsonc",
+    "~/.config/waybar/modules/tray.jsonc"
+  ],
+
+  "modules-left": [
+      "hyprland/workspaces"
+      /*"hyprland/window"*/
+  ],
+
+  "modules-center": [
+      "custom/user"
+  ],
+
+  "modules-right": [
+      "custom/music",
+      "group/pulseaudio",
+      "network",
+      "clock#time",
+      "clock#date",
+      "group/tray"
+  ],
+
+
+  "layer": "top",
+  "position": "top",
+  "exclusive": true,
+  "reload_style_on_change": true
+/*
+  "pulseaudio": {
+    "format": "{icon}  {volume}%",
+    "format-muted": " MUTED",
+    "format-icons": {
+        "headphone": "",
+        "hands-free": "",
+        "headset": "",
+        "phone": "",
+        "portable": "",
+        "car": "",
+        "default": ["", "", ""]
+    },
+    "on-click": "pavucontrol"
+  },
+*/
+ /* "custom/music": {
+    "format": "{}",
+    "return-type": "json",
+    "exec": "waybar-module-music --whitelist \"spotify\" --marquee --title-width 15 --effect-speed 300"
+  },
+*/
+/*"hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "1": "",
+      "2": "",
+      "3": "󰊴",
+      "4": "󰍺"
+    }
+  }, */
+/*
+  "hyprland/workspaces": {
+    "format": "{name}"
+  },*/
+}
