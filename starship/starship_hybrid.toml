@@ -1,0 +1,52 @@
+# Starship Configuration for "Bridge/Double-Decker" Style
+# Matches Tokyo Night Colors
+
+add_newline = true
+
+# Define the order of modules
+# Removed explicit lines '─' between modules
+format = """
+[╭─](blue)$username$directory$git_branch$git_status$fill$time
+$character"""
+
+# --- MODULES ---
+
+[fill]
+symbol = "─"
+style = "blue"
+
+[username]
+style_user = "fg:#7aa2f7"
+style_root = "fg:#f7768e"
+# Added starting bracket [, restored separator 
+format = '[\[](blue)[  $user ]($style)[](fg:#7aa2f7)'
+disabled = false
+show_always = true
+
+[directory]
+style = "fg:#c0caf5"
+# Removed brackets, restored separator 
+format = '[   $path ]($style)[](fg:#7aa2f7)'
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+symbol = " "
+style = "fg:#bb9af7"
+# Removed brackets, restored separator 
+format = '[ $symbol$branch ]($style)[](fg:#7aa2f7)'
+
+[git_status]
+style = "fg:#f7768e"
+format = '[$all_status$ahead_behind ]($style)'
+
+[time]
+disabled = false
+time_format = "%H:%M"
+style = "fg:#7aa2f7"
+# Kept brackets for Time
+format = '[\[](blue)[ $time  ]($style)[\]](blue)'
+
+[character]
+success_symbol = "[╰─❱](blue)"
+error_symbol = "[╰─❱](red)"
