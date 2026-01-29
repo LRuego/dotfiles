@@ -15,12 +15,14 @@ Row {
     property string icon:         ""
     property color  iconColor:    labelColor
     property int    iconSize:     labelSize
+    property int    iconWidth:    0
     property string iconFont:     labelFont
     property bool   iconBold:     labelBold
 
     property string text:         ""
     property color  textColor:    labelColor
     property int    textSize:     labelSize
+    property int    textWidth:    0
     property string textFont:     labelFont
     property bool   textBold:     labelBold
 
@@ -35,8 +37,11 @@ Row {
         color: root.iconColor
         font.family: root.iconFont
         font.pixelSize: root.iconSize
-        font.bold: textBold
+        font.bold: root.iconBold
         visible: text !== ""
+
+        width: root.iconWidth > 0 ? root.iconWidth : implicitWidth
+        horizontalAlignment: Text.AlignHCenter
     }
 
     Text {
@@ -47,7 +52,10 @@ Row {
         color: root.textColor
         font.family: root.textFont
         font.pixelSize: root.textSize
-        font.bold: textBold
+        font.bold: root.textBold
         visible: text !== ""
+
+        width: root.textWidth > 0 ? root.textWidth : implicitWidth
+        horizontalAlignment: Text.AlignHCenter
     }
 }
