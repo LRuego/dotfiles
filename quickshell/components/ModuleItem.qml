@@ -7,17 +7,30 @@ Item {
 
     default property alias content: row.data
     signal clicked()
+    property alias hovered: mouse.containsMouse
 
     // --- RECEIVED PROPERTIES ---
     property string pos:          "single"
     property real   fullRadius:   Theme.cornerRadius
     property color  hoverColor:   Theme.surface1
 
+    // --- API ---
+    property bool isHidden: false
+
     // --- LAYOUT ---
     property int    padLeft:      (pos === "right" || pos === "mid") ? 5 : 10
     property int    padRight:     (pos === "left"  || pos === "mid") ? 5 : 10
 
-    width:                        Math.max(20, row.width + padLeft + padRight)
+    // Calculate natural width
+    readonly property real naturalWidth: Math.max(20, row.width + padLeft + padRight)
+
+    // Animated Width Logic
+    width: isHidden ? 0 : naturalWidth
+    visible: width > 0
+    clip: true // Prevent overflow during animation
+
+    Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.InOutQuad } }
+
     height:                       parent.height
 
     // --- HOVER BACKGROUND ---
