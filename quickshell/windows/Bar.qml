@@ -10,6 +10,7 @@ PanelWindow {
     id: root
     // --- LOGIC ---
     ClockService { id: clockData }
+    AudioService { id: audio }
 
     // --- PROPERTIES ---
     property int    textSize:     Theme.fontSizeSmall
@@ -59,30 +60,39 @@ PanelWindow {
         //  --- VOLUME  ---
         Module {
             ModuleItem {
+                id: volItem
+                onClicked: audio.toggleMute()
+
                 IconLabel {
-                    labelBold:    true
+                    labelBold: true
+                    icon: audio.icon
+                    iconSize: Theme.fontSizeTiny
+                    iconWidth: root.textSize
 
-                    icon:         ""
-                    iconSize:     root.textSize
-
-                    text:         "100%"
-                    textFont:     root.textFont
-                    textSize:     root.textSize
+                    text: audio.volume + "%"
+                    textFont: root.textFont
+                    textSize: root.textSize
+                    textWidth: 32
                 }
             }
-
             ModuleItem {
+                // Collapsible Mic: Show if Vol hovered OR Mic hovered OR Mic is UNMUTED
+                isHidden: !(volItem.hovered || hovered || audio.isMicActive)
+                onClicked: audio.toggleMic()
+
                 IconLabel {
-                    labelBold:    true
+                    labelBold: true
+                    icon: audio.micIcon
+                    iconSize: Theme.fontSizeTiny
+                    iconWidth: root.textSize
 
-                    icon:         ""
-                    iconSize:     Theme.fontSizeTiny
-
-                    text:         "100%"
-                    textFont:     root.textFont
-                    textSize:     root.textSize
+                    text: audio.micVolume + "%"
+                    textFont: root.textFont
+                    textSize: root.textSize
+                    textWidth: 32
                 }
             }
+
         }
 
         //  --- DATE & TIME ---
