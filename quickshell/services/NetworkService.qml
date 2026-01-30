@@ -15,7 +15,7 @@ Item {
 
     // --- UI HELPERS ---
     readonly property string icon: {
-        if (statusText === "Eth") return "󰈀"
+      if (statusText === "Eth") return ""
         if (statusText === "WiFi") return ""
         return "󰤮" // Disconnected
     }

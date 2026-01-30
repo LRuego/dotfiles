@@ -52,15 +52,15 @@ PanelWindow {
 
         //  --- CONNECTIVITY ---
         Module {
+            ModuleItem{
+                IconLabel { icon: "../assets/tailscale-on.svg" }
+            }
+
             ModuleItem {
                 IconLabel {
                     labelBold: true
                     icon: net.icon
                     iconColor: net.statusColor
-
-                    text: net.statusText
-                    textFont: root.textFont
-                    textSize: root.textSize
                 }
             }
 
@@ -73,14 +73,8 @@ PanelWindow {
 
                 IconLabel {
                     labelBold: true
-
                     icon: bt.icon
                     iconColor: bt.statusColor
-
-                    text: bt.statusText
-                    textColor: bt.statusColor
-                    textFont: root.textFont
-                    textSize: root.textSize
                 }
             }
         }
@@ -133,6 +127,7 @@ PanelWindow {
 
                     icon:         "󰅐"
                     iconSize:     root.textSize
+                    iconOffset:   1
 
                     text:         clockData.time
                     textFont:     root.textFont

@@ -7,7 +7,6 @@ Row {
     anchors.verticalCenter: parent.verticalCenter
 
     property color  labelColor:   Theme.text
-    property string labelFont:    Theme.fontFamily
     property bool   labelBold:    false
     property int    labelSize:    Theme.fontSize
     property int    labelSpacing: 4
@@ -16,7 +15,7 @@ Row {
     property color  iconColor:    labelColor
     property int    iconSize:     labelSize
     property int    iconWidth:    0
-    property string iconFont:     labelFont
+    property string iconFont:     Theme.fontFamilyAlt
     property bool   iconBold:     labelBold
     property int    iconOffset:   0
 
@@ -24,12 +23,31 @@ Row {
     property color  textColor:    labelColor
     property int    textSize:     labelSize
     property int    textWidth:    0
-    property string textFont:     labelFont
+    property string textFont:     Theme.fontFamily
     property bool   textBold:     labelBold
     property int    textOffset:   1
 
 
     spacing:                      labelSpacing
+
+    readonly property bool isImageIcon: icon.includes(".") || icon.includes("/")
+
+    Image {
+        id: imageIconItem
+        source: isImageIcon ? (icon.startsWith("/") ? "file://" + icon : icon) : ""
+
+        width: root.iconWidth > 0 ? root.iconWidth : root.iconSize
+        height: root.iconSize
+
+        sourceSize.width: width
+        sourceSize.height: height
+
+        fillMode: Image.PreserveAspectFit
+        visible: isImageIcon && icon !== ""
+
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: root.iconOffset
+    }
 
     Text {
         id: iconItem
@@ -41,7 +59,7 @@ Row {
         font.family: root.iconFont
         font.pixelSize: root.iconSize
         font.bold: root.iconBold
-        visible: text !== ""
+        visible: !isImageIcon && text !== ""
 
         width: root.iconWidth > 0 ? root.iconWidth : implicitWidth
         horizontalAlignment: Text.AlignHCenter
