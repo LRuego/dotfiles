@@ -18,6 +18,7 @@ Row {
     property int    iconWidth:    0
     property string iconFont:     labelFont
     property bool   iconBold:     labelBold
+    property int    iconOffset:   0
 
     property string text:         ""
     property color  textColor:    labelColor
@@ -25,13 +26,15 @@ Row {
     property int    textWidth:    0
     property string textFont:     labelFont
     property bool   textBold:     labelBold
+    property int    textOffset:   1
 
 
     spacing:                      labelSpacing
 
     Text {
         id: iconItem
-        anchors.baseline: labelItem.baseline
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: root.iconOffset
 
         text: root.icon
         color: root.iconColor
@@ -47,6 +50,7 @@ Row {
     Text {
         id: labelItem
         anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: root.textOffset
 
         text: root.text
         color: root.textColor
