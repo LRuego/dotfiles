@@ -1,0 +1,28 @@
+/* Ghostty GTK CSS - Reorganized */
+
+tab {
+    font-weight: 400;
+    padding: 0 10px; /* Small vertical padding */
+    border-radius: 8px;
+    color: #c0caf5;
+}
+
+tab:selected {
+    font-weight: 700;
+    color: #7aa2f7;
+    box-shadow: none;
+    border-bottom: none;
+}
+
+tab:hover:not(:selected) {
+    background-color: #24283b;
+    color: #7aa2f7;
+}
+
+tab button {
+    min-height: 0;
+    min-width: 0;
+    padding: 1px;
+    margin-left: 4px;
+    color: inherit;
+}

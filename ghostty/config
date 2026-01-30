@@ -22,6 +22,7 @@ font-size = 10
 
 # Window
 window-padding-x = 2
+window-step-resize = true
 
 # Mouse
 mouse-hide-while-typing = true
@@ -29,23 +30,50 @@ mouse-hide-while-typing = true
 
 # Theme
 theme = "tokyonight_night"
+gtk-custom-css = gtk.css
 cursor-invert-fg-bg = true
 background-opacity = 0.8
 window-theme = ghostty
 
+unfocused-split-fill=#1a1b26
+unfocused-split-opacity=0.4
+
+gtk-tabs-location = bottom
+
 # keybindings
 keybind = clear
-keybind = ctrl+shift+h=goto_split:left
-keybind = ctrl+shift+j=goto_split:bottom
-keybind = ctrl+shift+k=goto_split:top
-keybind = ctrl+shift+l=goto_split:right
-keybind = alt+shift+t=new_tab
-keybind = alt+shift+h=previous_tab
-keybind = alt+shift+l=next_tab
-keybind = alt+shift+comma=move_tab:-1
-keybind = alt+shift+period=move_tab:1
+
+# Navigation (Alt+Shift)
+keybind = alt+shift+h=goto_split:left
+keybind = alt+shift+j=goto_split:bottom
+keybind = alt+shift+k=goto_split:top
+keybind = alt+shift+l=goto_split:right
+
+# Creation & Management
+keybind = alt+shift+q=new_split:auto
+keybind = alt+shift+w=close_surface
+keybind = alt+shift+f=toggle_split_zoom
+
+# Resizing (Alt+Ctrl)
+keybind = alt+ctrl+h=resize_split:left,10
+keybind = alt+ctrl+j=resize_split:down,10
+keybind = alt+ctrl+k=resize_split:up,10
+keybind = alt+ctrl+l=resize_split:right,10
+
+# Quick Terminal (Global Toggle)
+keybind = super+backspace=toggle_quick_terminal
+quick-terminal-animation-duration = 0.2
+quick-terminal-position = bottom
+
+# Utilities
+keybind = alt+shift+p=toggle_command_palette
+keybind = alt+shift+i=show_gtk_inspector
+keybind = alt+shift+s=write_screen_file:open
+
+# System & Data
 keybind = ctrl+shift+c=copy_to_clipboard
 keybind = ctrl+shift+v=paste_from_clipboard
-keybind = ctrl+shift+,=reload_config
-keybind = alt+shift+s=write_screen_file:open
-keybind = alt+shift+w=close_surface
+keybind = alt+shift+,=reload_config
+
+keybind = alt+shift+t=new_tab
+keybind = alt+shift+tab=next_tab
