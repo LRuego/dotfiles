@@ -11,6 +11,8 @@ PanelWindow {
     // --- LOGIC ---
     ClockService { id: clockData }
     AudioService { id: audio }
+    BluetoothService { id: bt }
+    NetworkService { id: net }
 
     // --- PROPERTIES ---
     property int    textSize:     Theme.fontSizeSmall
@@ -48,12 +50,38 @@ PanelWindow {
         anchors.bottom:           parent.bottom
         spacing:                  10
 
+        //  --- CONNECTIVITY ---
         Module {
             ModuleItem {
-                IconLabel { labelBold: true; labelSize: root.textSize; icon: "󰖩" }
+                IconLabel {
+                    labelBold: true
+                    icon: net.icon
+                    iconColor: net.statusColor
+
+                    text: net.statusText
+                    textFont: root.textFont
+                    textSize: root.textSize
+                }
             }
+
             ModuleItem {
-                IconLabel { labelBold: true; labelSize: root.textSize; icon: "󰂯"}
+                id: btItem
+                // Click to toggle Bluetooth Power
+                onClicked: {
+                    if (bt.adapter) bt.adapter.enabled = !bt.adapter.enabled
+                }
+
+                IconLabel {
+                    labelBold: true
+
+                    icon: bt.icon
+                    iconColor: bt.statusColor
+
+                    text: bt.statusText
+                    textColor: bt.statusColor
+                    textFont: root.textFont
+                    textSize: root.textSize
+                }
             }
         }
 
