@@ -1,4 +1,3 @@
-
 #░██████╗░██╗░░██╗░█████╗░░██████╗████████╗████████╗██╗░░░██╗
 #██╔════╝░██║░░██║██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝╚██╗░██╔╝
 #██║░░██╗░███████║██║░░██║╚█████╗░░░░██║░░░░░░██║░░░░╚████╔╝░
@@ -8,72 +7,69 @@
 # By LRuego
 # --------------------------------------------------------------------------
 
-# CONTROL + SHIFT + COMMA to reload Ghostty config
-
-# Fonts
-font-family = "Fira Code"
+# --- Fonts ---
 font-family = "Fira Code"
 font-family-bold = "Fira Code"
 font-family-italic = "Maple Mono"
 font-family-bold-italic = "Maple Mono"
 font-family = "Symbols Nerd Font"
 font-size = 10
-#adjust-underline-position = 4
+# adjust-underline-position = 4
 
-# Window
-window-padding-x = 2
+# --- Window ---
+# window-padding-x = 2
 window-step-resize = true
+window-theme = ghostty
+background-opacity = 0.8
 
-# Mouse
+# --- Theme ---
+theme = "tokyonight_night"
+gtk-custom-css = custom.css
+gtk-tabs-location = bottom
+# cursor-invert-fg-bg = true
+unfocused-split-fill = #1a1b26
+unfocused-split-opacity = 0.4
+
+# --- Mouse ---
 mouse-hide-while-typing = true
 # mouse-scroll-multiplier = 1
 
-# Theme
-theme = "tokyonight_night"
-gtk-custom-css = gtk.css
-cursor-invert-fg-bg = true
-background-opacity = 0.8
-window-theme = ghostty
-
-unfocused-split-fill=#1a1b26
-unfocused-split-opacity=0.4
-
-gtk-tabs-location = bottom
-
-# keybindings
+# --- Keybindings ---
 keybind = clear
 
-# Navigation (Alt+Shift)
+# System & Config
+keybind = ctrl+shift+c=copy_to_clipboard
+keybind = ctrl+shift+v=paste_from_clipboard
+keybind = alt+shift+,=reload_config
+keybind = alt+shift+p=toggle_command_palette
+keybind = alt+shift+i=show_gtk_inspector
+keybind = alt+shift+s=write_screen_file:open
+
+# Tabs
+keybind = alt+shift+t=new_tab
+keybind = alt+tab=next_tab
+keybind = alt+shift+tab=previous_tab
+keybind = ctrl+tab=toggle_tab_overview
+
+# Splits: Creation & Management
+keybind = alt+shift+q=new_split:auto
+keybind = alt+shift+w=close_surface
+keybind = alt+shift+f=toggle_split_zoom
+
+# Splits: Navigation (Alt+Shift)
 keybind = alt+shift+h=goto_split:left
 keybind = alt+shift+j=goto_split:bottom
 keybind = alt+shift+k=goto_split:top
 keybind = alt+shift+l=goto_split:right
 
-# Creation & Management
-keybind = alt+shift+q=new_split:auto
-keybind = alt+shift+w=close_surface
-keybind = alt+shift+f=toggle_split_zoom
-
-# Resizing (Alt+Ctrl)
+# Splits: Resizing (Alt+Ctrl)
 keybind = alt+ctrl+h=resize_split:left,10
 keybind = alt+ctrl+j=resize_split:down,10
 keybind = alt+ctrl+k=resize_split:up,10
 keybind = alt+ctrl+l=resize_split:right,10
 
-# Quick Terminal (Global Toggle)
-keybind = super+backspace=toggle_quick_terminal
+# Quick Terminal (Internal)
+# Note: For global toggling, see Hyprland config (Special Workspace)
+# keybind = super+backspace=toggle_quick_terminal
 quick-terminal-animation-duration = 0.2
 quick-terminal-position = bottom
-
-# Utilities
-keybind = alt+shift+p=toggle_command_palette
-keybind = alt+shift+i=show_gtk_inspector
-keybind = alt+shift+s=write_screen_file:open
-
-# System & Data
-keybind = ctrl+shift+c=copy_to_clipboard
-keybind = ctrl+shift+v=paste_from_clipboard
-keybind = alt+shift+,=reload_config
-
-keybind = alt+shift+t=new_tab
-keybind = alt+shift+tab=next_tab
