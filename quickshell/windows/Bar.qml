@@ -52,8 +52,8 @@ PanelWindow {
 
         //  --- CONNECTIVITY ---
         Module {
-            ModuleItem{
-                IconLabel { icon: "../assets/tailscale-on.svg" }
+            ModuleItem {
+                IconLabel { icon: Assets.tailscaleOn }
             }
 
             ModuleItem {
@@ -61,6 +61,7 @@ PanelWindow {
                     labelBold: true
                     icon: net.icon
                     iconColor: net.statusColor
+                    iconWidth: Theme.fontSize
                 }
             }
 
@@ -84,34 +85,43 @@ PanelWindow {
             ModuleItem {
                 id: volItem
                 onClicked: audio.toggleMute()
+                onWheeled: (wheel) => audio.adjustVolume(wheel.angleDelta.y > 0)
 
                 IconLabel {
                     labelBold: true
+
                     icon: audio.icon
-                    iconSize: Theme.fontSizeTiny
+                    iconColor: audio.speakerColor
+                    iconSize: root.textSize
                     iconWidth: root.textSize
 
                     text: audio.volume + "%"
+                    textColor: audio.speakerColor
                     textFont: root.textFont
                     textSize: root.textSize
-                    textWidth: 32
+                    textWidth: audio.volume < 100 ? 24 : 32
                 }
             }
             ModuleItem {
                 // Collapsible Mic: Show if Vol hovered OR Mic hovered OR Mic is UNMUTED
                 isHidden: !(volItem.hovered || hovered || audio.isMicActive)
                 onClicked: audio.toggleMic()
+                onWheeled: (wheel) => audio.adjustMicVolume(wheel.angleDelta.y > 0)
 
                 IconLabel {
                     labelBold: true
+
                     icon: audio.micIcon
-                    iconSize: Theme.fontSizeTiny
+                    iconColor: audio.micColor
+                    iconSize: root.textSize
                     iconWidth: root.textSize
 
                     text: audio.micVolume + "%"
+                    textColor: audio.micColor
                     textFont: root.textFont
                     textSize: root.textSize
-                    textWidth: 32
+                    textWidth: audio.micVolume < 100 ? 24 : 32
+
                 }
             }
 
@@ -125,9 +135,8 @@ PanelWindow {
                 IconLabel {
                     labelBold:    true
 
-                    icon:         "󰅐"
+                    icon:         Assets.clock
                     iconSize:     root.textSize
-                    iconOffset:   1
 
                     text:         clockData.time
                     textFont:     root.textFont
@@ -140,7 +149,7 @@ PanelWindow {
                 IconLabel {
                     labelBold:    true
 
-                    icon:         ""
+                    icon:         Assets.calendar
                     iconSize:     Theme.fontSizeTiny
 
                     text:         clockData.date

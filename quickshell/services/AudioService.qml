@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
+import "../theme.js" as Theme
 
 Item {
     id: root
@@ -25,17 +26,21 @@ Item {
     readonly property bool isMuted: root.sink?.audio?.muted ?? true
 
     readonly property string icon: {
-        if (isMuted) return "󰝟"
-        if (volume >= 60) return ""
-        if (volume >= 30) return ""
-        return ""
+        if (isMuted) return Assets.volumeMute
+        if (volume >= 60) return Assets.volumeUp
+        if (volume >= 30) return Assets.volumeDown
+        return Assets.volume
     }
+
+    readonly property color speakerColor: isMuted ? Theme.overlay : Theme.text
 
     // 2. Microphone
     readonly property int micVolume: Math.round((root.source?.audio?.volume ?? 0) * 100)
     readonly property bool isMicMuted: root.source?.audio?.muted ?? true
 
-    readonly property string micIcon: isMicMuted ? "" : ""
+    readonly property string micIcon: isMicMuted ? Assets.microphoneMute : Assets.microphone
+
+    readonly property color micColor: isMicActive ? Theme.warning : Theme.text
 
     // --- RECORDING DETECTION (Shell Script) ---
     // Uses privacy_dots.sh from https://github.com/alvaniss/privacy-dots
@@ -85,5 +90,21 @@ Item {
         if (root.source?.audio) {
             root.source.audio.muted = !root.source.audio.muted
         }
+    }
+
+    function adjustVolume(isUp) {
+        if (!root.sink?.audio) return
+        let current = root.sink.audio.volume
+        let step = 0.10 // 10% increments
+        let next = isUp ? Math.min(1.0, current + step) : Math.max(0.0, current - step)
+        root.sink.audio.volume = next
+    }
+
+    function adjustMicVolume(isUp) {
+        if (!root.source?.audio) return
+        let current = root.source.audio.volume
+        let step = 0.10 // 10% increments
+        let next = isUp ? Math.min(1.0, current + step) : Math.max(0.0, current - step)
+        root.source.audio.volume = next
     }
 }

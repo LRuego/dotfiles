@@ -15,13 +15,13 @@ Item {
 
     // --- UI HELPERS ---
     readonly property string icon: {
-      if (statusText === "Eth") return ""
-        if (statusText === "WiFi") return ""
-        return "󰤮" // Disconnected
+      if (statusText === "Eth") return Assets.networkWired
+        if (statusText === "WiFi") return Assets.networkWireless
+        return Assets.networkOff // Disconnected
     }
 
     readonly property color statusColor: {
-        if (statusText === "Off") return Theme.subtext
+        if (statusText === "Off") return Theme.urgent
         return Theme.primary
     }
 

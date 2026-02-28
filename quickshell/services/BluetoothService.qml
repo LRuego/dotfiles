@@ -42,9 +42,9 @@ QtObject {
 
     // --- UI HELPERS ---
     readonly property string icon: {
-        if (!powered) return "󰂲" // Disabled/Off
-        if (connected) return "󰂯" // Connected
-        return "󰂯" // On but disconnected
+        if (!powered) return Assets.bluetoothOff // Disabled/Off
+        if (connected) return Assets.bluetooth // Connected
+        return Assets.bluetooth // On but disconnected
     }
 
     readonly property color statusColor: {

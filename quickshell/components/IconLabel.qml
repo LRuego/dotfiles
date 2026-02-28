@@ -1,5 +1,6 @@
 // components/IconLabel.qml
 import QtQuick
+import QtQuick.Effects
 import "../theme.js" as Theme
 
 Row {
@@ -39,14 +40,25 @@ Row {
         width: root.iconWidth > 0 ? root.iconWidth : root.iconSize
         height: root.iconSize
 
+        // Rasterize at exact pixel size for maximum sharpness
         sourceSize.width: width
         sourceSize.height: height
+
+        smooth: true
+        mipmap: false // Mipmapping causes blur at very small sizes
 
         fillMode: Image.PreserveAspectFit
         visible: isImageIcon && icon !== ""
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: root.iconOffset
+
+        // --- DYNAMIC COLORING ---
+        layer.enabled: visible && root.iconColor.a > 0
+        layer.effect: MultiEffect {
+            colorization: 1.0
+            colorizationColor: root.iconColor
+        }
     }
 
     Text {
@@ -63,6 +75,7 @@ Row {
 
         width: root.iconWidth > 0 ? root.iconWidth : implicitWidth
         horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
     }
 
     Text {
@@ -79,5 +92,6 @@ Row {
 
         width: root.textWidth > 0 ? root.textWidth : implicitWidth
         horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
     }
 }

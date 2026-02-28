@@ -7,6 +7,7 @@ Item {
 
     default property alias content: row.data
     signal clicked()
+    signal wheeled(var wheel)
     property alias hovered: mouse.containsMouse
 
     // --- RECEIVED PROPERTIES ---
@@ -74,5 +75,6 @@ Item {
         hoverEnabled:             true
         cursorShape:              Qt.PointingHandCursor
         onClicked:                root.clicked()
+        onWheel: (wheel) =>       root.wheeled(wheel)
     }
 }
