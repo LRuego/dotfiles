@@ -27,8 +27,8 @@ theme = "tokyonight_night"
 gtk-custom-css = custom.css
 gtk-tabs-location = bottom
 # cursor-invert-fg-bg = true
-unfocused-split-fill = #1a1b26
-unfocused-split-opacity = 0.4
+#unfocused-split-fill = #1a1b26
+#unfocused-split-opacity = 0.4
 
 # --- Mouse ---
 mouse-hide-while-typing = true

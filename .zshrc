@@ -115,7 +115,6 @@ alias cd='z'
 alias grep='grep --color=auto'
 alias n='nvim'
 alias cat='bat'
-alias paruz='paru -Slq | fzf --multi --preview 'paru -Si {1}' | xargs -ro paru -S'
 
 # FZF
 # Define a shared command for fzf to find files while excluding certain directories.
@@ -146,3 +145,5 @@ source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Starship
 eval "$(starship init zsh)"
+export EDITOR="nvim"
+export VISUAL="nvim"
