@@ -19,5 +19,17 @@ return {
         end,
       }
     })
+
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = { "qml", "qmljs" },
+      callback = function(ev)
+        local root_dir = vim.fs.dirname(vim.fs.find({ ".git", "qmlls.ini" }, { upward = true, path = ev.file })[1])
+        vim.lsp.start({
+          name = "qmlls",
+          cmd = { "qmlls6" },
+          root_dir = root_dir,
+        })
+      end,
+    })
   end,
 }
