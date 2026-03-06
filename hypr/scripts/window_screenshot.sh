@@ -14,4 +14,4 @@ if [ -z "$GEOMETRY" ]; then
 fi
 
 # Take the screenshot using the selected geometry, output as PNG, and pipe to satty.
-grim -g "$GEOMETRY" -t png - | satty --filename - --fullscreen --output-filename ~/Pictures/Screenshots/$(date '+%Y%m%d-%H:%M:%S').png
+grim -g "$GEOMETRY" -t png - | satty --filename - --output-filename ~/Pictures/Screenshots/$(date '+%Y%m%d-%H:%M:%S').png
