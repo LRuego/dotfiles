@@ -27,8 +27,8 @@ theme = "tokyonight_night"
 gtk-custom-css = custom.css
 gtk-tabs-location = bottom
 # cursor-invert-fg-bg = true
-#unfocused-split-fill = #1a1b26
-#unfocused-split-opacity = 0.4
+unfocused-split-fill = #1a1b26
+unfocused-split-opacity = 0.6
 
 # --- Mouse ---
 mouse-hide-while-typing = true
@@ -57,10 +57,10 @@ keybind = alt+shift+w=close_surface
 keybind = alt+shift+f=toggle_split_zoom
 
 # Splits: Navigation (Alt+Shift)
-keybind = alt+shift+h=goto_split:left
-keybind = alt+shift+j=goto_split:bottom
-keybind = alt+shift+k=goto_split:top
-keybind = alt+shift+l=goto_split:right
+keybind = global:alt+shift+h=goto_split:left
+keybind = global:alt+shift+j=goto_split:bottom
+keybind = global:alt+shift+k=goto_split:top
+keybind = global:alt+shift+l=goto_split:right
 
 # Splits: Resizing (Alt+Ctrl)
 keybind = alt+ctrl+h=resize_split:left,10

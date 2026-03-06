@@ -1,3 +1,7 @@
+vim.opt.termguicolors = true
+vim.opt.cursorline = true
+vim.opt.number = true
+
 -- lazy.nvim Configuration --
 require("config.lazy")
 vim.keymap.set('n', '<leader>l', '<cmd>Lazy<cr>', { desc = 'Open lazy.nvim' })
@@ -8,8 +12,6 @@ require('lualine').setup {
 	theme = 'tokyonight-night'
 	},
 }
-
-vim.opt.cursorline = true
 
 -- copy paste --
 vim.opt.clipboard = "unnamedplus"
