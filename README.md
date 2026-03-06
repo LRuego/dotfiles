@@ -9,19 +9,19 @@ Personal configuration files for my Arch Linux workstation.
 *   **Terminal:** Ghostty + Zsh + Starship
 *   **Editor:** Neovim (LazyVim-based custom config)
 *   **Launcher:** Rofi
-*   **Bar:** Quickshell
+*   **Shell/UI:** Quickshell (Bar, Menus, Notifications)
 *   **Theme:** Customized [Tokyo Night](https://github.com/folke/tokyonight.nvim)
 
 ## Structure
 
 *   `hypr/`: Hyprland configuration, keybindings, and custom scripts.
-*   `waybar/`: Status bar configuration and style.
-*   `quickshell/`: Programmable status bar and widgets (QML).
+*   `quickshell/`: Programmable QML environment handling the status bar, system menus, tooltips, and notification daemon.
 *   `rofi/`: Application launcher and clipboard manager themes.
 *   `nvim/`: Neovim Lua configuration.
 *   `ghostty/`: Terminal emulator config.
-*   `zsh/` & `.zshrc`: Shell configuration.
-*   `dunst/`: Notification daemon config.
+*   `.zshrc`: Shell configuration.
+*   `yazi/`: TUI file manager config.
+*   `zathura/`: PDF viewer config.
 
 ## Acknowledgements
 

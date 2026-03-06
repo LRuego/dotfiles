@@ -1,7 +1,8 @@
+pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Bluetooth
-import "../theme.js" as Theme
+import "../core"
 
 QtObject {
     id: root
@@ -13,23 +14,9 @@ QtObject {
     readonly property var _adapters: Bluetooth.adapters.values
     readonly property var adapter: Bluetooth.defaultAdapter ?? (_adapters.length > 0 ? _adapters[0] : null)
 
-    //  --  BLUETOOTH LOGGING ---
-    Component.onCompleted: {
-        if (root.debug) {
-            console.log("[BT] Service Loaded")
-            console.log("[BT] Selected Adapter:", adapter)
-            if (adapter) {
-                console.log("[BT] Props - Enabled:", adapter.enabled)
-                console.log("[BT] Props - Devices:", adapter.devices ? adapter.devices.values.length : "null")
-            }
-        }
-    }
-
     // --- STATE ---
-    // Use 'enabled' as confirmed by logs
     readonly property bool powered: adapter ? adapter.enabled : false
 
-    // Check devices
     readonly property bool connected: {
         if (!adapter) return false
         let devs = Bluetooth.devices ? Bluetooth.devices.values : (adapter.devices ? adapter.devices.values : [])
@@ -42,15 +29,15 @@ QtObject {
 
     // --- UI HELPERS ---
     readonly property string icon: {
-        if (!powered) return Assets.bluetoothOff // Disabled/Off
-        if (connected) return Assets.bluetooth // Connected
-        return Assets.bluetooth // On but disconnected
+        if (!powered) return Assets.bluetoothOff
+        if (connected) return Assets.bluetooth
+        return Assets.bluetooth
     }
 
     readonly property color statusColor: {
         if (!powered) return Theme.subtext
-        if (connected) return Theme.primary // Blue
-        return Theme.text // White
+        if (connected) return Theme.primary
+        return Theme.text
     }
 
     readonly property string statusText: powered ? "On" : "Off"
