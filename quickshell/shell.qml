@@ -33,4 +33,12 @@ ShellRoot {
             2500 
         );
     }
+
+    IpcHandler {
+        target: "shell"
+
+        function softReload(): void {
+            Quickshell.reload(false)
+        }
+    }
 }
