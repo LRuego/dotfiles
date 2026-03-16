@@ -39,6 +39,10 @@ QtObject {
     readonly property string tailscaleOn:  asset("system/tailscale-on.svg")
     readonly property string tailscaleOff: asset("system/tailscale-off.svg")
 
+    // --- System Resources ---
+    readonly property string cpu: asset("system/cpu.svg")
+    readonly property string ram: asset("system/ram.svg")
+
     function get(name) {
         // Fallback search logic: try system/ first, then root
         return asset("system/" + name + (name.includes(".") ? "" : ".svg"));

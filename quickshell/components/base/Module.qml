@@ -20,8 +20,7 @@ Rectangle {
 
     // --- LAYOUT ---
     implicitHeight:               32
-    anchors.top:                  parent ? parent.top : undefined
-    anchors.bottom:               parent ? parent.bottom : undefined
+    height:                       parent ? parent.height : implicitHeight
     width:                        internalRow.width
 
     // --- STYLE ---
@@ -33,7 +32,6 @@ Rectangle {
     // --- LOGIC ---
     Row {
         id: internalRow
-        anchors.centerIn:         parent
         height:                   parent.height
         spacing:                  0
 

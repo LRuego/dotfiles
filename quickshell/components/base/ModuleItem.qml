@@ -25,13 +25,18 @@ Item {
     property int    padLeft:      (pos === "right" || pos === "mid") ? 5 : 10
     property int    padRight:     (pos === "left"  || pos === "mid") ? 5 : 10
 
-    readonly property real naturalWidth: Math.max(20, row.width + padLeft + padRight)
+    readonly property int naturalWidth: Math.ceil(Math.max(20, row.width + padLeft + padRight))
 
     width: isHidden ? 0 : naturalWidth
     visible: width > 0
     clip: true 
 
-    Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.OutQuart } }
+    Behavior on width {
+        NumberAnimation {
+            duration: 200
+            easing.type: Easing.OutQuart
+        }
+    }
 
     height: parent.height
 

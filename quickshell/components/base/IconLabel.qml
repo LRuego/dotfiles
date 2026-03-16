@@ -31,6 +31,7 @@ Row {
     property string textFont:     Theme.fontFamily
     property bool   textBold:     labelBold
     property int    textOffset:   1
+    property int    elide:        Text.ElideNone
 
     spacing:                      labelSpacing
 
@@ -95,6 +96,7 @@ Row {
         visible: text !== ""
         
         width: root.textWidth > 0 ? root.textWidth : implicitWidth
+        elide: root.elide
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
     }
