@@ -1,4 +1,4 @@
-// components/IconLabel.qml
+// components/base/IconLabel.qml
 import QtQuick
 import QtQuick.Effects
 import Quickshell.Widgets

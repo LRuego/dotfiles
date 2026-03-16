@@ -1,3 +1,4 @@
+// components/bar/SystemResources.qml
 import Quickshell
 import "../../core"
 import "../base"

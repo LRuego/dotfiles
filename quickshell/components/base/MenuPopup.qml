@@ -1,3 +1,4 @@
+// components/base/MenuPopup.qml
 import QtQuick
 import Quickshell
 import "../../services"

@@ -1,3 +1,4 @@
+// services/ResourceService.qml
 pragma Singleton
 import QtQuick
 import Quickshell

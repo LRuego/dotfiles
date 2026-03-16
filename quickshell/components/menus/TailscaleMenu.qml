@@ -1,3 +1,4 @@
+// components/menus/TailscaleMenu.qml
 import QtQuick
 import Quickshell
 import "../base"

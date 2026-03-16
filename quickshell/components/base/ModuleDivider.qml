@@ -1,4 +1,4 @@
-// components/ModuleDivider.qml
+// components/base/ModuleDivider.qml
 import QtQuick
 import "../../core"
 

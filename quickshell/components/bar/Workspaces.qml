@@ -1,3 +1,4 @@
+// components/bar/Workspaces.qml
 import QtQuick
 import QtQuick.Effects
 import Quickshell

@@ -1,4 +1,4 @@
-// windows/Bar.qml
+// components/bar/Bar.qml
 import QtQuick
 import QtQuick.Layouts
 import Quickshell

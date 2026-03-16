@@ -1,4 +1,4 @@
-// components/Module.qml
+// components/base/Module.qml
 import QtQuick
 import "../../core"
 
