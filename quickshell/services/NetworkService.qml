@@ -1,3 +1,4 @@
+// services/NetworkService.qml
 pragma Singleton
 import QtQuick
 import Quickshell
@@ -11,14 +12,15 @@ Item {
     property bool debug: false
 
     // --- STATE ---
-    property string statusText: "Off"     // "Eth", "WiFi", "Off"
-    property string ssid: ""              // Name of connection
+    property string statusText: "Off"
+    property string ssid: ""
+    property int    restartAttempts: 0
 
     // --- UI HELPERS ---
     readonly property string icon: {
         if (statusText === "Eth") return Assets.networkWired
         if (statusText === "WiFi") return Assets.networkWireless
-        return Assets.networkOff // Disconnected
+        return Assets.networkOff
     }
 
     readonly property color statusColor: {
@@ -32,17 +34,39 @@ Item {
         running: true
         command: ["nmcli", "monitor"]
         stdout: SplitParser {
-            onRead: updateTimer.restart()
+            onRead: {
+                root.restartAttempts = 0
+                updateTimer.restart()
+            }
         }
-        onExited: updateTimer.restart()
+        onExited: {
+            if (root.restartAttempts < 5) {
+                root.restartAttempts++
+                if (!restartDelay.running)
+                    restartDelay.start()
+            } else {
+                console.warn("[NetworkService] nmcli monitor failed too many times, giving up")
+            }
+        }
     }
 
+    // --- RESTART BACKOFF ---
+    Timer {
+        id: restartDelay
+        interval: 2000
+        onTriggered: {
+            root.restartAttempts = 0
+            monitorProc.running = true
+        }
+    }
+
+    // --- UPDATE DEBOUNCE ---
     Timer {
         id: updateTimer
         interval: 100
         onTriggered: {
-            if (!monitorProc.running) monitorProc.running = true
-            statusProc.running = true
+            if (!statusProc.running)
+                statusProc.running = true
         }
     }
 
@@ -65,42 +89,48 @@ Item {
 
     // --- PARSER ---
     function parseStatus(data) {
-        const lines = data.trim().split('\n');
-        let ethActive = false;
-        let ethName = "";
-        let wifiActive = false;
-        let wifiName = "";
+        const lines = data.trim().split('\n')
+        let ethActive = false
+        let ethName = ""
+        let wifiActive = false
+        let wifiName = ""
 
         for (let line of lines) {
-            if (!line) continue;
-            const parts = line.split(':');
-            if (parts.length < 4) continue;
+            if (!line) continue
+            const parts = line.split(':')
+            if (parts.length < 4) continue
 
-            const type = parts[1];
-            const state = parts[2];
-            const connName = parts[3];
-            const isConnected = state === "connected" || state.startsWith("100");
+            const type = parts[1]
+            const state = parts[2]
+            const connName = parts.slice(3).join(':')
+            const isConnected = state === "connected" || state.startsWith("100")
 
             if (isConnected) {
                 if (type === "ethernet") {
-                    ethActive = true;
-                    ethName = connName;
+                    ethActive = true
+                    ethName = connName
                 } else if (type === "wifi") {
-                    wifiActive = true;
-                    wifiName = connName;
+                    wifiActive = true
+                    wifiName = connName
                 }
             }
         }
 
         if (ethActive) {
-            root.statusText = "Eth";
-            root.ssid = ethName;
+            root.statusText = "Eth"
+            root.ssid = ethName
         } else if (wifiActive) {
-            root.statusText = "WiFi";
-            root.ssid = wifiName;
+            root.statusText = "WiFi"
+            root.ssid = wifiName
         } else {
-            root.statusText = "Off";
-            root.ssid = "";
+            root.statusText = "Off"
+            root.ssid = ""
         }
+    }
+
+    Component.onCompleted: {
+        // --- DEBUG ---
+        // console.log("[NetworkService] Loaded.")
+        statusProc.running = true
     }
 }
