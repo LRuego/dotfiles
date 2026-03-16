@@ -26,4 +26,5 @@ Personal configuration files for my Arch Linux workstation.
 ## Acknowledgements
 
 *   **Privacy Dots:** The recording detection logic in Quickshell is powered by [privacy-dots](https://github.com/alvaniss/privacy-dots), originally by alibaghernejad.
+* **Taildrop:** A systemd service that automatically receives files via Tailscale and triggers notifications with image previews.
 *   **Tokyo Night:** Theme palette by [folke](https://github.com/folke/tokyonight.nvim).

@@ -1,0 +1,13 @@
+[Unit]
+Description=Taildrop Auto-Receiver and Notifier
+After=network-online.target
+
+[Service]
+Type=simple
+# Using %h to refer to the user's home directory dynamically
+ExecStart=%h/.config/quickshell/scripts/taildrop-notify.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
