@@ -42,6 +42,7 @@ QtObject {
     // --- System Resources ---
     readonly property string cpu: asset("system/cpu.svg")
     readonly property string ram: asset("system/ram.svg")
+    readonly property string gpu: asset("system/gpu.svg")
 
     function get(name) {
         // Fallback search logic: try system/ first, then root
