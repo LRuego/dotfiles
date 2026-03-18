@@ -125,7 +125,7 @@ ClippingRectangle {
                 Text {
                     text: root.summary
                     width: parent.width
-                    color: Theme.text
+                    color: ThemeState.text
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.fontSize
                     font.bold: true

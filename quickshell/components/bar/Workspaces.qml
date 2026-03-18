@@ -14,9 +14,9 @@ Module {
     property bool   enclosed:       true
     property string indicatorStyle: "pills" // "pills" | "circles" | "numbers"
 
-    baseColor:   root.enclosed ? Theme.surface0 : "transparent"
-    borderColor: root.enclosed ? ThemeState.border : "transparent"
-    hoverColor:  root.enclosed ? Theme.surface1 : "transparent"
+    baseColor:   root.enclosed ? Theme.surface0     :  "transparent"
+    borderColor: root.enclosed ? ThemeState.border  :  "transparent"
+    hoverColor:  root.enclosed ? ThemeState.hover   :  "transparent"
 
     // --- HELPERS ---
     function indicatorWidth(isFocused, isHovered) {
@@ -32,12 +32,12 @@ Module {
     }
 
     function indicatorColor(isFocused, isHovered) {
-        return (isFocused || isHovered) ? ThemeState.accent : Theme.surface1
+        return (isFocused || isHovered) ? ThemeState.accent : ThemeState.hover
     }
 
     function numberColor(isFocused, isHovered) {
         if (isFocused) return ThemeState.accent
-        return isHovered ? Theme.surface2 : Theme.text
+        return ThemeState.text
     }
 
     Item {

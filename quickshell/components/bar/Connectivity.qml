@@ -21,7 +21,7 @@ Module {
     readonly property color btColor: {
         if (!BluetoothService.powered) return Theme.subtext
         if (BluetoothService.connected) return ThemeState.accent
-        return Theme.text
+        return ThemeState.text
     }
 
     ModuleItem {

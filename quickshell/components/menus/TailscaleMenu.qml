@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import "../base"
 import "../../services/network"
+import "../../services/ui"
 import "../../core"
 
 MenuPopup {
@@ -120,7 +121,7 @@ MenuPopup {
                 iconColor: modelData.online ? Theme.success : Theme.overlay
                 colorize: true
                 text: modelData.name
-                textColor: modelData.isSelf ? Theme.primary : Theme.text
+                textColor: modelData.isSelf ? ThemeState.accent : ThemeState.text
                 textBold: modelData.isSelf
             }
         }

@@ -2,6 +2,7 @@
 import QtQuick
 import QtQuick.Effects
 import Quickshell.Widgets
+import "../../services/ui"
 import "../../core"
 
 Row {
@@ -10,7 +11,7 @@ Row {
     // We do NOT anchor the Row itself to verticalCenter.
     // This allows the Row to be used inside Columns without crashing.
 
-    property color  labelColor:   Theme.text
+    property color  labelColor:   ThemeState.text
     property bool   labelBold:    false
     property int    labelSize:    Theme.fontSize
     property int    labelSpacing: 4

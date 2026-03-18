@@ -1,6 +1,7 @@
 // components/base/MenuItem.qml
 import QtQuick
 import "../../core"
+import "../../services/ui"
 
 Rectangle {
     id: root
@@ -13,7 +14,7 @@ Rectangle {
     signal clicked(int button)
     
     property bool hovered: mouseArea.containsMouse
-    property color hoverColor: Theme.surface1
+    property color hoverColor: ThemeState.hover
     
     // --- TOOLTIP API ---
     property string tooltip: ""

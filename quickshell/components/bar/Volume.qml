@@ -20,14 +20,14 @@ Module {
         return Assets.volume
     }
 
-    readonly property color speakerColor: AudioService.isMuted ? Theme.urgent : Theme.text
+    readonly property color speakerColor: AudioService.isMuted ? Theme.urgent : ThemeState.text
 
     readonly property string micIcon: AudioService.isMicMuted ? Assets.microphoneMute : Assets.microphone
 
     readonly property color micColor: {
         if (AudioService.isMicMuted)   return Theme.urgent
         if (AudioService.isMicActive)  return Theme.warning
-        return Theme.text
+        return ThemeState.text
     }
 
     ModuleItem {

@@ -23,13 +23,13 @@ Module {
     function usageColor(usage, temp) {
         if (usage >= 90 || temp >= 80) return Theme.urgent
         if (usage >= 75 || temp >= 70) return Theme.warning
-        return Theme.text
+        return ThemeState.text
     }
 
     function memColor(percent) {
         if (percent >= 90) return Theme.urgent
         if (percent >= 75) return Theme.warning
-        return Theme.text
+        return ThemeState.text
     }
 
     ModuleItem {

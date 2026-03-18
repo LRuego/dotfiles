@@ -2,6 +2,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
+import "../../services/ui"
 import "../../core"
 import "../base"
 

@@ -12,5 +12,5 @@ Item {
     readonly property color border:   GamemodeService.isActive ? Theme.overlayPurple  : Theme.overlay
     readonly property color hover:    GamemodeService.isActive ? Theme.surface1Purple : Theme.surface1
     readonly property color pressed:  GamemodeService.isActive ? Theme.surface2Purple : Theme.surface2
-    readonly property color text:    GamemodeService.isActive ? Theme.textPurple     : Theme.text
+    readonly property color text:     GamemodeService.isActive ? Theme.textPurple     : Theme.text
 }
