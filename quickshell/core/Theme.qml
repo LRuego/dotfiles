@@ -20,12 +20,16 @@ QtObject {
     // --- SURFACES ---
     readonly property color surface0:       "#1a1b26" // Default Block background
     readonly property color surface1:       "#283457" // Hover state (Selection)
+    readonly property color surface1Purple: "#2d1f42" // Hover state (Gaming mode)
     readonly property color surface2:       "#414868" // Pressed state
+    readonly property color surface2Purple: "#3d2a5a" // Pressed state (Gaming mode)
 
     // --- TEXT ---
     readonly property color text:           "#c0caf5"
+    readonly property color textPurple:     "#e0d4ff" // Gaming mode text/accent
     readonly property color subtext:        "#a9b1d6"
     readonly property color overlay:        "#414868" // Borders / Div
+    readonly property color overlayPurple:  "#4c3b6b" // Borders (Gaming mode)
 
     // --- ACCENTS ---
     readonly property color primary:        "#7aa2f7"

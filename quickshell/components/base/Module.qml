@@ -15,56 +15,71 @@ Rectangle {
 
     // --- COLORS & BORDER ---
     property color  baseColor:    Theme.surface0
-    property color  hoverColor:   Theme.surface1
+    property color  hoverColor:   ThemeState.hover
     property color  borderColor:  ThemeState.border
     property int    borderWidth:  1
 
     // --- LAYOUT ---
     implicitHeight:               32
     height:                       parent ? parent.height : implicitHeight
-    width:                        internalRow.width
+    width:                        internalRow.width + (root.borderWidth * 2)
 
     // --- STYLE ---
     color:                        root.baseColor
-    border.color:                 root.borderColor
-    border.width:                 root.borderWidth
+    border.width:                 0
     radius:                       root.square ? 0 : Math.min(height / 2, root.radiusConfig)
 
-    // --- LOGIC ---
-    Row {
-        id: internalRow
-        height:                   parent.height
-        spacing:                  0
+    // --- CONTENT CONTAINER ---
+    Item {
+        anchors.fill:             parent
+        anchors.margins:          root.borderWidth
+        clip:                     true
 
-        onChildrenChanged:        updateProps()
-        Component.onCompleted:    updateProps()
+        Row {
+            id: internalRow
+            height:               parent.height
+            spacing:              0
 
-        function updateProps() {
-            let items = []
+            onChildrenChanged:        updateProps()
+            Component.onCompleted:    updateProps()
 
-            for (let i = 0; i < children.length; i++) {
-                let child = children[i]
-                if (!child) continue
+            function updateProps() {
+                let items = []
 
-                try { child.visibleChanged.disconnect(updateProps) } catch(e) {}
-                child.visibleChanged.connect(updateProps)
+                for (let i = 0; i < children.length; i++) {
+                    let child = children[i]
+                    if (!child) continue
 
-                if (child.visible && typeof child.pos !== "undefined") {
-                    items.push(child)
-                    child.fullRadius = Qt.binding(function() { return root.radius })
-                    child.hoverColor = Qt.binding(function() { return root.hoverColor })
+                    try { child.visibleChanged.disconnect(updateProps) } catch(e) {}
+                    child.visibleChanged.connect(updateProps)
+
+                    if (child.visible && typeof child.pos !== "undefined") {
+                        items.push(child)
+                        child.fullRadius = Qt.binding(function() { return root.radius })
+                        child.hoverColor = Qt.binding(function() { return root.hoverColor })
+                    }
                 }
-            }
 
-            if (items.length === 1) {
-                items[0].pos = "single"
-            } else if (items.length > 1) {
-                items[0].pos = "left"
-                for (let j = 1; j < items.length - 1; j++) {
-                    items[j].pos = "mid"
+                if (items.length === 1) {
+                    items[0].pos = "single"
+                } else if (items.length > 1) {
+                    items[0].pos = "left"
+                    for (let j = 1; j < items.length - 1; j++) {
+                        items[j].pos = "mid"
+                    }
+                    items[items.length - 1].pos = "right"
                 }
-                items[items.length - 1].pos = "right"
             }
         }
+    }
+
+    // --- BORDER OVERLAY ---
+    Rectangle {
+        anchors.fill:             parent
+        color:                    "transparent"
+        border.color:             root.borderColor
+        border.width:             root.borderWidth
+        radius:                   root.radius
+        z:                        99
     }
 }
