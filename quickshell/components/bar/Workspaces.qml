@@ -102,7 +102,7 @@ Module {
                         id: mouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
+                        cursorShape: modelData.active ? Qt.ArrowCursor : Qt.PointingHandCursor
 
                         onClicked: HyprlandService.goToWorkspace(modelData.id)
                         onWheel: (wheel) => {
@@ -121,6 +121,7 @@ Module {
         ModuleItem {
             id: numberItem
             visible: modelData.id >= 0
+            cursorShape: modelData.active ? Qt.ArrowCursor : Qt.PointingHandCursor
 
             readonly property bool isFocused: modelData.active
 

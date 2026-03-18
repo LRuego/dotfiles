@@ -31,6 +31,7 @@ Item {
 
     // --- PUBLIC API ---
     function goToWorkspace(id) {
+        if (root.focusedWorkspace?.id === id) return;
         Hyprland.dispatch(`workspace ${id}`);
     }
 

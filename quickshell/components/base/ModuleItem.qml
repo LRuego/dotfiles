@@ -20,6 +20,7 @@ Item {
 
     // --- API ---
     property bool isHidden: false
+    property int cursorShape: Qt.PointingHandCursor
 
     // --- LAYOUT ---
     property int    padLeft:      (pos === "right" || pos === "mid") ? 5 : 10
@@ -78,7 +79,7 @@ Item {
         z:                        99
         hoverEnabled:             true
         acceptedButtons:          Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
-        cursorShape:              Qt.PointingHandCursor
+        cursorShape:              root.cursorShape
         
         // Pass only the button to the signal
         onClicked: (mouse) => root.clicked(mouse.button)
