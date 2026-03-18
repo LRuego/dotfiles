@@ -25,6 +25,9 @@ vim.opt.titlestring = "%t %m - nvim"
 vim.keymap.set('n', 'x', '"_x')
 -- Paste over selection without overwriting clipboard with the deleted text
 vim.keymap.set('x', 'p', '"_dP')
+-- Move line up or down
+vim.keymap.set("n", "<A-j>", ":m .+1<CR>==")
+vim.keymap.set("n", "<A-k>", ":m .-2<CR>==")
 
 -- Toggle Diagnostics for current buffer
 vim.keymap.set('n', '<leader>d', function()
