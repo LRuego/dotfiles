@@ -30,7 +30,7 @@ Item {
     Process {
         id: micProcess
         // We run the script in a loop because it's currently built to output once and exit.
-        command: [Qt.resolvedUrl("../scripts/privacy_dots.sh")]
+        command: [Qt.resolvedUrl("../../scripts/privacy_dots.sh")]
         stdout: SplitParser {
             onRead: function(data) {
                 try {

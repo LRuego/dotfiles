@@ -2,7 +2,8 @@
 pragma Singleton
 import QtQuick
 import Quickshell
-import "../core"
+import "../../core"
+import "../system"
 
 Item {
     id: root

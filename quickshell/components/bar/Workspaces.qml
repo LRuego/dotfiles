@@ -3,7 +3,8 @@ import QtQuick
 import QtQuick.Effects
 import Quickshell
 import "../../core"
-import "../../services"
+import "../../services/system"
+import "../../services/ui"
 import "../base"
 
 Module {

@@ -2,7 +2,7 @@
 import QtQuick
 import Quickshell.Widgets
 import "../../core"
-import "../../services"
+import "../../services/ui"
 import "../base"
 
 ClippingRectangle {

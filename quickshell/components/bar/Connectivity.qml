@@ -3,7 +3,8 @@ import QtQuick
 import Quickshell
 import "../../core"
 import "../base"
-import "../../services"
+import "../../services/network"
+import "../../services/ui"
 
 Module {
     id: root

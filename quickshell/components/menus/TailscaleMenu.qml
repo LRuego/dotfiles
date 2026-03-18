@@ -2,7 +2,7 @@
 import QtQuick
 import Quickshell
 import "../base"
-import "../../services"
+import "../../services/network"
 import "../../core"
 
 MenuPopup {

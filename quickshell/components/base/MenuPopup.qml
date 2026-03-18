@@ -1,7 +1,7 @@
 // components/base/MenuPopup.qml
 import QtQuick
 import Quickshell
-import "../../services"
+import "../../services/ui"
 import "../../core"
 
 PopupWindow {

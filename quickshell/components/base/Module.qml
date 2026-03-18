@@ -1,7 +1,7 @@
 // components/base/Module.qml
 import QtQuick
 import "../../core"
-import "../../services"
+import "../../services/ui"
 
 Rectangle {
     id: root

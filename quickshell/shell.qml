@@ -7,7 +7,9 @@ import "./components/bar"
 import "./components/base"
 import "./components/notifications"
 import "./components/menus"
-import "./services"
+import "./services/input"
+import "./services/system"
+import "./services/ui"
 import "./core"
 
 ShellRoot {

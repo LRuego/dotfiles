@@ -3,7 +3,8 @@ import Quickshell
 import QtQuick
 import "../../core"
 import "../base"
-import "../../services"
+import "../../services/input"
+import "../../services/ui"
 import "."
 
 PanelWindow {
