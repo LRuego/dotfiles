@@ -1,6 +1,7 @@
 // components/base/Module.qml
 import QtQuick
 import "../../core"
+import "../../services"
 
 Rectangle {
     id: root
@@ -15,7 +16,7 @@ Rectangle {
     // --- COLORS & BORDER ---
     property color  baseColor:    Theme.surface0
     property color  hoverColor:   Theme.surface1
-    property color  borderColor:  Theme.overlay
+    property color  borderColor:  ThemeState.border
     property int    borderWidth:  1
 
     // --- LAYOUT ---
@@ -41,41 +42,27 @@ Rectangle {
         function updateProps() {
             let items = []
 
-            // --- 1. FILTER VISIBLE ITEMS ---
             for (let i = 0; i < children.length; i++) {
                 let child = children[i]
-
-                // Validate child
                 if (!child) continue
 
-                // --- DYNAMIC UPDATES ---
-                // Re-connect to visibleChanged signal safely
                 try { child.visibleChanged.disconnect(updateProps) } catch(e) {}
                 child.visibleChanged.connect(updateProps)
 
-                // Check visibility & validity
                 if (child.visible && typeof child.pos !== "undefined") {
                     items.push(child)
-
-                    // --- BIND PROPERTIES ---
                     child.fullRadius = Qt.binding(function() { return root.radius })
                     child.hoverColor = Qt.binding(function() { return root.hoverColor })
                 }
             }
 
-            // --- 2. ASSIGN POSITIONS ---
             if (items.length === 1) {
                 items[0].pos = "single"
             } else if (items.length > 1) {
-                // First
                 items[0].pos = "left"
-
-                // Middle(s)
                 for (let j = 1; j < items.length - 1; j++) {
                     items[j].pos = "mid"
                 }
-
-                // Last
                 items[items.length - 1].pos = "right"
             }
         }

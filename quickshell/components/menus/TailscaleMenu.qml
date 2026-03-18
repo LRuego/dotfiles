@@ -80,7 +80,20 @@ MenuPopup {
 
         delegate: MenuItem {
             id: peerItem
-            tooltip: "IP: " + modelData.ip + (modelData.lastSeen !== "Connected" ? "\nLast: " + modelData.lastSeen : "")
+            
+            readonly property string lastSeenStr: {
+                if (modelData.online || modelData.lastSeen === "0001-01-01T00:00:00Z") return "Connected"
+                return Qt.formatDateTime(new Date(modelData.lastSeen), "MMM d, h:mm AP")
+            }
+
+            readonly property string peerIcon: {
+                if (modelData.isSelf) return Assets.desktop
+                if (modelData.tags && modelData.tags.indexOf("tag:server") !== -1) return Assets.server
+                if (modelData.os === "android" || modelData.os === "iOS") return Assets.smartphone
+                return Assets.desktop
+            }
+
+            tooltip: "IP: " + modelData.ip + (lastSeenStr !== "Connected" ? "\nLast: " + lastSeenStr : "")
             
             onClicked: (button) => {
                 if (button === Qt.LeftButton) {
@@ -103,7 +116,7 @@ MenuPopup {
 
             IconLabel {
                 labelSpacing: 12
-                icon: modelData.icon
+                icon: peerItem.peerIcon
                 iconColor: modelData.online ? Theme.success : Theme.overlay
                 colorize: true
                 text: modelData.name

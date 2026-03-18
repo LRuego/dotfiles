@@ -32,6 +32,10 @@ ShellRoot {
             Assets.quickshell, 
             2500 
         );
+
+        GamemodeService
+        InputService
+        ThemeState
     }
 
     IpcHandler {

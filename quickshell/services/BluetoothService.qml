@@ -3,7 +3,6 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Bluetooth
-import "../core"
 
 QtObject {
     id: root
@@ -27,19 +26,4 @@ QtObject {
         }
         return false
     }
-
-    // --- UI HELPERS ---
-    readonly property string icon: {
-        if (!powered) return Assets.bluetoothOff
-        if (connected) return Assets.bluetooth
-        return Assets.bluetooth
-    }
-
-    readonly property color statusColor: {
-        if (!powered) return Theme.subtext
-        if (connected) return Theme.primary
-        return Theme.text
-    }
-
-    readonly property string statusText: powered ? "On" : "Off"
 }

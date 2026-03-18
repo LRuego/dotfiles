@@ -1,4 +1,5 @@
 // components/bar/SystemResources.qml
+import QtQuick
 import Quickshell
 import "../../core"
 import "../base"
@@ -7,84 +8,95 @@ import "../../services"
 Module {
     id: root
 
-    property int    textSize:     Theme.fontSizeSmall
-    property string textFont:     Theme.fontFamilyAlt
+    property int    textSize: Theme.fontSizeSmall
+    property string textFont: Theme.fontFamilyAlt
+
+    // --- DISPLAY HELPERS ---
+    readonly property string cpuDisplay:  InputService.shiftHeld ? ResourceService.cpuTemp + "°C" : ResourceService.cpuUsage + "%"
+    readonly property string memDisplay:  ResourceService.memUsagePercent + "%"
+    readonly property string gpuDisplay:  InputService.shiftHeld ? ResourceService.gpuTemp + "°C" : ResourceService.gpuUsage + "%"
+    readonly property string vramDisplay: ResourceService.vramUsagePercent + "%"
+
+    // --- COLOR HELPERS ---
+    function usageColor(usage, temp) {
+        if (usage >= 90 || temp >= 80) return Theme.urgent
+        if (usage >= 75 || temp >= 70) return Theme.warning
+        return Theme.text
+    }
+
+    function memColor(percent) {
+        if (percent >= 90) return Theme.urgent
+        if (percent >= 75) return Theme.warning
+        return Theme.text
+    }
 
     ModuleItem {
         id: cpuItem
-
         IconLabel {
-            labelBold: true
-            icon: ResourceService.cpuIcon
-            iconColor: ResourceService.cpuUsage >= 90 || ResourceService.cpuTemp >= 80 ? Theme.urgent : (ResourceService.cpuUsage >= 75 || ResourceService.cpuTemp >= 70 ? Theme.warning : Theme.text)
-            colorize: true
-            iconSize: Theme.fontSize
-
-            text: ResourceService.cpuUsage + "%"
-            textColor: iconColor
-            textFont: root.textFont
-            textSize: root.textSize
-            textWidth: ResourceService.cpuUsage < 100 ? 24 : 32
+            labelBold:  true
+            icon:       Assets.cpu
+            iconColor:  root.usageColor(ResourceService.cpuUsage, ResourceService.cpuTemp)
+            colorize:   true
+            iconSize:   Theme.fontSize
+            text:       root.cpuDisplay
+            textColor:  iconColor
+            textFont:   root.textFont
+            textSize:   root.textSize
+            textWidth:  root.cpuDisplay.length <= 3 ? 24 : 32
         }
     }
 
     ModuleItem {
         id: memItem
-        // Hidden unless CPU or itself is hovered
-        isHidden: !(cpuItem.hovered || hovered)
-
+        isHidden: !(cpuItem.hovered || hovered || BarState.peekMode || BarState.gamingMode)
         IconLabel {
-            labelBold: true
-            icon: ResourceService.memIcon
-            iconColor: ResourceService.memUsagePercent >= 90 ? Theme.urgent : (ResourceService.memUsagePercent >= 75 ? Theme.warning : Theme.text)
-            colorize: true
-            iconSize: Theme.fontSize
-
-            text: ResourceService.memUsagePercent + "%"
-            textColor: iconColor
-            textFont: root.textFont
-            textSize: root.textSize
-            textWidth: ResourceService.memUsagePercent < 100 ? 24 : 32
+            labelBold:  true
+            icon:       Assets.ram
+            iconColor:  root.memColor(ResourceService.memUsagePercent)
+            colorize:   true
+            iconSize:   Theme.fontSize
+            text:       root.memDisplay
+            textColor:  iconColor
+            textFont:   root.textFont
+            textSize:   root.textSize
+            textWidth:  root.memDisplay.length <= 3 ? 24 : 32
         }
     }
 
     ModuleItem {
         id: gpuItem
-        // GAMING MODE: Only show if Feral GameMode is active
-        isHidden: !ResourceService.gamemodeActive
-
+        property bool shouldShow: BarState.gamingMode || BarState.peekMode
+        isHidden: !shouldShow
         IconLabel {
-            labelBold: true
-            icon: ResourceService.gpuIcon
-            iconColor: ResourceService.gpuUsage >= 90 || ResourceService.gpuTemp >= 80 ? Theme.urgent : (ResourceService.gpuUsage >= 75 || ResourceService.gpuTemp >= 70 ? Theme.warning : Theme.text)
-            colorize: true
-            iconSize: Theme.fontSize
-
-            text: ResourceService.gpuUsage + "%"
-            textColor: iconColor
-            textFont: root.textFont
-            textSize: root.textSize
-            textWidth: 32
+            labelBold:  true
+            icon:       Assets.gpu
+            iconColor:  root.usageColor(ResourceService.gpuUsage, ResourceService.gpuTemp)
+            colorize:   true
+            iconSize:   Theme.fontSize
+            text:       root.gpuDisplay
+            textColor:  iconColor
+            textFont:   root.textFont
+            textSize:   root.textSize
+            textWidth:  root.gpuDisplay.length <= 3 ? 24 : 32
         }
     }
 
     ModuleItem {
         id: vramItem
-        // Hidden unless GPU is visible and either GPU or itself is hovered
-        isHidden: gpuItem.isHidden || !(gpuItem.hovered || hovered)
-
+        property bool gamemodeVisible: BarState.gamingMode || BarState.peekMode
+        property bool shouldShow:      gpuItem.hovered || hovered || BarState.peekMode || BarState.gamingMode
+        isHidden: !gamemodeVisible || !shouldShow
         IconLabel {
-            labelBold: true
-            icon: ResourceService.vramIcon
-            iconColor: ResourceService.vramUsagePercent >= 90 ? Theme.urgent : (ResourceService.vramUsagePercent >= 75 ? Theme.warning : Theme.text)
-            colorize: true
-            iconSize: Theme.fontSize
-
-            text: ResourceService.vramUsagePercent + "%"
-            textColor: iconColor
-            textFont: root.textFont
-            textSize: root.textSize
-            textWidth: ResourceService.vramUsagePercent < 100 ? 24 : 32
+            labelBold:  true
+            icon:       Assets.ram
+            iconColor:  root.memColor(ResourceService.vramUsagePercent)
+            colorize:   true
+            iconSize:   Theme.fontSize
+            text:       root.vramDisplay
+            textColor:  iconColor
+            textFont:   root.textFont
+            textSize:   root.textSize
+            textWidth:  root.vramDisplay.length <= 3 ? 24 : 32
         }
     }
 }

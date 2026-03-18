@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
-import "../core"
 
 Item {
     id: root
@@ -22,19 +21,8 @@ Item {
     readonly property int volume: Math.round((root.sink?.audio?.volume ?? 0) * 100)
     readonly property bool isMuted: root.sink?.audio?.muted ?? true
 
-    readonly property string icon: {
-        if (isMuted) return Assets.volumeMute
-        if (volume >= 60) return Assets.volumeUp
-        if (volume >= 30) return Assets.volumeDown
-        return Assets.volume
-    }
-
-    readonly property color speakerColor: isMuted ? Theme.urgent : Theme.text
-
     readonly property int micVolume: Math.round((root.source?.audio?.volume ?? 0) * 100)
     readonly property bool isMicMuted: root.source?.audio?.muted ?? true
-    readonly property string micIcon: isMicMuted ? Assets.microphoneMute : Assets.microphone
-    readonly property color micColor: isMicMuted ? Theme.urgent : (isMicActive ? Theme.warning : Theme.text)
 
     // --- RECORDING DETECTION (Via privacy_dots.sh) ---
     property bool micActiveState: false

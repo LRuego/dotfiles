@@ -7,21 +7,20 @@ import "../base"
 
 ClippingRectangle {
     id: root
-    
-    // API roles from the model
+
     property string summary: ""
     property string body: ""
     property string icon: ""
-    property string image: "" // Added image property
-    property int notifId: -1
-    property bool closing: false
-    property int timeout: 5000 
+    property string image: ""
+    property int    notifId: -1
+    property bool   closing: false
+    property int    timeout: 5000
 
     width: 320
-    height: Math.max(64, mainLayout.implicitHeight + 32) // Dynamically adjust height
+    height: Math.max(64, mainLayout.implicitHeight + 32)
     radius: Theme.cornerRadius
     color: Theme.surface0
-    border.color: Theme.overlay
+    border.color: ThemeState.border
     border.width: 1
 
     // --- PROGRESS ANIMATION ---
@@ -34,7 +33,7 @@ ClippingRectangle {
         duration: root.timeout
         running: root.timeout > 0 && !root.closing
         onFinished: {
-            if (!root.closing) NotificationService.dismiss(root.notifId);
+            if (!root.closing) NotificationService.dismiss(root.notifId)
         }
     }
 
@@ -44,7 +43,7 @@ ClippingRectangle {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         height: 3
-        color: Theme.primary
+        color: ThemeState.accent
         visible: root.timeout > 0
         z: 10
     }
@@ -72,9 +71,8 @@ ClippingRectangle {
             to: "*"
             NumberAnimation { properties: "opacity,x"; duration: 400; easing.type: Easing.OutCubic }
             onRunningChanged: {
-                if (!running && root.closing) {
-                    NotificationService.finalizeRemoval(root.notifId);
-                }
+                if (!running && root.closing)
+                    NotificationService.finalizeRemoval(root.notifId)
             }
         }
     ]
@@ -94,31 +92,23 @@ ClippingRectangle {
                 id: iconImage
                 width: 32
                 height: 32
-
                 sourceSize.width: width
                 sourceSize.height: height
                 smooth: true
                 mipmap: true
 
-                // --- SMART FALLBACK CHAIN ---
-                // 1. Provided Icon (String or Path)
-                // 2. Guaranteed Local Logo
                 readonly property string finalFallback: Assets.notificationFallback
-
                 property string targetIcon: root.icon && root.icon !== "" ? root.icon : finalFallback
 
                 source: {
-                    if (targetIcon.startsWith("file://")) return targetIcon;
-                    if (targetIcon.startsWith("/")) return "file://" + targetIcon;
-                    return "image://icon/" + targetIcon;
+                    if (targetIcon.startsWith("file://")) return targetIcon
+                    if (targetIcon.startsWith("/")) return "file://" + targetIcon
+                    return "image://icon/" + targetIcon
                 }
 
                 onStatusChanged: {
-                    // If the provided app icon fails to load from the system theme,
-                    // instantly switch to our guaranteed local SVG.
-                    if (status === Image.Error && targetIcon !== finalFallback) {
-                        targetIcon = finalFallback;
-                    }
+                    if (status === Image.Error && targetIcon !== finalFallback)
+                        targetIcon = finalFallback
                 }
 
                 visible: true
@@ -149,7 +139,7 @@ ClippingRectangle {
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.fontSizeSmall
                     wrapMode: Text.Wrap
-                    maximumLineCount: root.image !== "" ? 2 : 4 // Slightly more lines if no image
+                    maximumLineCount: root.image !== "" ? 2 : 4
                     elide: Text.ElideRight
                 }
             }
@@ -162,14 +152,13 @@ ClippingRectangle {
             source: root.image !== "" ? (root.image.startsWith("/") ? "file://" + root.image : root.image) : ""
             visible: root.image !== ""
             fillMode: Image.PreserveAspectCrop
-            autoTransform: true // Respect EXIF orientation
+            autoTransform: true
             sourceSize: undefined
 
             Rectangle {
-
                 anchors.fill: parent
                 color: "transparent"
-                border.color: Theme.overlay
+                border.color: ThemeState.border
                 border.width: 1
                 radius: 4
             }
@@ -180,12 +169,12 @@ ClippingRectangle {
         anchors.fill: parent
         hoverEnabled: true
         onClicked: NotificationService.dismiss(root.notifId)
-        
+
         onEntered: {
-            if (progressAnim.running) progressAnim.pause();
+            if (progressAnim.running) progressAnim.pause()
         }
         onExited: {
-            if (progressAnim.paused) progressAnim.resume();
+            if (progressAnim.paused) progressAnim.resume()
         }
     }
 }

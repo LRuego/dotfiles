@@ -4,7 +4,6 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
-import "../core"
 
 Item {
     id: root
@@ -23,10 +22,6 @@ Item {
     // --- MENU POSITIONING ---
     property bool menuOpen: false
     property var menuAnchor: null
-
-    // --- UI HELPERS ---
-    readonly property string icon: active ? Assets.tailscaleOn : Assets.tailscaleOff
-    readonly property color statusColor: active ? Theme.success : Theme.overlay
 
     // --- LOGIC ---
     Process {
@@ -55,9 +50,8 @@ Item {
                             "ip": parsed.Self.TailscaleIPs[0],
                             "os": parsed.Self.OS,
                             "online": true, 
-                            "icon": Assets.desktop, // hardcoded to always be a desktop
                             "tags": parsed.Self.Tags,
-                            "lastSeen": "Connected",
+                            "lastSeen": parsed.Self.LastSeen,
                             "isSelf": true
                         });
                     }
@@ -66,23 +60,14 @@ Item {
                         for (let key in parsed.Peer) {
                             let p = parsed.Peer[key];
                             
-                            // Native Qt absolute date formatting
-                            let lastSeenStr = "Connected";
-                            if (p.LastSeen !== "0001-01-01T00:00:00Z" && !p.Online) {
-                                lastSeenStr = Qt.formatDateTime(new Date(p.LastSeen), "MMM d, h:mm AP");
-                            }
-
                             newPeers.push({
                                 "name": (p.HostName === "localhost") ? p.DNSName.split(".")[0] : p.HostName,
                                 "dnsName": p.DNSName,
                                 "ip": p.TailscaleIPs[0],
                                 "os": p.OS,
                                 "online": p.Online,
-                                "icon": p.Tags?.includes("tag:server") ? Assets.server
-                                      : (p.OS === "android" || p.OS === "iOS") ? Assets.smartphone
-                                      : Assets.desktop,
                                 "tags": p.Tags,
-                                "lastSeen": lastSeenStr,
+                                "lastSeen": p.LastSeen,
                                 "isSelf": false
                             });
                         }

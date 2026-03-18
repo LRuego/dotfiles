@@ -3,7 +3,6 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import "../core"
 
 Item {
     id: root
@@ -15,18 +14,6 @@ Item {
     property string statusText: "Off"
     property string ssid: ""
     property int    restartAttempts: 0
-
-    // --- UI HELPERS ---
-    readonly property string icon: {
-        if (statusText === "Eth") return Assets.networkWired
-        if (statusText === "WiFi") return Assets.networkWireless
-        return Assets.networkOff
-    }
-
-    readonly property color statusColor: {
-        if (statusText === "Off") return Theme.urgent
-        return Theme.primary
-    }
 
     // --- MONITORING ---
     Process {

@@ -8,6 +8,21 @@ import "../../services"
 Module {
     id: root
 
+    // --- HELPERS ---
+    readonly property string netIcon: {
+        if (NetworkService.statusText === "Eth") return Assets.networkWired
+        if (NetworkService.statusText === "WiFi") return Assets.networkWireless
+        return Assets.networkOff
+    }
+
+    readonly property color netColor: NetworkService.statusText === "Off" ? Theme.urgent : ThemeState.accent
+
+    readonly property color btColor: {
+        if (!BluetoothService.powered) return Theme.subtext
+        if (BluetoothService.connected) return ThemeState.accent
+        return Theme.text
+    }
+
     ModuleItem {
         id: tsModule
         onClicked: (button) => {
@@ -20,8 +35,8 @@ Module {
 
         IconLabel {
             id: tsIcon
-            icon: TailscaleService.icon
-            colorize: false
+            icon: TailscaleService.active ? Assets.tailscaleOn : Assets.tailscaleOff
+            colorize: true
 
             SequentialAnimation on opacity {
                 running: TailscaleService.transitioning
@@ -36,9 +51,9 @@ Module {
     ModuleItem {
         IconLabel {
             labelBold: true
-            icon: NetworkService.icon
-            iconColor: NetworkService.statusColor
-            colorize: true
+            icon:      root.netIcon
+            iconColor: root.netColor
+            colorize:  true
             iconWidth: Theme.fontSize
         }
     }
@@ -53,9 +68,9 @@ Module {
 
         IconLabel {
             labelBold: true
-            icon: BluetoothService.icon
-            iconColor: BluetoothService.statusColor
-            colorize: true
+            icon:      BluetoothService.powered ? Assets.bluetooth : Assets.bluetoothOff
+            iconColor: root.btColor
+            colorize:  true
         }
     }
 }

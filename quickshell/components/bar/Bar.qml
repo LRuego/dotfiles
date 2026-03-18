@@ -1,7 +1,6 @@
 // components/bar/Bar.qml
-import QtQuick
-import QtQuick.Layouts
 import Quickshell
+import QtQuick
 import "../../core"
 import "../base"
 import "../../services"
@@ -9,7 +8,7 @@ import "."
 
 PanelWindow {
     id: root
-    
+
     // --- PROPERTIES ---
     property int    textSize:     Theme.fontSizeSmall
     property string textFont:     Theme.fontFamilyAlt
@@ -23,6 +22,13 @@ PanelWindow {
 
     implicitHeight:               24
     color:                        Theme.barBackground
+
+    Component.onCompleted: {
+        InputService.onHold("KEY_LEFTALT", 500,
+            () => { BarState.setPeekMode(true) },
+            () => { BarState.setPeekMode(false) }
+        )
+    }
 
     Item {
         anchors.fill: parent
@@ -38,7 +44,6 @@ PanelWindow {
             spacing: 10
 
             DateTime {}
-
             Workspaces {
                 enclosed: true
                 indicatorStyle: "pills"
@@ -62,11 +67,8 @@ PanelWindow {
             spacing: 10
 
             SystemResources {}
-
             Volume {}
-
             Connectivity {}
-
         }
     }
 }

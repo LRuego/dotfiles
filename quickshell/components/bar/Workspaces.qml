@@ -14,8 +14,30 @@ Module {
     property string indicatorStyle: "pills" // "pills" | "circles" | "numbers"
 
     baseColor:   root.enclosed ? Theme.surface0 : "transparent"
-    borderColor: root.enclosed ? Theme.overlay  : "transparent"
+    borderColor: root.enclosed ? ThemeState.border : "transparent"
     hoverColor:  root.enclosed ? Theme.surface1 : "transparent"
+
+    // --- HELPERS ---
+    function indicatorWidth(isFocused, isHovered) {
+        if (root.indicatorStyle === "circles") return 10
+        // Pills
+        if (isFocused) return 32
+        if (isHovered) return 20
+        return 12
+    }
+
+    function indicatorHeight() {
+        return root.indicatorStyle === "circles" ? 10 : 6
+    }
+
+    function indicatorColor(isFocused, isHovered) {
+        return (isFocused || isHovered) ? ThemeState.accent : Theme.surface1
+    }
+
+    function numberColor(isFocused, isHovered) {
+        if (isFocused) return ThemeState.accent
+        return isHovered ? Theme.surface2 : Theme.text
+    }
 
     Item {
         id: shapesContainer
@@ -46,8 +68,8 @@ Module {
                     readonly property bool isFocused: modelData.active
                     readonly property bool isHovered: mouseArea.containsMouse
 
-                    width: root.indicatorStyle === "pills" ? (isFocused ? 32 : (isHovered ? 20 : 12)) : (root.indicatorStyle === "circles" ? 10 : 12)
-                    height: root.indicatorStyle === "circles" ? 10 : 6
+                    width: root.indicatorWidth(isFocused, isHovered)
+                    height: root.indicatorHeight()
                     anchors.verticalCenter: parent.verticalCenter
 
                     Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
@@ -59,7 +81,7 @@ Module {
                         height: parent.height
                         radius: height / 2
 
-                        color: (shapeWsItem.isFocused || shapeWsItem.isHovered) ? Theme.primary : Theme.surface1
+                        color: root.indicatorColor(shapeWsItem.isFocused, shapeWsItem.isHovered)
 
                         Behavior on color { ColorAnimation { duration: 150 } }
                     }
@@ -69,7 +91,7 @@ Module {
                         anchors.fill: shapeIndicator
                         visible: shapeWsItem.isFocused
                         shadowEnabled: true
-                        shadowColor: Theme.primary
+                        shadowColor: ThemeState.accent
                         shadowBlur: 0.8
                         shadowScale: 1.2
                         opacity: 0.7
@@ -109,7 +131,7 @@ Module {
 
             Text {
                 text: modelData.id
-                color: numberItem.isFocused ? Theme.primary : (numberItem.hovered ? Theme.surface2 : Theme.text)
+                color: root.numberColor(numberItem.isFocused, numberItem.hovered)
                 font.family: Theme.fontFamilyAlt
                 font.pixelSize: Theme.fontSizeSmall
                 font.bold: numberItem.isFocused
