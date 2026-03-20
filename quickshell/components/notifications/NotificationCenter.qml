@@ -56,8 +56,7 @@ PanelWindow {
         from:             root.implicitWidth + 20
         to:               0
         duration:         350
-        easing.type:      Easing.OutBack
-        easing.overshoot: 0.5
+        easing.type:      Easing.OutQuart
     }
 
     NumberAnimation {
@@ -71,20 +70,19 @@ PanelWindow {
     }
 
     // --- PANEL ---
-    Rectangle {
-        id:      panel
-        anchors {
-            top:    parent.top
-            bottom: parent.bottom
-            right:  parent.right
-        }
-        width:        root.implicitWidth
-        opacity:      0
-        x:            root.implicitWidth + 20
-        radius:       Theme.cornerRadius
-        color:        Qt.rgba(Theme.base.r, Theme.base.g, Theme.base.b, 0.8)
-        border.color: ThemeState.border
-        border.width: 1
+        Rectangle {
+            id:      panel
+            anchors {
+                top:    parent.top
+                bottom: parent.bottom
+            }
+            x:            root.implicitWidth + 20  // controlled by animation, not anchor
+            width:        root.implicitWidth
+            opacity:      0
+            radius:       Theme.cornerRadius
+            color:        Qt.rgba(Theme.base.r, Theme.base.g, Theme.base.b, 0.8)
+            border.color: ThemeState.border
+            border.width: 1
 
         Column {
             anchors.fill:    parent
