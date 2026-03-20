@@ -1,5 +1,4 @@
 [manager]
-flavor = "tokyonight_night"
 sort_by      = "natural"
 sort_sensitive = false
 sort_reverse   = false
@@ -14,6 +13,7 @@ max_height      = 900
 cache_dir       = ""
 image_filter    = "triangle"
 image_quality   = 75
+image_origin    = "kitty"
 sixel_fraction  = 15
 ueberzug_scale  = 1
 ueberzug_margin = 0
@@ -62,11 +62,65 @@ rules = [
 	{ mime = "application/pdf", use = "pdf" },
 	{ mime = "inode/directory", use = "open" },
 
-	# 4. Global Fallback
+	# 4. Binary/Exec Safety
+	{ mime = "application/octet-stream", use = "open" },
+	{ name = "*", is = "exec", use = "open" },
+
+	# 5. Global Fallback
 	{ name = "*", use = "edit" },
     { mime = "*", use = "edit" },
 ]
 
-[plugin]
-prepend_previewers = [
-]
+# --- MEDIAINFO ---
+[[plugin.prepend_preloaders]]
+mime = "{audio,video,image}/*"
+run  = "mediainfo"
+
+[[plugin.prepend_preloaders]]
+mime = "application/subrip"
+run  = "mediainfo"
+
+[[plugin.prepend_previewers]]
+mime = "{audio,video,image}/*"
+run  = "mediainfo"
+
+[[plugin.prepend_previewers]]
+mime = "application/subrip"
+run  = "mediainfo"
+
+# --- GIT ---
+[[plugin.prepend_fetchers]]
+id  = "git"
+url = "*"
+run = "git"
+
+[[plugin.prepend_fetchers]]
+id  = "git"
+url = "*/"
+run = "git"
+
+# --- OUCH ---
+[[plugin.prepend_previewers]]
+mime = "application/{*zip,tar,bzip2,7z*,rar,xz,zstd,java-archive}"
+run  = "ouch"
+
+# --- RICH-PREVIEW --- 
+[[plugin.prepend_previewers]]
+url = "*.csv"
+run = "rich-preview"
+
+[[plugin.prepend_previewers]]
+url = "*.md"
+run = "rich-preview"
+
+[[plugin.prepend_previewers]]
+url = "*.rst"
+run = "rich-preview"
+
+[[plugin.prepend_previewers]]
+url = "*.ipynb"
+run = "rich-preview"
+
+[[plugin.prepend_previewers]]
+url = "*.json"
+run = "rich-preview"

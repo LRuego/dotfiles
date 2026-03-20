@@ -1,12 +1,16 @@
+"$schema" = "https://yazi-rs.github.io/schemas/theme.json"
+
+[app]
+overall = { bg = "#1a1b26" }
+
 [mgr]
 # NOTE: can be combined with tmTheme (sublime colorshceme file) for preview code highlight
 # syntect_theme = "path/to/tmTheme"
 
 cwd = { fg = "#a9b1d6", italic = true }
 
-# Hovered
-hovered         = { bg = "#292e42" }
-preview_hovered = { bg = "#292e42" }
+# Symlink
+symlink_target = { italic = true }
 
 # Find
 find_keyword  = { fg = "#16161e", bg = "#ff9e64", bold = true }
@@ -29,8 +33,8 @@ border_style  = { fg = "#27a1b9" }
 
 # Tab
 [tabs]
-active = { bg = "blue", bold = true }
-inactive = { fg = "blue", bg = "gray" }
+active   = { fg = "#15161e", bg = "#7aa2f7" }
+inactive = { fg = "#7aa2f7", bg = "#3b4261" }
 
 [mode]
 normal_main = { fg = "#15161e", bg = "#7aa2f7", bold = true }
@@ -42,10 +46,16 @@ select_alt  = { fg = "#bb9af7", bg = "#3b4261" }
 unset_main  = { fg = "#15161e", bg = "#9d7cd8", bold = true }
 unset_alt   = { fg = "#9d7cd8", bg = "#3b4261" }
 
+# Hover
+[indicator]
+parent  = { bg = "#292e42" }
+current = { bg = "#292e42" }
+preview = { bg = "#292e42" }
+
 [status]
 overall   = { fg = "#c0caf5", bg = "#16161e" }
-sep_left  = { open = "", close = "" }
-sep_right = { open = "", close = "" }
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
 
 # Progress
 progress_label  = { fg = "#c0caf5", bold = true }
@@ -61,7 +71,7 @@ perm_sep   = { fg = "#414868" }
 
 [pick]
 border   = { fg = "#27a1b9" }
-active   = { fg = "#c0caf5",  bg = "#283457" }
+active   = { fg = "#c0caf5", bg = "#283457" }
 inactive = { fg = "#c0caf5" }
 
 # Input
@@ -77,9 +87,9 @@ border   = { fg = "#0db9d7" }
 active   = { fg = "#c0caf5", bg = "#343a55" }
 inactive = { fg = "#c0caf5" }
 
-icon_file    = ""
-icon_folder  = ""
-icon_command = ""
+icon_file    = ""
+icon_folder  = ""
+icon_command = ""
 
 # Tasks
 [tasks]
@@ -101,7 +111,7 @@ separator_style = { fg = "#565f89" }
 [confirm]
 border  = { fg = "#0db9d7" }
 title   = { fg = "#27a1b9" }
-content = {}
+body    = {}
 list    = {}
 btn_yes = { bg = "#283457" }
 btn_no  = {}
@@ -118,9 +128,9 @@ title_info  = { fg = "#0db9d7" }
 title_warn  = { fg = "#e0af68" }
 title_error = { fg = "#db4b4b" }
 
-icon_error = ""
-icon_warn = ""
-icon_info = ""
+icon_info  = ""
+icon_warn  = ""
+icon_error = ""
 
 # Help
 [help]
@@ -131,7 +141,6 @@ hovered = { bg = "#292e42" }
 footer  = { fg = "#c0caf5", bg = "#1a1b26" }
 
 [filetype]
-
 rules = [
 	# Images
 	{ mime = "image/*", fg = "#e0af68" },
@@ -150,10 +159,10 @@ rules = [
 	# { mime = "inode/x-empty", fg = "#f7768e" },
 
 	# Special files
-	{ name = "*", is = "orphan", bg = "#f7768e" },
-	{ name = "*", is = "exec"  , fg = "#9ece6a" },
+	{ url = "*", is = "orphan", bg = "#f7768e" },
+	{ url = "*", is = "exec"  , fg = "#9ece6a" },
 
 	# Fallback
-	{ name = "*/", fg = "#7aa2f7" },
-	{ name = "*", fg = "#c0caf5" }
+	{ url = "*/", fg = "#7aa2f7" },
+	{ url = "*", fg = "#c0caf5" }
 ]

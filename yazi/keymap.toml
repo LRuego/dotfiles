@@ -1,3 +1,45 @@
+# N → open in Nemo
+[[mgr.prepend_keymap]]
+on = ["N"]
+run = "shell 'nemo \"$CWD\"' --block"
+desc = "Open in Nemo"
+
+# jump-to-char
+[[mgr.prepend_keymap]]
+on   = "f"
+run  = "plugin jump-to-char"
+desc = "Jump to file starting with char"
+
+# ouch
+[[mgr.prepend_keymap]]
+on = ["C"]
+run = "plugin ouch"
+desc = "Compress with ouch"
+
+# pref-by-location
+[[mgr.prepend_keymap]]
+on   = [",", "b"]
+run  = ["sort btime --reverse=no", "linemode btime", "plugin pref-by-location -- save"]
+desc = "Sort by birth time"
+
+[[mgr.prepend_keymap]]
+on   = [",", "B"]
+run  = ["sort btime --reverse", "linemode btime", "plugin pref-by-location -- save"]
+desc = "Sort by birth time (reverse)"
+
+# recycle-bin
+[[mgr.prepend_keymap]]
+on   = ["R", "b"]
+run  = "plugin recycle-bin"
+desc = "Open Recycle Bin menu"
+
+# restore
+[[mgr.prepend_keymap]]
+on   = "u"
+run  = "plugin restore"
+desc = "Restore last deleted files/folders"
+
+# smart-enter
 [[mgr.prepend_keymap]]
 on   = "l"
 run  = "plugin smart-enter"
