@@ -37,7 +37,6 @@ Module {
         IconLabel {
             id: tsIcon
             icon: TailscaleService.active ? Assets.tailscaleOn : Assets.tailscaleOff
-            colorize: true
 
             SequentialAnimation on opacity {
                 running: TailscaleService.transitioning
@@ -51,11 +50,15 @@ Module {
 
     ModuleItem {
         IconLabel {
-            labelBold: true
-            icon:      root.netIcon
-            iconColor: root.netColor
-            colorize:  true
-            iconWidth: Theme.fontSize
+            labelBold:  true
+            icon:       root.netIcon
+            iconColor:  root.netColor
+            colorize:   true
+            iconWidth:  Theme.fontSize
+
+            showText:   parent.hovered || BarState.peekMode
+            text:       NetworkService.ssid
+            textColor:  root.netColor
         }
     }
 

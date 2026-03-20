@@ -34,6 +34,9 @@ Row {
     property int    textOffset:   1
     property int    elide:        Text.ElideNone
 
+    // --- SHOW/HIDE TEXT ---
+    property bool   showText:     true
+
     spacing:                      labelSpacing
 
     readonly property bool isImageIcon: icon.includes(".") || icon.includes("/")
@@ -42,15 +45,13 @@ Row {
     // ONLY ONE ICONIMAGE
     IconImage {
         id: imageIconItem
-        
+
         source: isImageIcon ? root.icon : (isThemeIcon ? "image://icon/" + root.icon : "")
-        
+
         implicitSize: root.iconWidth > 0 ? root.iconWidth : root.iconSize
-        
+
         visible: (isImageIcon || isThemeIcon) && root.icon !== ""
-        
-        // This keeps the ICON vertically centered relative to the Row's height
-        
+
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: root.iconOffset
 
@@ -64,18 +65,17 @@ Row {
     // FONT-BASED ICONS (Nerd Font)
     Text {
         id: iconItem
-        // This keeps the ICON vertically centered relative to the Row's height
-        
+
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: root.iconOffset
-        
+
         text: (!isImageIcon && !isThemeIcon) ? root.icon : ""
         color: root.iconColor
         font.family: root.iconFont
         font.pixelSize: root.iconSize
         font.bold: root.iconBold
         visible: text !== ""
-        
+
         width: root.iconWidth > 0 ? root.iconWidth : implicitWidth
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
@@ -84,21 +84,33 @@ Row {
     // --- THE LABEL ---
     Text {
         id: labelItem
-        // This keeps the TEXT vertically centered relative to the Row's height
-        
+
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: root.textOffset
-        
+
         text: root.text
         color: root.textColor
         font.family: root.textFont
         font.pixelSize: root.textSize
         font.bold: root.textBold
+
+        // Drive visibility via width + opacity so the Row collapses cleanly
         visible: text !== ""
-        
-        width: root.textWidth > 0 ? root.textWidth : implicitWidth
+        clip: true
+        opacity: root.showText ? 1 : 0
+
+        width: (root.showText && text !== "")
+            ? (root.textWidth > 0 ? root.textWidth : contentWidth)
+            : 0
+
         elide: root.elide
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 150
+            }
+        }
     }
 }
