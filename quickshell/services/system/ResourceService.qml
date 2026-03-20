@@ -1,4 +1,4 @@
-// services/ResourceService.qml
+// services/system/ResourceService.qml
 pragma Singleton
 import QtQuick
 import Quickshell
@@ -10,8 +10,10 @@ Item {
     // --- PROPERTIES ---
     property int  cpuUsage:         0
     property int  memUsagePercent:  0
+    property real memUsageGiB:      0
     property int  gpuUsage:         0
     property int  vramUsagePercent: 0
+    property real vramUsageGiB:     0
     property int  cpuTemp:          0
     property int  gpuTemp:          0
 
@@ -46,6 +48,7 @@ Item {
             "bash", "-c",
             "grep 'cpu ' /proc/stat; " +
             "echo \"STATS:{\\\"mem\\\":$(free | awk '/Mem:/ {print int($3/$2 * 100)}'), " +
+            "\\\"mu\\\":$(free -b | awk '/Mem:/ {print $3}'), " +
             "\\\"gpu\\\":$(cat /sys/class/drm/card1/device/gpu_busy_percent 2>/dev/null || cat /sys/class/drm/card0/device/gpu_busy_percent 2>/dev/null || echo 0), " +
             "\\\"vru\\\":$(cat /sys/class/drm/card1/device/mem_info_vram_used 2>/dev/null || cat /sys/class/drm/card0/device/mem_info_vram_used 2>/dev/null || echo 0), " +
             "\\\"vrt\\\":$(cat /sys/class/drm/card1/device/mem_info_vram_total 2>/dev/null || cat /sys/class/drm/card0/device/mem_info_vram_total 2>/dev/null || echo 0), " +
@@ -84,11 +87,14 @@ Item {
                         try {
                             let json = JSON.parse(trimmed.substring(6))
                             root.memUsagePercent  = json.mem
+                            root.memUsageGiB      = Math.round((json.mu / 1024 / 1024 / 1024) * 10) / 10
                             root.gpuUsage         = json.gpu
                             root.cpuTemp          = Math.round(json.ct / 1000)
                             root.gpuTemp          = Math.round(json.gt / 1000)
-                            if (json.vrt > 0)
+                            if (json.vrt > 0) {
                                 root.vramUsagePercent = Math.round((json.vru / json.vrt) * 100)
+                                root.vramUsageGiB     = Math.round((json.vru / 1024 / 1024 / 1024) * 10) / 10
+                            }
                         } catch (e) {}
                     }
                 }
@@ -98,11 +104,11 @@ Item {
 
     // --- REFRESH TIMER ---
     Timer {
-        id: refreshTimer
-        interval: 1000
-        running: false
-        repeat: true
+        id:               refreshTimer
+        interval:         1000
+        running:          false
+        repeat:           true
         triggeredOnStart: true
-        onTriggered: statsProcess.running = true
+        onTriggered:      statsProcess.running = true
     }
 }

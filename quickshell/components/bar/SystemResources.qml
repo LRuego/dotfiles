@@ -15,9 +15,9 @@ Module {
 
     // --- DISPLAY HELPERS ---
     readonly property string cpuDisplay:  InputService.shiftHeld ? ResourceService.cpuTemp + "°C" : ResourceService.cpuUsage + "%"
-    readonly property string memDisplay:  ResourceService.memUsagePercent + "%"
+    readonly property string memDisplay:  ResourceService.memUsageGiB + "G"
     readonly property string gpuDisplay:  InputService.shiftHeld ? ResourceService.gpuTemp + "°C" : ResourceService.gpuUsage + "%"
-    readonly property string vramDisplay: ResourceService.vramUsagePercent + "%"
+    readonly property string vramDisplay: ResourceService.vramUsageGiB + "G"
 
     // --- COLOR HELPERS ---
     function usageColor(usage, temp) {
@@ -61,7 +61,7 @@ Module {
             textColor:  iconColor
             textFont:   root.textFont
             textSize:   root.textSize
-            textWidth:  root.memDisplay.length <= 3 ? 24 : 32
+            textWidth:  root.memDisplay.length <= 2 ? 16 : root.memDisplay.length <= 4 ? 32 : 40
         }
     }
 
@@ -98,7 +98,8 @@ Module {
             textColor:  iconColor
             textFont:   root.textFont
             textSize:   root.textSize
-            textWidth:  root.vramDisplay.length <= 3 ? 24 : 32
+            textWidth:  root.vramDisplay.length <= 2 ? 16 : root.memDisplay.length <= 4 ? 32 : 40
+
         }
     }
 }
