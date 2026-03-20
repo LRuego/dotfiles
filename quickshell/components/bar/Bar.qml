@@ -24,13 +24,6 @@ PanelWindow {
     implicitHeight:               24
     color:                        Theme.barBackground
 
-    Component.onCompleted: {
-        InputService.onHold("KEY_LEFTALT", 500,
-            () => { BarState.setPeekMode(true) },
-            () => { BarState.setPeekMode(false) }
-        )
-    }
-
     Item {
         anchors.fill: parent
 
@@ -70,6 +63,7 @@ PanelWindow {
             SystemResources {}
             Volume {}
             Connectivity {}
+            Notifications {}
         }
     }
 }

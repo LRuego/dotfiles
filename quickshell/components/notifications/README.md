@@ -1,37 +1,87 @@
 # Quickshell Notification System
 
-This directory contains the visual components for the Quickshell Notification System. The core D-Bus server logic and state management are handled in `../../services/NotificationService.qml`.
+A fully native notification system for Quickshell, replacing Dunst by claiming `org.freedesktop.Notifications` directly via D-Bus.
 
-## Current State (v1.0)
-- **Native D-Bus Integration:** Replaces Dunst/Mako by natively claiming `org.freedesktop.Notifications`.
-- **State-Controlled Animations:** Uses a pure QML state machine (`visible` / `hidden`) instead of `ListView` transitions to guarantee glitch-free fade-outs and prevent transparency bugs.
-- **Memory Safe:** `ListModel` only stores strings and numbers. QML components (like Timers and Animations) are strictly confined to the `NotificationCard` to prevent garbage collection crashes during high-volume notification spam.
-- **Smart Progress Bar:** Features a bottom-aligned, shrinking progress bar that automatically pauses when hovered and perfectly respects the card's `Theme.cornerRadius`.
+## Architecture
 
----
+### Files
+- `NotificationService.qml` — singleton service, D-Bus server, state management, persistence
+- `NotificationCard.qml` — popup card component
+- `NotificationPopup.qml` — popup window (layer shell, overlay)
+- `NotificationCenter.qml` — history panel (layer shell, overlay, slide-in)
+- `NotificationCenterCard.qml` — history card component
 
-## Future Roadmap (What to build next)
+### Data Flow
+```
+D-Bus → NotificationServer → NotificationService → popupList → NotificationPopup
+                                                 → historyList → NotificationCenter
+                                                 → notifications.json (persistence)
+```
 
-### 1. The History Center
-**Goal:** A persistent window to view dismissed or missed notifications.
-*   **Service Requirement:** Re-introduce an `all` ListModel in `NotificationService.qml`. Ensure it only stores raw data (`summary`, `body`, `icon`, `time`) and strictly caps at ~50-100 items to prevent RAM bloat over long uptimes.
-*   **UI Requirement:** Create a `NotificationCenter.qml` window (perhaps triggered by a clock click or keybind) with a `ListView` bound to the `all` model. Includes a "Clear All" button.
+## Features
 
-### 2. Action Buttons
-**Goal:** Allow users to interact with notifications (e.g., "Reply", "Open", "Skip").
-*   **Service Requirement:** Pass the `n.actions` array into the `popupList` model.
-*   **UI Requirement:** In `NotificationCard.qml`, add a `Repeater` below the text block that generates a `Rectangle` (button) for each action. Clicking the button should call the native `.invokeAction(identifier)` method.
+### Popup System
+- **App grouping** — multiple notifications from the same app stack into one card with a badge counter instead of flooding the screen
+- **Hover pause** — hovering a card pauses its dismiss timer and resumes from where it left off when you leave
+- **Image previews** — automatically detects and displays images from screenshots (Satty), file transfers (Taildrop), and `image-path` hints
+- **Urgency styling** — critical notifications (`urgency = 2`) render with a red border via `Theme.urgent`
+- **Left click** — invokes the notification's default action if one exists (e.g. opens the relevant app/conversation)
+- **Right click** — dismisses the card immediately
+- **Transient support** — notifications marked transient show as popups but are never stored in history
+- **DND mode** — set `NotificationService.dnd = true` to suppress all popups while still logging to history
 
-### 3. Application Grouping
-**Goal:** Prevent screen clutter by stacking multiple messages from the same app (e.g., 5 Discord messages become 1 visual card).
-*   **Service Requirement:** Before appending a new notification, scan the `popupList` for an existing item with the same `appName`. If found, replace the old item's body with the new one, or append it to a string like "2 new messages".
+### Notification Center
+- Right-side panel that slides in with a fade + spring animation
+- Grouped by app — each app shows its latest message, summary, and a count badge
+- Scrollable list for large history
+- "Clear all" button wipes history and persists the change
+- Per-entry dismiss button
+- Image preview with "Image deleted" fallback if the file no longer exists
+- Frosted glass background via Hyprland `layerrule` blur
+- Click-outside to close via `FocusService` / `HyprlandFocusGrab`
+- Popups are instantly dismissed when the center opens
 
-### 4. Rich Media (Images & Screenshots)
-**Goal:** Display actual images sent by applications (like Spotify album art or Grim/Slurp screenshots).
-*   **Service Requirement:** Parse the `n.image` property or the `image-path` / `image-data` hints from the D-Bus payload.
-*   **UI Requirement:** Add an `Image` component to `NotificationCard.qml` that dynamically expands if a valid image path is provided.
+### Persistence
+- History is saved to `~/.local/share/quickshell/notifications.json`
+- Restored on startup — unread count carries over across reboots
+- Cleared when you use "Clear all" or dismiss individual entries
+- Only stores primitives — structure is ready for `FileView` to extend
 
-### 5. Urgency Styling
-**Goal:** Visually distinguish between Low, Normal, and Critical alerts.
-*   **Service Requirement:** Pass `n.urgency` into the model.
-*   **UI Requirement:** Bind the card's `border.color` or a dedicated warning icon to change to `Theme.urgent` (red) if the urgency is Critical.
+### Bar Module
+- `Notifications.qml` in `components/bar/` — drop-in bar module
+- Inbox icon dims when DND is active
+- Red dot indicator appears when `unreadCount > 0`, clears when center is opened
+
+## Configuration
+
+All tunable values live at the top of `NotificationService.qml`:
+
+| Property | Default | Description |
+|---|---|---|
+| `defaultTimeout` | `5000` | Popup duration in ms when app sends no expiry |
+| `minRemaining` | `500` | Minimum time left after hover resume |
+| `historyMax` | `100` | Max history entries before oldest is dropped |
+| `dnd` | `false` | Suppress all popups when true |
+
+## Hyprland Setup
+
+Add to your `hyprland.conf` for blur support on the notification center:
+
+```
+layerrule = blur on, match:namespace notifications-center
+layerrule = ignore_alpha 0.5, match:namespace notifications-center
+```
+
+## Roadmap
+
+### Action Buttons
+**Goal:** Display interactive buttons on popup cards for notifications that include actions (e.g. Spotify play/pause/skip, email reply/archive).
+
+- Backend already implemented — actions stored in `_activeActions`, `invokeDefault()` handles invocation
+- **UI needed:** `Repeater` below the text block in `NotificationCard.qml` generating a button per action, calling `NotificationService.invokeDefault()` with the action identifier
+
+### DND Toggle
+**Goal:** Toggle DND from within the notification center header rather than requiring an external binding.
+
+- `NotificationService.dnd` property already exists
+- **UI needed:** A toggle button in the `NotificationCenter.qml` header row, bound to `NotificationService.dnd`

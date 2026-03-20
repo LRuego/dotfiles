@@ -1,0 +1,188 @@
+// components/notifications/NotificationCenter.qml
+import QtQuick
+import QtQuick.Controls
+import Quickshell
+import Quickshell.Wayland
+import "../../core"
+import "../../services/ui"
+import "../base"
+
+PanelWindow {
+    id: root
+
+    WlrLayershell.layer:         WlrLayer.Overlay
+    WlrLayershell.namespace:     "notifications-center"
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+    WlrLayershell.exclusiveZone: -1
+
+    anchors {
+        top:    true
+        right:  true
+        bottom: true
+    }
+
+    margins {
+        top:    39
+        right:  20
+        bottom: 20
+    }
+
+    implicitWidth: 360
+    color:         "transparent"
+    visible:       true
+
+    signal dismissed()
+    onDismissed: NotificationService.centerVisible = false
+
+    Timer {
+        id:       focusDelay
+        interval: 50
+        onTriggered: FocusService.registerMenu(root)
+    }
+
+    Component.onCompleted: {
+        focusDelay.start()
+        slideAnim.start()
+        fadeAnim.start()
+    }
+
+    mask: Region { item: panel }
+
+    // --- OPEN ANIMATIONS ---
+    NumberAnimation {
+        id:               slideAnim
+        target:           panel
+        property:         "x"
+        from:             root.implicitWidth + 20
+        to:               0
+        duration:         350
+        easing.type:      Easing.OutBack
+        easing.overshoot: 0.5
+    }
+
+    NumberAnimation {
+        id:          fadeAnim
+        target:      panel
+        property:    "opacity"
+        from:        0
+        to:          1
+        duration:    250
+        easing.type: Easing.OutCubic
+    }
+
+    // --- PANEL ---
+    Rectangle {
+        id:      panel
+        anchors {
+            top:    parent.top
+            bottom: parent.bottom
+            right:  parent.right
+        }
+        width:        root.implicitWidth
+        opacity:      0
+        x:            root.implicitWidth + 20
+        radius:       Theme.cornerRadius
+        color:        Qt.rgba(Theme.base.r, Theme.base.g, Theme.base.b, 0.8)
+        border.color: ThemeState.border
+        border.width: 1
+
+        Column {
+            anchors.fill:    parent
+            anchors.margins: 16
+            spacing:         12
+
+            // --- HEADER ---
+            Row {
+                width: parent.width
+
+                Text {
+                    text:           "Notifications"
+                    color:          ThemeState.text
+                    font.family:    Theme.fontFamily
+                    font.pixelSize: Theme.fontSize
+                    font.bold:      true
+                    width:          parent.width - clearButton.width
+                }
+
+                Rectangle {
+                    id:     clearButton
+                    width:  72
+                    height: 24
+                    radius: Theme.cornerRadius
+                    color:  clearArea.containsMouse ? ThemeState.accent : ThemeState.border
+
+                    Text {
+                        anchors.centerIn: parent
+                        text:             "Clear all"
+                        color:            ThemeState.text
+                        font.family:      Theme.fontFamily
+                        font.pixelSize:   Theme.fontSizeSmall
+                    }
+
+                    MouseArea {
+                        id:           clearArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked:    NotificationService.clearHistory()
+                    }
+                }
+            }
+
+            // --- DIVIDER ---
+            Rectangle {
+                width:  parent.width
+                height: 1
+                color:  ThemeState.border
+            }
+
+            // --- LIST ---
+            Item {
+                width:  parent.width
+                height: parent.height - 60
+
+                ListView {
+                    id:           historyList
+                    anchors.fill: parent
+                    model:        NotificationService.historyList
+                    spacing:      8
+                    clip:         true
+
+                    delegate: NotificationCenterCard {
+                        width:   ListView.view.width
+                        appName: model.appName
+                        summary: model.summary
+                        body:    model.body
+                        icon:    model.icon
+                        image:   model.image
+                        count:   model.count
+                    }
+
+                    displaced: Transition {
+                        NumberAnimation { properties: "y"; duration: 300; easing.type: Easing.OutQuad }
+                    }
+
+                    Text {
+                        anchors.centerIn: parent
+                        visible:          historyList.count === 0
+                        text:             "No notifications"
+                        color:            Theme.subtext
+                        font.family:      Theme.fontFamily
+                        font.pixelSize:   Theme.fontSizeSmall
+                    }
+                }
+
+                ScrollBar {
+                    id:                scrollBar
+                    anchors.top:       parent.top
+                    anchors.right:     parent.right
+                    anchors.bottom:    parent.bottom
+                    policy:            ScrollBar.AsNeeded
+                    orientation:       Qt.Vertical
+                    size:              historyList.visibleArea.heightRatio
+                    position:          historyList.visibleArea.yPosition
+                    onPositionChanged: historyList.contentY = position * historyList.contentHeight
+                }
+            }
+        }
+    }
+}

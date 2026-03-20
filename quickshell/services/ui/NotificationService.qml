@@ -1,38 +1,136 @@
-// services/NotificationService.qml
+// services/ui/NotificationService.qml
 pragma Singleton
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Notifications
 import "../../core"
 
 Item {
     id: root
 
-    // Active Popups Only (STRICTLY PRIMITIVES ONLY)
-    property ListModel popupList: ListModel {} 
+    // --- CONFIG ---
+    property int  defaultTimeout: 5000
+    property int  minRemaining:   500
+    property int  historyMax:     100
+    property bool dnd:            false
 
-    // Hidden array to safely hold the physical C++ objects for dismissal
-    property var _activeNotifs: []
+    // --- STATE ---
+    property ListModel popupList:     ListModel {}
+    property ListModel historyList:   ListModel {}
+    property bool      centerVisible: false
+    property int       unreadCount:   0
+    property var       _activeNotifs: []
+    property int       _idCounter:    9000
+    property string    _homeDir:      Quickshell.env("HOME") || ""
+    property var       _activeTimers:  ({})
+    property var       _activeActions: ({})
+    property var       _timerStarted:  ({})
+    property var       _timerElapsed:  ({})
+
+    onCenterVisibleChanged: {
+        if (centerVisible) {
+            unreadCount = 0;
+            for (let key in root._activeTimers) {
+                let t = root._activeTimers[key];
+                if (t) t.stop();
+                root._activeTimers[key] = null;
+            }
+            root.popupList.clear();
+        }
+    }
+
+    // --- PERSISTENCE ---
+    property string _historyPath: _homeDir + "/.local/share/quickshell/notifications.json"
+
+    Process {
+        id:      mkdirProcess
+        command: ["mkdir", "-p", root._homeDir + "/.local/share/quickshell"]
+        onExited: historyFile.reload()
+    }
+
+    FileView {
+        id:   historyFile
+        path: root._historyPath
+
+        onLoaded: {
+            try {
+                let entries = JSON.parse(historyFile.text());
+                root.historyList.clear();
+                for (let i = 0; i < entries.length; i++) {
+                    root.historyList.append(entries[i]);
+                }
+                root.unreadCount = root.historyList.count;
+            } catch (e) {
+                console.log("[NotificationService] Failed to parse history file:", e);
+            }
+        }
+
+        onLoadFailed: (error) => {
+            // First run only — file gets created here and warning never appears again
+            console.log("[NotificationService] History file not found, creating fresh.");
+            historyFile.setText("[]");
+        }
+    }
+
+    // Debounced save — batches rapid writes into one disk operation
+    Timer {
+        id:       saveDebounce
+        interval: 500
+        repeat:   false
+        onTriggered: root._saveHistory()
+    }
+
+    function _saveHistory() {
+        let entries = [];
+        for (let i = 0; i < historyList.count; i++) {
+            let item = historyList.get(i);
+            entries.push({
+                "appName": item.appName,
+                "summary": item.summary,
+                "body":    item.body,
+                "icon":    item.icon,
+                "image":   item.image,
+                "count":   item.count,
+                "time":    item.time
+            });
+        }
+        historyFile.setText(JSON.stringify(entries, null, 2));
+    }
+
+    Component.onCompleted: mkdirProcess.running = true
+
+    // --- TIMER COMPONENT ---
+    Component {
+        id: timerComponent
+        Timer {
+            property int notifId: -1
+            running:  true
+            onTriggered: {
+                root.dismiss(notifId);
+                destroy();
+            }
+        }
+    }
 
     // --- SERVER ---
     NotificationServer {
         id: server
-        
-        // CRITICAL FIX: Disable raw image support.
-        // This forces applications like Discord to send theme icon names (e.g. "discord")
-        // instead of raw memory buffers, completely preventing the "Cannot use same item" 
-        // Wayland/Qt segmentation fault.
-        imageSupported: false
+
+        imageSupported:       false
         actionIconsSupported: false
+        actionsSupported:     true
 
         onNotification: n => {
             root._activeNotifs.push(n);
-            n.closed.connect(() => root.finalizeRemoval(n.id));
+            n.closed.connect(() => root.removeFromPopup(n.id));
 
-            // EXTREMELY DEFENSIVE ICON ROUTING
+            let isTransientHint = (n.hints && n.hints["transient"]) ? true : false;
+
+            // --- ICON ROUTING ---
             let safeIconPath = "";
-            let rawAppIcon = (n.appIcon && typeof n.appIcon === "string") ? n.appIcon : "";
-            let rawAppName = n.appName ? String(n.appName).toLowerCase() : "";
+            let rawAppIcon   = (n.appIcon && typeof n.appIcon === "string") ? n.appIcon : "";
+            let rawAppName   = n.appName ? String(n.appName).toLowerCase() : "";
 
             if (rawAppIcon.startsWith("image://quickshell") || rawAppIcon === "") {
                 if (rawAppName === "tailscale" || rawAppName === "tailscale-drop") {
@@ -40,121 +138,258 @@ Item {
                 } else if (rawAppName !== "" && rawAppName !== "notify-send") {
                     safeIconPath = rawAppName;
                 } else {
-                    safeIconPath = ""; // Pass empty string so the UI fallback kicks in cleanly
+                    safeIconPath = "";
                 }
             } else {
                 safeIconPath = rawAppIcon;
             }
 
-            // --- RICH MEDIA DETECTION ---
+            // --- IMAGE DETECTION ---
             let previewImage = "";
-            let homeDir = Quickshell.env("HOME") || "/home/lruego";
 
-            // 1. Direct Image Property (often a path)
-            if (n.image && typeof n.image === "string" && n.image !== "" && !n.image.startsWith("image://qsimage")) {
+            // 1. D-Bus image field
+            if (n.image
+                    && typeof n.image === "string"
+                    && n.image !== ""
+                    && !n.image.startsWith("image://qsimage")
+                    && (n.image.startsWith("/") || n.image.startsWith("file://"))
+                    && n.image.match(/\.(jpg|jpeg|png|gif|webp|svg|ppm)$/i)
+                    && (root._homeDir === "" || n.image.startsWith(root._homeDir) || n.image.startsWith("file://" + root._homeDir))) {
                 previewImage = n.image;
             }
 
-            // 2. Tailscale File Detection
-            let lowerApp = rawAppName.toLowerCase();
-            let lowerSum = String(n.summary).toLowerCase();
-
-            if (lowerApp.includes("tailscale") || lowerSum.includes("tailscale")) {
-                // Look for any quoted string that might be a filename
-                let match = String(n.body).match(/"([^"]+)"/);
-                if (match) {
-                    let filename = match[1];
-                    // If it matched something like 'Saved "file" to "/path"', we want the first quote
-                    // but we should check if it has an image extension
-                    if (filename.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
-                        previewImage = homeDir + "/Downloads/Taildrop/" + filename;
-                    }
-                }
+            // 2. Absolute path in body text (e.g. Satty: 'Saved to "/home/..."')
+            if (previewImage === "") {
+                let bodyStr = String(n.body);
+                let match   = bodyStr.match(/"(\/[^"]+\.(?:jpg|jpeg|png|gif|webp|svg|ppm))"/i)
+                           || bodyStr.match(/(\/\S+\.(?:jpg|jpeg|png|gif|webp|svg|ppm))/i);
+                if (match) previewImage = match[1];
             }
 
-
-            // 3. Fallback to Hints
+            // 3. image-path hint
             if (previewImage === "" && n.hints) {
                 let hintPath = n.hints["image-path"] || n.hints["image_path"];
-                if (hintPath && typeof hintPath === "string" && !hintPath.startsWith("image://qsimage")) {
+                if (hintPath
+                        && typeof hintPath === "string"
+                        && !hintPath.startsWith("image://qsimage")
+                        && (hintPath.startsWith("/") || hintPath.startsWith("file://"))
+                        && (root._homeDir === "" || hintPath.startsWith(root._homeDir) || hintPath.startsWith("file://" + root._homeDir))) {
                     previewImage = hintPath;
                 }
             }
 
-            let ms = n.expireTimeout <= 0 ? 5000 : n.expireTimeout;
+            let ms      = n.expireTimeout <= 0 ? root.defaultTimeout : n.expireTimeout;
+            let appName = n.appName ? String(n.appName).charAt(0).toUpperCase() + String(n.appName).slice(1) : "Unknown";
+            let urgency = (n.hints && n.hints["urgency"] !== undefined) ? Number(n.hints["urgency"]) : 1;
 
-            let data = { 
-                "summary": String(n.summary),
-                "body": String(n.body),
-                "icon": safeIconPath,
-                "image": previewImage, // Pass the detected image
-                "notifId": Number(n.id),
-                "timeout": Number(ms),
-                "closing": false
-            };
+            // Store actions separately — arrays can't go in ListModel
+            let hasDefault = false;
+            if (n.actions && n.actions.length > 0) {
+                root._activeActions[Number(n.id)] = n.actions;
+                for (let a = 0; a < n.actions.length; a++) {
+                    if (n.actions[a].identifier === "default") {
+                        hasDefault = true;
+                        break;
+                    }
+                }
+            }
 
-            // 3. Update or Append
+            // Always add to history unless transient
+            if (!isTransientHint) {
+                root._addToHistory({
+                    "summary": String(n.summary),
+                    "body":    String(n.body),
+                    "icon":    safeIconPath,
+                    "image":   previewImage,
+                    "appName": appName,
+                    "notifId": Number(n.id)
+                });
+            }
+
+            // Skip popups entirely when DND is on
+            if (root.dnd) return;
+
+            // --- POPUP: group by appName ---
             let found = false;
             for (let i = 0; i < popupList.count; i++) {
-                if (popupList.get(i).notifId === n.id) {
-                    let item = popupList.get(i);
-                    item.summary = data.summary;
-                    item.body = data.body;
-                    item.icon = data.icon;
-                    item.image = data.image; // Update image
-                    item.timeout = data.timeout;
+                let item = popupList.get(i);
+                if (item.appName === appName) {
+                    popupList.setProperty(i, "summary",    String(n.summary));
+                    popupList.setProperty(i, "body",       String(n.body));
+                    popupList.setProperty(i, "icon",       safeIconPath);
+                    popupList.setProperty(i, "image",      previewImage);
+                    popupList.setProperty(i, "count",      item.count + 1);
+                    popupList.setProperty(i, "notifId",    Number(n.id));
+                    popupList.setProperty(i, "hasDefault", hasDefault);
+                    popupList.setProperty(i, "urgency",    urgency);
+                    let existingTimer = root._activeTimers[appName];
+                    if (existingTimer) {
+                        existingTimer.notifId  = Number(n.id);
+                        existingTimer.interval = ms;
+                        existingTimer.restart();
+                        root._timerStarted[appName] = Date.now();
+                        root._timerElapsed[appName] = 0;
+                    }
                     found = true;
                     break;
                 }
             }
 
-            if (!found) {
-                root.popupList.append(data);
+            if (!found && !root.centerVisible) {
+                popupList.append({
+                    "summary":    String(n.summary),
+                    "body":       String(n.body),
+                    "icon":       safeIconPath,
+                    "image":      previewImage,
+                    "appName":    appName,
+                    "notifId":    Number(n.id),
+                    "count":      1,
+                    "hasDefault": hasDefault,
+                    "urgency":    urgency
+                });
+                let t = timerComponent.createObject(root, {
+                    "notifId":  Number(n.id),
+                    "interval": ms
+                });
+                root._activeTimers[appName] = t;
+                root._timerStarted[appName] = Date.now();
+                root._timerElapsed[appName] = 0;
             }
         }
+    }
+
+    // --- HOVER PAUSE/RESUME ---
+    function pauseTimer(appName) {
+        let t = root._activeTimers[appName];
+        if (t && t.running) {
+            let elapsed = Date.now() - (root._timerStarted[appName] || Date.now());
+            root._timerElapsed[appName] = (root._timerElapsed[appName] || 0) + elapsed;
+            t.stop();
+        }
+    }
+
+    function resumeTimer(appName) {
+        let t = root._activeTimers[appName];
+        if (t && !t.running) {
+            let elapsed   = root._timerElapsed[appName] || 0;
+            let remaining = Math.max(root.minRemaining, t.interval - elapsed);
+            t.interval  = remaining;
+            root._timerStarted[appName] = Date.now();
+            t.start();
+        }
+    }
+
+    // --- ACTION INVOCATION ---
+    function invokeDefault(id) {
+        let actions = root._activeActions[id];
+        if (actions) {
+            for (let i = 0; i < actions.length; i++) {
+                if (actions[i].identifier === "default") {
+                    actions[i].invoke();
+                    break;
+                }
+            }
+        }
+        root.dismiss(id);
+    }
+
+    // --- HISTORY ---
+    function _addToHistory(data) {
+        root.unreadCount++;
+        for (let i = 0; i < historyList.count; i++) {
+            let item = historyList.get(i);
+            if (item.appName === data.appName) {
+                historyList.setProperty(i, "summary", data.summary);
+                historyList.setProperty(i, "body",    data.body);
+                historyList.setProperty(i, "image",   data.image);
+                historyList.setProperty(i, "count",   item.count + 1);
+                historyList.setProperty(i, "time",    Date.now());
+                saveDebounce.restart();
+                return;
+            }
+        }
+        if (historyList.count >= root.historyMax) historyList.remove(0);
+        historyList.append({
+            "appName": data.appName,
+            "summary": data.summary,
+            "body":    data.body,
+            "icon":    data.icon,
+            "image":   data.image,
+            "count":   1,
+            "time":    Date.now()
+        });
+        saveDebounce.restart();
+    }
+
+    function clearHistory() {
+        historyList.clear();
+        saveDebounce.restart();
+    }
+
+    function dismissHistory(appName) {
+        for (let i = 0; i < historyList.count; i++) {
+            if (historyList.get(i).appName === appName) {
+                historyList.remove(i);
+                saveDebounce.restart();
+                return;
+            }
+        }
+    }
+
+    // --- POPUP MANAGEMENT ---
+    function removeFromPopup(id) {
+        for (let i = 0; i < popupList.count; i++) {
+            if (popupList.get(i).notifId === id) {
+                let timerKey = popupList.get(i).appName;
+                popupList.remove(i);
+                root._activeTimers[timerKey]  = null;
+                root._activeActions[id]       = null;
+                root._timerStarted[timerKey]  = null;
+                root._timerElapsed[timerKey]  = null;
+                break;
+            }
+        }
+        let exists = root._activeNotifs.some(n => n.id === id);
+        if (exists) root._activeNotifs = root._activeNotifs.filter(n => n.id !== id);
+    }
+
+    function dismiss(id) {
+        root.removeFromPopup(id);
+        let nObj = null;
+        for (let i = 0; i < root._activeNotifs.length; i++) {
+            if (root._activeNotifs[i].id === id) {
+                nObj = root._activeNotifs[i];
+                break;
+            }
+        }
+        if (nObj && typeof nObj.dismiss === "function") nObj.dismiss();
     }
 
     // --- PUBLIC API ---
-    function notify(summary, body, icon, timeout = 3000, image = "") {
-        let id = 9000 + popupList.count;
-        
-        root.popupList.append({ 
-            "summary": String(summary),
-            "body": String(body),
-            "icon": String(icon),
-            "image": String(image),
-            "notifId": id,
-            "timeout": timeout,
-            "closing": false
-        });
-    }
+    function notify(summary, body, icon, timeout, image, isTransient) {
+        timeout     = timeout     !== undefined ? timeout     : root.defaultTimeout;
+        image       = image       !== undefined ? image       : "";
+        isTransient = isTransient !== undefined ? isTransient : false;
 
-    // Called by the UI when the fade-out animation finishes
-    function finalizeRemoval(id) {
-        for (let i = 0; i < popupList.count; i++) {
-            if (popupList.get(i).notifId === id) {
-                popupList.remove(i);
-                break;
-            }
+        let id   = ++root._idCounter;
+        let data = {
+            "summary":    String(summary),
+            "body":       String(body),
+            "icon":       String(icon),
+            "image":      String(image),
+            "appName":    "Quickshell",
+            "notifId":    id,
+            "count":      1,
+            "hasDefault": false,
+            "urgency":    1
+        };
+        if (!root.dnd && !root.centerVisible) {
+            root.popupList.append(data);
+            let t = timerComponent.createObject(root, { "notifId": id, "interval": timeout });
+            root._activeTimers["Quickshell"] = t;
+            root._timerStarted["Quickshell"] = Date.now();
+            root._timerElapsed["Quickshell"] = 0;
         }
-        root._activeNotifs = root._activeNotifs.filter(n => n.id !== id);
-    }
-
-    // Called by the UI when a user clicks the card or the timeout hits 0
-    function dismiss(id) {
-        // 1. Trigger the visual close animation in the model
-        for (let i = 0; i < popupList.count; i++) {
-            let item = popupList.get(i);
-            if (item.notifId === id) {
-                item.closing = true; 
-                break;
-            }
-        }
-        
-        // 2. Safely call dismiss on the physical object
-        let nativeObj = root._activeNotifs.find(n => n.id === id);
-        if (nativeObj && typeof nativeObj.dismiss === "function") {
-            nativeObj.dismiss();
-        }
+        if (!isTransient) root._addToHistory(data);
     }
 }

@@ -1,180 +1,183 @@
 // components/notifications/NotificationCard.qml
 import QtQuick
-import Quickshell.Widgets
 import "../../core"
 import "../../services/ui"
 import "../base"
 
-ClippingRectangle {
+Rectangle {
     id: root
 
-    property string summary: ""
-    property string body: ""
-    property string icon: ""
-    property string image: ""
-    property int    notifId: -1
-    property bool   closing: false
-    property int    timeout: 5000
+    // --- PROPERTIES ---
+    property string summary:    ""
+    property string body:       ""
+    property string icon:       ""
+    property string image:      ""
+    property string appName:    ""
+    property int    notifId:    -1
+    property int    count:      1
+    property bool   hasDefault: false
+    property int    urgency:    1
 
-    width: 320
-    height: Math.max(64, mainLayout.implicitHeight + 32)
-    radius: Theme.cornerRadius
-    color: Theme.surface0
-    border.color: ThemeState.border
+    width:        320
+    height:       Math.max(64, mainLayout.implicitHeight + 32)
+    radius:       Theme.cornerRadius
+    color:        Theme.surface0
+    border.color: root.urgency === 2 ? Theme.urgent : ThemeState.border
     border.width: 1
+    opacity:      0
+    x:            30
 
-    // --- PROGRESS ANIMATION ---
-    NumberAnimation {
-        id: progressAnim
-        target: progressBar
-        property: "width"
-        from: root.width
-        to: 0
-        duration: root.timeout
-        running: root.timeout > 0 && !root.closing
-        onFinished: {
-            if (!root.closing) NotificationService.dismiss(root.notifId)
-        }
+    Component.onCompleted: addAnim.start()
+
+    ListView.onAdd:    function() { addAnim.start() }
+    ListView.onRemove: function() { removeAnim.start() }
+
+    ParallelAnimation {
+        id: addAnim
+        NumberAnimation { target: root; property: "opacity"; from: 0;  to: 1; duration: 400; easing.type: Easing.OutCubic }
+        NumberAnimation { target: root; property: "x";       from: 30; to: 0; duration: 400; easing.type: Easing.OutCubic }
     }
 
-    // --- PROGRESS BAR ---
-    Rectangle {
-        id: progressBar
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        height: 3
-        color: ThemeState.accent
-        visible: root.timeout > 0
-        z: 10
+    SequentialAnimation {
+        id: removeAnim
+        PropertyAction { target: root; property: "ListView.delayRemove"; value: true }
+        ParallelAnimation {
+            NumberAnimation { target: root; property: "opacity"; to: 0;  duration: 300; easing.type: Easing.OutCubic }
+            NumberAnimation { target: root; property: "x";       to: 30; duration: 300; easing.type: Easing.OutCubic }
+        }
+        PropertyAction { target: root; property: "ListView.delayRemove"; value: false }
     }
 
-    // --- ANIMATION STATE ---
-    opacity: 0
-    x: 50
-
-    states: [
-        State {
-            name: "visible"
-            when: !root.closing
-            PropertyChanges { target: root; opacity: 1; x: 0 }
-        },
-        State {
-            name: "hidden"
-            when: root.closing
-            PropertyChanges { target: root; opacity: 0; x: 50 }
-        }
-    ]
-
-    transitions: [
-        Transition {
-            from: "*"
-            to: "*"
-            NumberAnimation { properties: "opacity,x"; duration: 400; easing.type: Easing.OutCubic }
-            onRunningChanged: {
-                if (!running && root.closing)
-                    NotificationService.finalizeRemoval(root.notifId)
-            }
-        }
-    ]
-
+    // --- LAYOUT ---
     Column {
-        id: mainLayout
-        anchors.fill: parent
+        id:              mainLayout
+        anchors.fill:    parent
         anchors.margins: 16
-        spacing: 12
+        spacing:         12
 
         Row {
-            id: contentRow
-            width: parent.width
+            id:      contentRow
+            width:   parent.width
             spacing: 12
 
-            Image {
-                id: iconImage
-                width: 32
-                height: 32
-                sourceSize.width: width
-                sourceSize.height: height
-                smooth: true
-                mipmap: true
-
-                readonly property string finalFallback: Assets.notificationFallback
-                property string targetIcon: root.icon && root.icon !== "" ? root.icon : finalFallback
-
-                source: {
-                    if (targetIcon.startsWith("file://")) return targetIcon
-                    if (targetIcon.startsWith("/")) return "file://" + targetIcon
-                    return "image://icon/" + targetIcon
-                }
-
-                onStatusChanged: {
-                    if (status === Image.Error && targetIcon !== finalFallback)
-                        targetIcon = finalFallback
-                }
-
-                visible: true
-                fillMode: Image.PreserveAspectFit
+            // --- ICON + BADGE CONTAINER ---
+            Item {
+                width:                  32
+                height:                 32
                 anchors.verticalCenter: parent.verticalCenter
+
+                Image {
+                    id:                iconImage
+                    anchors.fill:      parent
+                    sourceSize.width:  width
+                    sourceSize.height: height
+                    smooth:            true
+                    mipmap:            true
+
+                    readonly property string finalFallback: Assets.notificationFallback
+                    property string targetIcon: root.icon !== "" ? root.icon : finalFallback
+
+                    source: {
+                        if (targetIcon.startsWith("file://")) return targetIcon
+                        if (targetIcon.startsWith("/"))       return "file://" + targetIcon
+                        return "image://icon/" + targetIcon
+                    }
+
+                    onStatusChanged: {
+                        if (status === Image.Error && targetIcon !== finalFallback)
+                            targetIcon = finalFallback
+                    }
+
+                    visible:  root.icon !== ""
+                    fillMode: Image.PreserveAspectFit
+                }
+
+                // --- BADGE ---
+                Rectangle {
+                    visible:            root.count > 1
+                    width:              16
+                    height:             16
+                    radius:             8
+                    color:              Theme.urgent
+                    anchors.top:        parent.top
+                    anchors.left:       parent.left
+                    anchors.topMargin:  -4
+                    anchors.leftMargin: -4
+                    z:                  10
+
+                    Text {
+                        anchors.centerIn: parent
+                        text:             root.count > 99 ? "99+" : root.count
+                        color:            Theme.base
+                        font.family:      Theme.fontFamily
+                        font.pixelSize:   Theme.fontSizeTiny - 2
+                        font.bold:        true
+                    }
+                }
             }
 
             Column {
-                id: textColumn
-                width: parent.width - (iconImage.visible ? iconImage.width + 12 : 0)
+                id:      textColumn
+                width:   parent.width - 32 - 12
                 spacing: 2
                 anchors.verticalCenter: parent.verticalCenter
 
                 Text {
-                    text: root.summary
-                    width: parent.width
-                    color: ThemeState.text
-                    font.family: Theme.fontFamily
+                    text:           root.summary
+                    width:          parent.width
+                    color:          ThemeState.text
+                    font.family:    Theme.fontFamily
                     font.pixelSize: Theme.fontSize
-                    font.bold: true
-                    elide: Text.ElideRight
+                    font.bold:      true
+                    elide:          Text.ElideRight
                 }
 
                 Text {
-                    text: root.body
-                    width: parent.width
-                    color: Theme.subtext
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeSmall
-                    wrapMode: Text.Wrap
+                    text:             root.body
+                    width:            parent.width
+                    color:            Theme.subtext
+                    font.family:      Theme.fontFamily
+                    font.pixelSize:   Theme.fontSizeSmall
+                    wrapMode:         Text.Wrap
                     maximumLineCount: root.image !== "" ? 2 : 4
-                    elide: Text.ElideRight
+                    elide:            Text.ElideRight
                 }
             }
         }
 
         Image {
-            id: previewImage
-            width: parent.width
-            height: 120
-            source: root.image !== "" ? (root.image.startsWith("/") ? "file://" + root.image : root.image) : ""
-            visible: root.image !== ""
-            fillMode: Image.PreserveAspectCrop
-            autoTransform: true
-            sourceSize: undefined
+            id:                previewImage
+            width:             parent.width
+            height:            120
+            source:            root.image !== "" ? (root.image.startsWith("/") ? "file://" + root.image : root.image) : ""
+            visible:           root.image !== ""
+            fillMode:          Image.PreserveAspectCrop
+            autoTransform:     true
+            sourceSize.width:  width * 2
+            sourceSize.height: height * 2
 
             Rectangle {
                 anchors.fill: parent
-                color: "transparent"
+                color:        "transparent"
                 border.color: ThemeState.border
                 border.width: 1
-                radius: 4
+                radius:       4
             }
         }
     }
 
     MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        onClicked: NotificationService.dismiss(root.notifId)
-
-        onEntered: {
-            if (progressAnim.running) progressAnim.pause()
+        anchors.fill:    parent
+        hoverEnabled:    true
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        cursorShape:     root.hasDefault ? Qt.PointingHandCursor : Qt.ArrowCursor
+        onClicked: (mouse) => {
+            if (mouse.button === Qt.LeftButton && root.hasDefault)
+                NotificationService.invokeDefault(root.notifId)
+            else
+                NotificationService.dismiss(root.notifId)
         }
-        onExited: {
-            if (progressAnim.paused) progressAnim.resume()
-        }
+        onEntered: NotificationService.pauseTimer(root.appName)
+        onExited:  NotificationService.resumeTimer(root.appName)
     }
 }

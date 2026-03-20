@@ -1,0 +1,37 @@
+// components/bar/Notifications.qml
+import QtQuick
+import "../../core"
+import "../../services/ui"
+import "../base"
+
+Module {
+    id: root
+
+    ModuleItem {
+        onClicked: NotificationService.centerVisible = !NotificationService.centerVisible
+
+        Item {
+            implicitWidth:  iconLabel.implicitWidth
+            implicitHeight: iconLabel.implicitHeight
+
+            IconLabel {
+                id:        iconLabel
+                icon:      Assets.inbox
+                colorize:  true
+                iconColor: NotificationService.dnd ? Theme.subtext : ThemeState.text
+            }
+
+            Rectangle {
+                visible:             NotificationService.unreadCount > 0 && !NotificationService.dnd
+                width:               6
+                height:              6
+                radius:              3
+                color:               Theme.urgent
+                anchors.top:         iconLabel.top
+                anchors.right:       iconLabel.right
+                anchors.topMargin:   -1
+                anchors.rightMargin: -3
+            }
+        }
+    }
+}

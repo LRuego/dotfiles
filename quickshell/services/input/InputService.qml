@@ -1,4 +1,4 @@
-// services/InputService.qml
+// services/input/InputService.qml
 pragma Singleton
 import QtQuick
 import Quickshell
@@ -30,7 +30,8 @@ Item {
     // --- LOW LEVEL API ---
 
     function connectKey(key, onPress, onRelease) {
-        keyHandlers[key] = { onPress: onPress, onRelease: onRelease }
+        if (!keyHandlers[key]) keyHandlers[key] = []
+        keyHandlers[key].push({ onPress: onPress, onRelease: onRelease })
     }
 
     function disconnectKey(key) {
@@ -137,8 +138,8 @@ Item {
     function onDoubleTap(key, interval, onDoubleTap) {
         let lastTap = 0
         connectKey(key,
-            null,  // nothing on press
-            () => {  // fire on release
+            null,
+            () => {
                 let now = Date.now()
                 if (now - lastTap < interval) {
                     onDoubleTap()
@@ -178,10 +179,11 @@ Item {
                 }
             }
         }
-        onRunningChanged: {
-            if (!running)
-                console.log("[InputService] Discovery complete —", root.keyboardCount, "keyboard devices found.")
-        }
+        // --- DEBUG ---
+        // onRunningChanged: {
+        //     if (!running)
+        //         console.log("[InputService] Discovery complete —", root.keyboardCount, "keyboard devices found.")
+        // }
     }
 
     // --- PER-KEYBOARD WATCHER ---
@@ -227,12 +229,12 @@ Item {
                         // --- FIRE HANDLERS (ignore auto-repeat) ---
                         if (value === 1) {
                             root.keyPressed(key)
-                            if (root.keyHandlers[key]?.onPress)
-                                root.keyHandlers[key].onPress()
+                            if (root.keyHandlers[key])
+                                root.keyHandlers[key].forEach(h => h.onPress && h.onPress())
                         } else if (value === 0) {
                             root.keyReleased(key)
-                            if (root.keyHandlers[key]?.onRelease)
-                                root.keyHandlers[key].onRelease()
+                            if (root.keyHandlers[key])
+                                root.keyHandlers[key].forEach(h => h.onRelease && h.onRelease())
                         }
                         // value 2 (auto-repeat) intentionally ignored
                     }
@@ -244,7 +246,8 @@ Item {
     }
 
     Component.onCompleted: {
-        console.log("[InputService] Starting keyboard discovery...")
+        // --- DEBUG ---
+        // console.log("[InputService] Starting keyboard discovery...")
         discoverProcess.running = true
     }
 }

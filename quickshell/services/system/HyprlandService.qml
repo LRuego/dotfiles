@@ -1,4 +1,4 @@
-// services/HyprlandService.qml
+// services/system/HyprlandService.qml
 pragma Singleton
 import QtQuick
 import Quickshell
@@ -10,8 +10,7 @@ Item {
     id: root
 
     // --- DATA EXPOSURE ---
-    // Using standard properties instead of aliases for global singletons
-    readonly property var workspaces: Hyprland.workspaces
+    readonly property var workspaces:       Hyprland.workspaces
     readonly property var focusedWorkspace: Hyprland.focusedWorkspace
 
     // --- COMPOSITOR EVENTS ---
@@ -23,7 +22,9 @@ Item {
                     "Hyprland",
                     "Configuration Reloaded",
                     Assets.hyprland,
-                    2500
+                    2500,
+                    "",
+                    true
                 );
             }
         }
