@@ -128,7 +128,7 @@ eval "$(zoxide init zsh)"
 
 # NVM
 export NVM_DIR="$HOME/.nvm"
-[ -s "/usr/share/nvm/init-nvm.sh" ] && . "/usr/share/nvm/init-nvm.sh"  # This loads nvm
+[ -s "/usr/share/nvm/init-nvm.sh" ] && . "/usr/share/nvm/init-nvm.sh"
 
 ## Custom Functions
 
@@ -147,7 +147,12 @@ gem() {
 
 # Load system-wide zsh plugins installed via pacman/paru
 # zsh-completions is loaded automatically from /usr/share/zsh/site-functions
-autoload -U compinit && compinit
+autoload -U compinit
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
