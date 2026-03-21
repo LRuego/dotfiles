@@ -1,10 +1,10 @@
 // components/menus/TailscaleMenu.qml
 import QtQuick
 import Quickshell
-import "../base"
-import "../../services/network"
-import "../../services/ui"
-import "../../core"
+import qs.components.base
+import qs.services.network
+import qs.services.ui
+import qs.core
 
 MenuPopup {
     id: root

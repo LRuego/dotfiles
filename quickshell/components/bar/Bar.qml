@@ -1,11 +1,8 @@
 // components/bar/Bar.qml
 import Quickshell
 import QtQuick
-import "../../core"
-import "../base"
-import "../../services/input"
-import "../../services/ui"
-import "."
+import qs.core
+import qs.components.base
 
 PanelWindow {
     id: root

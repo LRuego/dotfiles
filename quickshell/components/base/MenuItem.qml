@@ -1,7 +1,7 @@
 // components/base/MenuItem.qml
 import QtQuick
-import "../../core"
-import "../../services/ui"
+import qs.core
+import qs.services.ui
 
 Rectangle {
     id: root

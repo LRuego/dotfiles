@@ -1,6 +1,6 @@
 import QtQuick
-import "../base"
-import "../../core"
+import qs.components.base
+import qs.core
 
 MenuPopup {
     id: root

@@ -1,6 +1,6 @@
 // components/base/ModuleItem.qml
 import QtQuick
-import "../../core"
+import qs.core
 
 Item {
     id: root

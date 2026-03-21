@@ -1,11 +1,11 @@
 // components/bar/SystemResources.qml
 import QtQuick
 import Quickshell
-import "../../core"
-import "../base"
-import "../../services/input"
-import "../../services/system"
-import "../../services/ui"
+import qs.core
+import qs.components.base
+import qs.services.input
+import qs.services.system
+import qs.services.ui
 
 Module {
     id: root

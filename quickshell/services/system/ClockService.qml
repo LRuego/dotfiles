@@ -1,4 +1,4 @@
-// services/ClockService.qml
+// services/system/ClockService.qml
 pragma Singleton
 import QtQuick
 import Quickshell

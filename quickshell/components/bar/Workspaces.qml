@@ -2,10 +2,10 @@
 import QtQuick
 import QtQuick.Effects
 import Quickshell
-import "../../core"
-import "../../services/system"
-import "../../services/ui"
-import "../base"
+import qs.core
+import qs.services.system
+import qs.services.ui
+import qs.components.base
 
 Module {
     id: root

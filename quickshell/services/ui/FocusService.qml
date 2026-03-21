@@ -1,4 +1,4 @@
-// services/FocusService.qml
+// services/ui/FocusService.qml
 pragma Singleton
 import QtQuick
 import Quickshell

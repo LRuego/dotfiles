@@ -1,10 +1,10 @@
 // components/bar/Connectivity.qml
 import QtQuick
 import Quickshell
-import "../../core"
-import "../base"
-import "../../services/network"
-import "../../services/ui"
+import qs.core
+import qs.components.base
+import qs.services.network
+import qs.services.ui
 
 Module {
     id: root

@@ -2,9 +2,8 @@
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
-import "../../services/ui"
-import "../../core"
-import "../base"
+import qs.core
+import qs.components.base
 
 Module {
     id: root

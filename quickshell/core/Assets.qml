@@ -1,7 +1,6 @@
 // core/Assets.qml
 pragma Singleton
 import QtQuick
-import "."
 
 QtObject {
     function asset(path) {

@@ -1,6 +1,6 @@
 // components/base/ModuleDivider.qml
 import QtQuick
-import "../../core"
+import qs.core
 
 Rectangle {
     id: root

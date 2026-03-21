@@ -1,4 +1,4 @@
-// services/TailscaleService.qml
+// services/network/TailscaleService.qml
 pragma Singleton
 import QtQuick
 import Quickshell

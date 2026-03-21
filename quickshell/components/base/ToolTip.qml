@@ -1,7 +1,7 @@
 // components/base/ToolTip.qml
 import QtQuick
 import Quickshell
-import "../../core"
+import qs.core
 
 PopupWindow {
     id: root

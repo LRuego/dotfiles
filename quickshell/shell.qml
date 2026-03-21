@@ -3,14 +3,14 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
-import "./components/bar"
-import "./components/base"
-import "./components/notifications"
-import "./components/menus"
-import "./services/input"
-import "./services/system"
-import "./services/ui"
-import "./core"
+import qs.components.bar
+import qs.components.base
+import qs.components.notifications
+import qs.components.menus
+import qs.services.input
+import qs.services.system
+import qs.services.ui
+import qs.core
 
 ShellRoot {
     id: root

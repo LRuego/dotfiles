@@ -1,9 +1,9 @@
-// services/BarState.qml
+// services/ui/BarState.qml
 pragma Singleton
 import QtQuick
 import Quickshell
-import "../../core"
-import "../system"
+import qs.core
+import qs.services.system
 
 Item {
     id: root
@@ -24,7 +24,8 @@ Item {
 
     // --- ACTIONS ---
     function setMode(m) {
-        console.log("[BarState] Mode:", root.mode, "→", m)
+        // --- DEBUG ---
+        // console.log("[BarState] Mode:", root.mode, "→", m)
         root.mode = m
     }
 

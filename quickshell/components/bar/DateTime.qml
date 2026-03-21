@@ -1,9 +1,9 @@
 // components/bar/DateTime.qml
 import QtQuick
 import Quickshell
-import "../../core"
-import "../base"
-import "../../services/system"
+import qs.core
+import qs.components.base
+import qs.services.system
 
 Module {
     id: root

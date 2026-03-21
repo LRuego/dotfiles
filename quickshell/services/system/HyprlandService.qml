@@ -3,8 +3,8 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
-import "../../core"
-import "../ui"
+import qs.core
+import qs.services.ui
 
 Item {
     id: root

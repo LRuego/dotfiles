@@ -2,8 +2,8 @@
 import QtQuick
 import QtQuick.Effects
 import Quickshell.Widgets
-import "../../services/ui"
-import "../../core"
+import qs.services.ui
+import qs.core
 
 Row {
     id: root

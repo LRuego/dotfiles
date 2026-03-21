@@ -1,4 +1,4 @@
-// services/NetworkService.qml
+// services/network/NetworkService.qml
 pragma Singleton
 import QtQuick
 import Quickshell

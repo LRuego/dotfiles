@@ -1,4 +1,4 @@
-// services/GamemodeService.qml
+// services/system/GamemodeService.qml
 pragma Singleton
 import QtQuick
 import Quickshell
@@ -30,7 +30,8 @@ Item {
                 if (active !== root.isActive) {
                     root.isActive = active
                     applyHyprlandColors(active)
-                    console.log("[GamemodeService] Gamemode:", active ? "active" : "inactive")
+                    // --- DEBUG ---
+                    // console.log("[GamemodeService] Gamemode:", active ? "active" : "inactive")
                 }
             }
         }
@@ -93,5 +94,6 @@ Item {
         onTriggered: gamemodeProc.running = true
     }
 
-    Component.onCompleted: console.log("[GamemodeService] Loaded.")
+    // --- DEBUG ---
+    // Component.onCompleted: console.log("[GamemodeService] Loaded.")
 }

@@ -1,4 +1,4 @@
-// services/AudioService.qml
+// services/system/AudioService.qml
 pragma Singleton
 import QtQuick
 import Quickshell

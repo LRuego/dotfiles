@@ -1,9 +1,9 @@
-// services/ThemeState.qml
+// services/ui/ThemeState.qml
 pragma Singleton
 import QtQuick
 import Quickshell
-import "../../core"
-import "../system"
+import qs.core
+import qs.services.system
 
 Item {
     id: root

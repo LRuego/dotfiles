@@ -1,4 +1,4 @@
-// services/BluetoothService.qml
+// services/network/BluetoothService.qml
 pragma Singleton
 import QtQuick
 import Quickshell
