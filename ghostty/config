@@ -7,11 +7,14 @@
 # By LRuego
 # --------------------------------------------------------------------------
 
+# --- Performance ---
+gtk-single-instance = true
+
 # --- Fonts ---
 font-family = "Fira Code"
-font-family-bold = "Fira Code"
+font-family-bold = "Fira Code Bold"
 font-family-italic = "Maple Mono"
-font-family-bold-italic = "Maple Mono"
+font-family-bold-italic = "Maple Mono Bold Italic"
 font-family = "Symbols Nerd Font"
 font-size = 10
 # adjust-underline-position = 4
@@ -57,10 +60,10 @@ keybind = alt+shift+w=close_surface
 keybind = alt+shift+f=toggle_split_zoom
 
 # Splits: Navigation (Alt+Shift)
-keybind = global:alt+shift+h=goto_split:left
-keybind = global:alt+shift+j=goto_split:bottom
-keybind = global:alt+shift+k=goto_split:top
-keybind = global:alt+shift+l=goto_split:right
+keybind = alt+shift+h=goto_split:left
+keybind = alt+shift+j=goto_split:bottom
+keybind = alt+shift+k=goto_split:top
+keybind = alt+shift+l=goto_split:right
 
 # Splits: Resizing (Alt+Ctrl)
 keybind = alt+ctrl+h=resize_split:left,10
