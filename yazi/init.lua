@@ -28,4 +28,6 @@ pref_by_location:setup({
 
 require("recycle-bin"):setup()
 require("restore"):setup()
-require("starship"):setup()
+require("starship"):setup({
+    config_file = "~/.config/starship/starship-yazi.toml",
+})

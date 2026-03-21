@@ -1,7 +1,13 @@
+# Shortcut to Gemini Folder
+[[mgr.prepend_keymap]]
+on = ["g", "G"]
+run = "cd /home/lruego/Gemini"
+desc = "Open Gemini"
+
 # N → open in Nemo
 [[mgr.prepend_keymap]]
-on = ["N"]
-run = "shell 'nemo \"$CWD\"' --block"
+on = ["n"]
+run = "shell 'nemo \"$cwd\"' --block"
 desc = "Open in Nemo"
 
 # jump-to-char

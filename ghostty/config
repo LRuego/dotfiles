@@ -7,6 +7,8 @@
 # By LRuego
 # --------------------------------------------------------------------------
 
+shell-integration = zsh
+
 # --- Performance ---
 gtk-single-instance = true
 

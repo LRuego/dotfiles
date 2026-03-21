@@ -1,0 +1,43 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+[](fg:#7aa2f7)\
+[](bg:#7aa2f7 fg:#1a1b26)\
+$username\
+[](bg:#3B4261 fg:#7aa2f7)\
+$directory\
+[](fg:#3B4261)\
+"""
+
+right_format = """$time"""
+
+[username]
+style_user = "fg:#1a1b26 bg:#7aa2f7"
+style_root = "fg:#f7768e"
+format = '[ $user ]($style)'
+disabled = false
+show_always = true
+
+[directory]
+style = "fg:#7aa2f7 bg:#3B4261"
+format = "[ $path ]($style)"
+truncation_length = 0
+truncate_to_repo = false
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+
+[git_branch]
+disabled = true
+
+[git_status]
+disabled = true
+
+[time]
+disabled = false
+time_format = "%R" # Hour:Minute Format
+style = "bg:#3d59a1"
+format = '[[ $time ](fg:#a0a9cb bg:#3d59a1)]($style)'
