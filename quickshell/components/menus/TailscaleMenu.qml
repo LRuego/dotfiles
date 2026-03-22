@@ -1,89 +1,104 @@
 // components/menus/TailscaleMenu.qml
 import QtQuick
 import Quickshell
+import Quickshell.Widgets
 import qs.components.base
 import qs.services.network
+import qs.services.system
 import qs.services.ui
 import qs.core
 
 MenuPopup {
     id: root
-    
-    // Bind to the service state
-    open: TailscaleService.menuOpen
-    anchorItem: TailscaleService.menuAnchor
-    menuWidth: 250
 
-    // React to the global dismissal
+    open:       TailscaleService.menuOpen
+    anchorItem: TailscaleService.menuAnchor
+    menuWidth:  260
+
     onDismissed: TailscaleService.menuOpen = false
 
-    // --- CONTENT ---
-    
-    // 1. Header
+    // --- HEADER ---
     Item {
-        width: parent.width
-        height: 32
+        width:  parent.width
+        height: 36
 
         Row {
-            anchors.top: parent.top
-            spacing: 12
+            anchors.verticalCenter: parent.verticalCenter
+            spacing:                10
 
-            IconLabel {
-                id: tsMenuIcon
-                icon: Assets.tailscaleOn 
-                iconSize: 32
-                iconWidth: 32 
-                anchors.top: parent.top
+            IconImage {
+                id:          tsIcon
+                source:      TailscaleService.active ? Assets.tailscaleOn : Assets.tailscaleOff
+                implicitSize: 28
+                smooth:      true
+                mipmap:      true
+                anchors.verticalCenter: parent.verticalCenter
+
+                layer.enabled: true
+                layer.effect: null
+
+                MouseArea {
+                    width:       parent.width
+                    height:      parent.height
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked:   TailscaleService.toggle()
+                }
             }
 
             Column {
-                anchors.top: parent.top
-                anchors.topMargin: -4 
-                spacing: 0
-                
+
                 Text {
-                    text: "Tailscale"
-                    color: Theme.primary
-                    font.family: Theme.fontFamily
+                    text:           "Tailscale"
+                    color:          ThemeState.accent
+                    font.family:    Theme.fontFamily
                     font.pixelSize: Theme.fontSizeLarge
-                    font.bold: true
+                    font.bold:      true
                 }
+
                 Text {
-                    text: TailscaleService.connected ? "Connected" : "Disconnected"
-                    color: Theme.subtext
-                    font.family: Theme.fontFamily
+                    text:           TailscaleService.transitioning
+                                        ? "Connecting..."
+                                        : TailscaleService.active ? "Connected" : "Disconnected"
+                    color:          Theme.subtext
+                    font.family:    Theme.fontFamily
                     font.pixelSize: Theme.fontSizeSmall
                 }
             }
         }
     }
-    
-    // 2. Divider
-    Rectangle { 
-        width: parent.width 
-        height: 1 
-        color: Theme.overlay 
+
+    // --- DIVIDER ---
+    Rectangle {
+        width:   parent.width
+        height:  1
+        color:   Theme.overlay
         visible: TailscaleService.connected
     }
 
-    // 3. Peer List
+    // --- PEER LIST ---
     ListView {
-        width: parent.width
-        // SMART HEIGHT
-        property int visibleItems: 5
-        property int maxListHeight: (36 * visibleItems) + (spacing * (visibleItems - 1))
-        
-        height: Math.min(maxListHeight, contentHeight)
-        model: TailscaleService.peers
-        clip: true
-        spacing: 4
+        id:      peerList
+        width:   parent.width
         visible: TailscaleService.connected
+        clip:    true
+        spacing: 2
+
+        property int maxVisible: 5
+        height: {
+            if (count <= maxVisible) return contentHeight
+            let item = contentItem.children[0]
+            if (!item) return maxVisible * 48
+            return (item.height * maxVisible) + (spacing * (maxVisible - 1))
+        }
+
+        model: TailscaleService.peers
 
         delegate: MenuItem {
-            id: peerItem
-            
+            id:    peerItem
+            width: ListView.view.width
+
             readonly property string lastSeenStr: {
-                if (modelData.online || modelData.lastSeen === "0001-01-01T00:00:00Z") return "Connected"
+                if (modelData.online || modelData.lastSeen === "0001-01-01T00:00:00Z") return "Online"
                 return Qt.formatDateTime(new Date(modelData.lastSeen), "MMM d, h:mm AP")
             }
 
@@ -94,36 +109,111 @@ MenuPopup {
                 return Assets.desktop
             }
 
-            tooltip: "IP: " + modelData.ip + (lastSeenStr !== "Connected" ? "\nLast: " + lastSeenStr : "")
-            
             onClicked: (button) => {
                 if (button === Qt.LeftButton) {
-                    console.log("Clicked peer: " + modelData.name)
+                    UtilService.copyToClipboard(modelData.ip)
+                    NotificationService.notify(
+                        "Tailscale",
+                        "Copied " + modelData.ip,
+                        Assets.tailscaleIcon,
+                        1500,
+                        "",
+                        true
+                    )
                 }
             }
 
-            // Call the GLOBAL tooltip instance
             onHoveredChanged: {
-                if (hovered && tooltip !== "") {
-                  globalTooltip.show(peerItem, tooltip, peerItem.mouseX, peerItem.mouseY, {
-                      followCursor: false,
-                      direction: Edges.Top,
-                      delay: 0
-                  });
+                if (hovered) {
+                    globalTooltip.show(peerItem, lastSeenStr)
                 } else {
-                    globalTooltip.hide(peerItem);
+                    globalTooltip.hide(peerItem)
                 }
             }
 
-            IconLabel {
-                labelSpacing: 12
-                icon: peerItem.peerIcon
-                iconColor: modelData.online ? Theme.success : Theme.overlay
-                colorize: true
-                text: modelData.name
-                textColor: modelData.isSelf ? ThemeState.accent : ThemeState.text
-                textBold: modelData.isSelf
+            Row {
+                spacing: 10
+
+                IconLabel {
+                    icon:      peerItem.peerIcon
+                    iconSize:  20
+                    iconWidth: 20
+                    colorize:  true
+                    iconColor: modelData.online ? Theme.success : Theme.overlay
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Column {
+                    spacing: 1
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    Row {
+                        spacing: 6
+
+                        Text {
+                            text:           modelData.name
+                            color:          modelData.isSelf ? ThemeState.accent : ThemeState.text
+                            font.family:    Theme.fontFamily
+                            font.pixelSize: Theme.fontSizeSmall
+                            font.bold:      modelData.isSelf
+                        }
+
+                        Rectangle {
+                            visible:                modelData.isExitNode
+                            width:                  exitLabel.implicitWidth + 6
+                            height:                 exitLabel.implicitHeight + 2
+                            radius:                 height / 2
+                            color:                  modelData.isActiveExitNode ? ThemeState.accent : Theme.overlay
+                            anchors.verticalCenter: parent.verticalCenter
+
+                            Text {
+                                id:               exitLabel
+                                anchors.centerIn: parent
+                                text:             "exit"
+                                color:            modelData.isActiveExitNode ? Theme.base : Theme.subtext
+                                font.family:      Theme.fontFamily
+                                font.pixelSize:   Theme.fontSizeTiny
+                                font.bold:        true
+                            }
+                        }
+                    }
+
+                    Text {
+                        text:           modelData.ip
+                        color:          Theme.subtext
+                        font.family:    Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeTiny
+                    }
+                }
             }
+        }
+    }
+
+    // --- DIVIDER ---
+    Rectangle {
+        width:  parent.width
+        height: 1
+        color:  Theme.overlay
+    }
+
+    // --- FOOTER ---
+    MenuItem {
+        width: parent.width
+
+        onClicked: (button) => {
+            if (button === Qt.LeftButton)
+                UtilService.openUrl("https://login.tailscale.com/admin")
+        }
+
+        IconLabel {
+            icon:      Assets.tailscaleIcon
+            iconSize:  Theme.fontSizeSmall
+            iconWidth: Theme.fontSizeSmall
+            colorize:  true
+            iconColor: Theme.subtext
+            text:      "Open Admin Console"
+            textSize:  Theme.fontSizeSmall
+            textColor: Theme.subtext
         }
     }
 }

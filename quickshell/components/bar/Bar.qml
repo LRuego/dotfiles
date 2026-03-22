@@ -57,6 +57,7 @@ PanelWindow {
             }
             spacing: 10
 
+            Tray {}
             SystemResources {}
             Volume {}
             Connectivity {}

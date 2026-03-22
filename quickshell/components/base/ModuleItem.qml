@@ -87,4 +87,7 @@ Item {
         // Pass only the direction boolean to the signal
         onWheel: (wheel) => root.wheeled(wheel.angleDelta.y > 0)
     }
+
+    readonly property real mouseX: mouse.mouseX
+    readonly property real mouseY: mouse.mouseY
 }
