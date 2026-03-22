@@ -25,8 +25,8 @@ Module {
     readonly property string micIcon: AudioService.isMicMuted ? Assets.microphoneMute : Assets.microphone
 
     readonly property color micColor: {
-        if (AudioService.isMicMuted)   return Theme.urgent
-        if (AudioService.isMicActive)  return Theme.warning
+        if (AudioService.isMicMuted)       return Theme.urgent
+        if (PrivacyService.micActive)      return Theme.warning
         return ThemeState.text
     }
 
@@ -51,7 +51,7 @@ Module {
     }
 
     ModuleItem {
-        isHidden: !(volItem.hovered || hovered || AudioService.isMicActive || BarState.peekMode)
+        isHidden: !(volItem.hovered || hovered || PrivacyService.micActive || BarState.peekMode)
         onClicked: AudioService.toggleMic()
         onWheeled: (isUp) => AudioService.adjustMicVolume(isUp)
 

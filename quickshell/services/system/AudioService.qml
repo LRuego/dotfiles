@@ -24,35 +24,6 @@ Item {
     readonly property int micVolume: Math.round((root.source?.audio?.volume ?? 0) * 100)
     readonly property bool isMicMuted: root.source?.audio?.muted ?? true
 
-    // --- RECORDING DETECTION (Via privacy_dots.sh) ---
-    property bool micActiveState: false
-
-    Process {
-        id: micProcess
-        // We run the script in a loop because it's currently built to output once and exit.
-        command: [Qt.resolvedUrl("../../scripts/privacy_dots.sh")]
-        stdout: SplitParser {
-            onRead: function(data) {
-                try {
-                    const json = JSON.parse(data)
-                    root.micActiveState = json.class && json.class.includes("mic-on")
-                } catch (e) {
-                    root.micActiveState = false
-                }
-            }
-        }
-    }
-
-    Timer {
-        interval: 2000
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: micProcess.running = true
-    }
-
-    readonly property bool isMicActive: micActiveState
-
     // --- ACTIONS ---
     function toggleMute() {
         if (root.sink?.audio) root.sink.audio.muted = !root.sink.audio.muted
