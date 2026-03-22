@@ -8,47 +8,49 @@ QtObject {
     }
 
     // --- LOGOS ---
-    readonly property string quickshell: asset("system/quickshell.svg")
-    readonly property string hyprland: asset("system/hyprland.svg")
-    readonly property string notificationFallback: asset("system/notification-fallback.svg")
+    readonly property string quickshell:            asset("app/quickshell.svg")
+    readonly property string hyprland:              asset("app/hyprland.svg")
+    readonly property string hamr:                  asset("app/hamr.png")
+    readonly property string notificationFallback:  asset("ui/notification-fallback.svg")
+    readonly property string steam:                 asset("app/steam.svg")
 
     // --- DEVICES ---
-    readonly property string desktop: asset("system/device-desktop.svg")
-    readonly property string server: asset("system/device-server.svg")
-    readonly property string smartphone: asset("system/device-smartphone.svg")
+    readonly property string desktop:               asset("system/device-desktop.svg")
+    readonly property string server:                asset("system/device-server.svg")
+    readonly property string smartphone:            asset("system/device-smartphone.svg")
 
     // --- DATE & TIME ---
-    readonly property string clock:  asset("system/clock.svg")
-    readonly property string calendar:  asset("system/calendar.svg")
+    readonly property string clock:                 asset("ui/clock.svg")
+    readonly property string calendar:              asset("ui/calendar.svg")
 
     // --- AUDIO ---
-    readonly property string volume:  asset("system/volume.svg")
-    readonly property string volumeMute:  asset("system/volume-mute.svg")
-    readonly property string volumeDown:  asset("system/volume-down.svg")
-    readonly property string volumeUp:  asset("system/volume-up.svg")
-    readonly property string microphone:  asset("system/microphone.svg")
-    readonly property string microphoneMute:  asset("system/microphone-mute.svg")
+    readonly property string volume:                asset("ui/volume.svg")
+    readonly property string volumeMute:            asset("ui/volume-mute.svg")
+    readonly property string volumeDown:            asset("ui/volume-down.svg")
+    readonly property string volumeUp:              asset("ui/volume-up.svg")
+    readonly property string microphone:            asset("ui/microphone.svg")
+    readonly property string microphoneMute:        asset("ui/microphone-mute.svg")
 
     // --- CONNECTIVITY ---
-    readonly property string bluetooth : asset("system/bluetooth.svg")
-    readonly property string bluetoothOff : asset("system/bluetooth-disconnected.svg")
-    readonly property string networkOff: asset("system/disconnected.svg")
-    readonly property string networkWired: asset("system/network-wired.svg")
-    readonly property string networkWireless: asset("system/wifi.svg")
-    readonly property string tailscaleIcon:  asset("system/tailscale-icon.svg")
-    readonly property string tailscaleOn:  asset("system/tailscale-on.svg")
-    readonly property string tailscaleOff: asset("system/tailscale-off.svg")
+    readonly property string bluetooth:             asset("system/bluetooth.svg")
+    readonly property string bluetoothOff:          asset("system/bluetooth-disconnected.svg")
+    readonly property string networkOff:            asset("system/disconnected.svg")
+    readonly property string networkWired:          asset("system/network-wired.svg")
+    readonly property string networkWireless:       asset("system/wifi.svg")
+    readonly property string tailscaleIcon:         asset("app/tailscale-icon.svg")
+    readonly property string tailscaleOn:           asset("app/tailscale-on.svg")
+    readonly property string tailscaleOff:          asset("app/tailscale-off.svg")
 
     // --- SYSTEM RESOURCES ---
-    readonly property string cpu: asset("system/cpu.svg")
-    readonly property string ram: asset("system/ram.svg")
-    readonly property string gpu: asset("system/gpu.svg")
+    readonly property string cpu:                   asset("system/cpu.svg")
+    readonly property string ram:                   asset("system/ram.svg")
+    readonly property string gpu:                   asset("system/gpu.svg")
 
     // --- NOTIFICATIONS ---
-    readonly property string inbox: asset("system/inbox.svg")
+    readonly property string inbox:                 asset("ui/inbox.svg")
 
     function get(name) {
-        // Fallback search logic: try system/ first, then root
+        // Fallback search logic: try system/ first, then app/, then ui/
         return asset("system/" + name + (name.includes(".") ? "" : ".svg"));
     }
 }
