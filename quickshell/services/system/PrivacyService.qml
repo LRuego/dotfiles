@@ -19,8 +19,7 @@ Item {
     property string scrApp: ""
 
     // --- SCRIPT ---
-    property string _homeDir: Quickshell.env("HOME") || ""
-    property string _scriptPath: _homeDir + "/.config/quickshell/scripts/privacy_dots.sh"
+    property string _scriptPath: Qt.resolvedUrl("../../scripts/privacy_dots.sh").toString().replace("file://", "")
 
     Process {
         id: privacyProcess

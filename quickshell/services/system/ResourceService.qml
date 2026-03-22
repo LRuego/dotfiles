@@ -23,7 +23,7 @@ Item {
     // --- DYNAMIC PATHS ---
     property string cpuTempPath: ""
     property string gpuTempPath: ""
-
+    property string _scriptPath: Qt.resolvedUrl("../../scripts/system_resources.sh").toString().replace("file://", "")
     Component.onCompleted: findPathsProcess.running = true
 
     // --- PATH DISCOVERY ---
@@ -44,17 +44,7 @@ Item {
     // --- STATS PROCESS ---
     Process {
         id: statsProcess
-        command: [
-            "bash", "-c",
-            "grep 'cpu ' /proc/stat; " +
-            "echo \"STATS:{\\\"mem\\\":$(free | awk '/Mem:/ {print int($3/$2 * 100)}'), " +
-            "\\\"mu\\\":$(free -b | awk '/Mem:/ {print $3}'), " +
-            "\\\"gpu\\\":$(cat /sys/class/drm/card1/device/gpu_busy_percent 2>/dev/null || cat /sys/class/drm/card0/device/gpu_busy_percent 2>/dev/null || echo 0), " +
-            "\\\"vru\\\":$(cat /sys/class/drm/card1/device/mem_info_vram_used 2>/dev/null || cat /sys/class/drm/card0/device/mem_info_vram_used 2>/dev/null || echo 0), " +
-            "\\\"vrt\\\":$(cat /sys/class/drm/card1/device/mem_info_vram_total 2>/dev/null || cat /sys/class/drm/card0/device/mem_info_vram_total 2>/dev/null || echo 0), " +
-            "\\\"ct\\\":$(cat " + root.cpuTempPath + " 2>/dev/null || echo 0), " +
-            "\\\"gt\\\":$(cat " + root.gpuTempPath + " 2>/dev/null || echo 0)}\""
-        ]
+        command: ["bash", root._scriptPath, root.cpuTempPath, root.gpuTempPath]
         stdout: SplitParser {
             onRead: data => {
                 let lines = data.split("\n")
