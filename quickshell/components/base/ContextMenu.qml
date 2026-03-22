@@ -19,6 +19,8 @@ PopupWindow {
     signal dismissed()
     signal closedAll()
 
+    onDismissed: root.open = false
+
     // --- WINDOW CONFIG ---
     anchor {
         item:        root.anchorItem
