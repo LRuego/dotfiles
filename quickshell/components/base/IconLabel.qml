@@ -39,8 +39,8 @@ Row {
 
     spacing:                      labelSpacing
 
-    readonly property bool isImageIcon: icon.includes(".") || icon.includes("/")
-    readonly property bool isThemeIcon: icon !== "" && !isImageIcon && icon.length > 3
+    readonly property bool isImageIcon: icon.includes("/") || icon.includes("://")
+    readonly property bool isThemeIcon: icon !== "" && !isImageIcon && icon.length > 2
 
     // ONLY ONE ICONIMAGE
     IconImage {

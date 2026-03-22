@@ -15,6 +15,22 @@ Item {
     property int  historyMax:     100
     property bool dnd:            false
 
+
+    // --- APP RULES ---
+    // Add entries here to customize per-app notification behavior.
+    // match:     matched against appName and summary (case-insensitive)
+    // transient: if true, shows popup but never stores in history
+    // icon:      overrides the resolved icon (use "" to keep default routing)
+    property var appRules: []
+
+    Component.onCompleted: {
+        appRules = [
+            { match: "satty", transient: true, icon: "satty" },
+            { match: "hamr-gtk", transient: true, icon: Assets.hamr }
+        ]
+        mkdirProcess.running = true
+    }
+
     // --- STATE ---
     property ListModel popupList:     ListModel {}
     property ListModel historyList:   ListModel {}
@@ -98,8 +114,6 @@ Item {
         historyFile.setText(JSON.stringify(entries, null, 2));
     }
 
-    Component.onCompleted: mkdirProcess.running = true
-
     // --- TIMER COMPONENT ---
     Component {
         id: timerComponent
@@ -126,13 +140,27 @@ Item {
             n.closed.connect(() => root.removeFromPopup(n.id));
 
             let isTransientHint = (n.hints && n.hints["transient"]) ? true : false;
+            let rawAppName      = n.appName ? String(n.appName).toLowerCase() : "";
+            let rawSummary      = n.summary ? String(n.summary).toLowerCase() : "";
+
+            // --- APP RULES LOOKUP ---
+            let rule = null;
+            for (let r = 0; r < root.appRules.length; r++) {
+                let m = root.appRules[r].match.toLowerCase();
+                if (rawAppName.includes(m) || rawSummary.includes(m)) {
+                    rule = root.appRules[r];
+                    break;
+                }
+            }
+            if (rule?.transient) isTransientHint = true;
 
             // --- ICON ROUTING ---
             let safeIconPath = "";
             let rawAppIcon   = (n.appIcon && typeof n.appIcon === "string") ? n.appIcon : "";
-            let rawAppName   = n.appName ? String(n.appName).toLowerCase() : "";
 
-            if (rawAppIcon.startsWith("image://quickshell") || rawAppIcon === "") {
+            if (rule?.icon !== undefined && rule.icon !== "") {
+                safeIconPath = rule.icon;
+            } else if (rawAppIcon.startsWith("image://quickshell") || rawAppIcon === "") {
                 if (rawAppName === "tailscale" || rawAppName === "tailscale-drop") {
                     safeIconPath = Assets.tailscaleIcon;
                 } else if (rawAppName !== "" && rawAppName !== "notify-send") {
