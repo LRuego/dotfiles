@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import qs.core
 import qs.components.base
+import qs.components.menus
 import qs.services.system
 
 Module {
@@ -25,12 +26,12 @@ Module {
     }
     ModuleItem {
         id: calendarItem
+
         onClicked: (button) => {
-            if (typeof sampleMenu !== "undefined") {
-                sampleMenu.anchorItem = calendarItem
-                sampleMenu.open = !sampleMenu.open
-            }
+            if (button === Qt.LeftButton)
+                calendarPopup.open = !calendarPopup.open
         }
+
         IconLabel {
             labelBold:    true
             icon:         Assets.calendar
@@ -39,6 +40,11 @@ Module {
             text:         ClockService.date
             textFont:     root.textFont
             textSize:     root.textSize
+        }
+        
+        CalendarPopup {
+            id:         calendarPopup
+            anchorItem: calendarItem
         }
     }
 }
