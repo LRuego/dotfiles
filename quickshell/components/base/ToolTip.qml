@@ -42,14 +42,14 @@ PopupWindow {
 
     // --- API ---
     function show(item, content) {
-        if (root.anchorItem === item && root.text === content) return
+        if (root.visible && root.anchorItem === item && root.text === content) return
         root.anchorItem = item
         root.text       = content
         delayTimer.restart()
     }
 
     function hide(item) {
-        if (item === undefined || root.anchorItem === item) {
+        if (item === null || item === undefined || root.anchorItem === item) {
             delayTimer.stop()
             root.visible = false
         }
