@@ -15,7 +15,6 @@ Item {
     property int  historyMax:     100
     property bool dnd:            false
 
-
     // --- APP RULES ---
     // Add entries here to customize per-app notification behavior.
     // match:     matched against appName and summary (case-insensitive)
@@ -25,7 +24,7 @@ Item {
 
     Component.onCompleted: {
         appRules = [
-            { match: "satty", transient: true, icon: "satty" },
+            { match: "satty",    transient: true, icon: "satty" },
             { match: "hamr-gtk", transient: true, icon: Assets.hamr }
         ]
         mkdirProcess.running = true
@@ -83,7 +82,6 @@ Item {
         }
 
         onLoadFailed: (error) => {
-            // First run only — file gets created here and warning never appears again
             console.log("[NotificationService] History file not found, creating fresh.");
             historyFile.setText("[]");
         }
@@ -197,13 +195,20 @@ Item {
             // 3. image-path hint
             if (previewImage === "" && n.hints) {
                 let hintPath = n.hints["image-path"] || n.hints["image_path"];
-                if (hintPath
-                        && typeof hintPath === "string"
-                        && !hintPath.startsWith("image://qsimage")
-                        && (hintPath.startsWith("/") || hintPath.startsWith("file://"))
-                        && (root._homeDir === "" || hintPath.startsWith(root._homeDir) || hintPath.startsWith("file://" + root._homeDir))) {
-                    previewImage = hintPath;
+                if (hintPath && typeof hintPath === "string") {
+                    // Strip trailing metadata like " (16935235 bytes)" appended by notify-send
+                    hintPath = hintPath.replace(/\s+\(\d+\s+bytes\)\s*$/, "")
+                    if (!hintPath.startsWith("image://qsimage")
+                            && (hintPath.startsWith("/") || hintPath.startsWith("file://"))
+                            && (root._homeDir === "" || hintPath.startsWith(root._homeDir) || hintPath.startsWith("file://" + root._homeDir))) {
+                        previewImage = hintPath;
+                    }
                 }
+            }
+
+            // 4. Encode spaces in file paths for QQuickImage
+            if (previewImage !== "") {
+                previewImage = previewImage.replace(/ /g, "%20")
             }
 
             let ms      = n.expireTimeout <= 0 ? root.defaultTimeout : n.expireTimeout;
