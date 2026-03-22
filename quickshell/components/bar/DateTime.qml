@@ -13,7 +13,21 @@ Module {
     property string textFont:     Theme.fontFamilyAlt
 
     ModuleItem {
-        onClicked: console.log("Time Clicked!")
+        id: timeItem
+
+        onClicked: (button) => {
+            if (button === Qt.RightButton) timeContextMenu.open = !timeContextMenu.open
+        }
+
+        ContextMenu {
+            id:         timeContextMenu
+            anchorItem: timeItem
+            model: [
+                { text: "Copy Time", action: () => UtilService.copyToClipboard(ClockService.time) },
+                { text: "Copy Date", action: () => UtilService.copyToClipboard(ClockService.date) }
+            ]
+        }
+
         IconLabel {
             labelBold:    true
             icon:         Assets.clock

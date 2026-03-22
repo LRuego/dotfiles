@@ -1,0 +1,26 @@
+// core/UserConfig.template
+// Copy this file to UserConfig.qml and fill in your values before running.
+pragma Singleton
+import QtQuick
+
+Item {
+    // Holiday calendar ICS URL from Google Calendar
+    // How to get yours:
+    // 1. Go to https://calendar.google.com
+    // 2. On the left sidebar, find "Other calendars" and click the + button
+    // 3. Browse "Browse calendars of interest" → Holidays → select your country
+    // 4. Go to Settings → click your holiday calendar → scroll to "Integrate calendar"
+    // 5. Copy the "Secret address in iCal format" or "Public address in iCal format"
+    // 6. Paste it below
+    property string holidayCalendarUrl: ""
+
+    // First day of week: 0 = Sunday, 1 = Monday
+    property int firstDayOfWeek: 0
+
+    // Weather — city name is resolved to coordinates automatically on startup
+    // Examples: "New York", "Los Angeles", "London", "Tokyo"
+    property string city: "New York"
+
+    // Temperature unit: "celsius" or "fahrenheit"
+    property string temperatureUnit: "fahrenheit"
+}
