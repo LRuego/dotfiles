@@ -21,10 +21,6 @@ Item {
     property var    peers:   []
     property string _buffer: ""
 
-    // --- MENU POSITIONING ---
-    property bool menuOpen:   false
-    property var  menuAnchor: null
-
     // --- LOGIC ---
     Process {
         id: tailscaleProc
@@ -147,12 +143,6 @@ Item {
     }
 
     // --- ACTIONS ---
-    function openMenu(item) {
-        if (item !== undefined) root.menuAnchor = item;
-        menuOpen = !menuOpen;
-        if (menuOpen) tailscaleProc.running = true;
-    }
-
     function toggle() {
         if (transitioning) return;
         transitioning = true;

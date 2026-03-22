@@ -14,6 +14,7 @@ PopupWindow {
     default property alias content: menuColumn.data
 
     signal dismissed()
+    onDismissed: root.open = false
 
     // --- WINDOW CONFIG ---
     anchor {

@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import qs.core
 import qs.components.base
+import qs.components.menus
 import qs.services.network
 import qs.services.ui
 
@@ -27,11 +28,16 @@ Module {
     ModuleItem {
         id: tsModule
         onClicked: (button) => {
-            if (button === Qt.RightButton) {
-                TailscaleService.openMenu(tsModule)
-            } else {
+            if (button === Qt.LeftButton) {
                 TailscaleService.toggle()
+            } else if (button === Qt.RightButton) {
+                tsPopup.open = !tsPopup.open
             }
+        }
+
+        TailscalePopup {
+            id:         tsPopup
+            anchorItem: tsModule
         }
 
         IconLabel {
@@ -40,7 +46,7 @@ Module {
 
             SequentialAnimation on opacity {
                 running: TailscaleService.transitioning
-                loops: Animation.Infinite
+                loops:   Animation.Infinite
                 NumberAnimation { from: 1.0; to: 0.4; duration: 800; easing.type: Easing.InOutQuad }
                 NumberAnimation { from: 0.4; to: 1.0; duration: 800; easing.type: Easing.InOutQuad }
             }
@@ -55,7 +61,6 @@ Module {
             iconColor:  root.netColor
             colorize:   true
             iconWidth:  Theme.fontSize
-
             showText:   parent.hovered || BarState.peekMode
             text:       NetworkService.ssid
             textColor:  root.netColor

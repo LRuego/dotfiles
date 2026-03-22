@@ -25,10 +25,6 @@ ShellRoot {
         sourceComponent: NotificationCenter {}
     }
 
-    // Menus
-    TailscaleMenu {}
-    SampleMenu { id: sampleMenu }
-
     // Global Components
     ToolTip { id: globalTooltip }
 

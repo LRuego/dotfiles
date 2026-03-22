@@ -1,4 +1,4 @@
-// components/menus/TailscaleMenu.qml
+// components/menus/TailscalePopup.qml
 import QtQuick
 import Quickshell
 import Quickshell.Widgets
@@ -11,11 +11,7 @@ import qs.core
 MenuPopup {
     id: root
 
-    open:       TailscaleService.menuOpen
-    anchorItem: TailscaleService.menuAnchor
     menuWidth:  260
-
-    onDismissed: TailscaleService.menuOpen = false
 
     // --- HEADER ---
     Item {
