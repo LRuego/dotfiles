@@ -9,12 +9,28 @@ import qs.components.base
 Module {
     id: root
 
+    property var trayRules: []
+
+    Component.onCompleted: {
+        trayRules = [
+            { match: "steam", icon: Assets.steam }
+        ]
+    }
+
     Repeater {
         model: SystemTray.items
 
         ModuleItem {
             id:           trayItem
             required property var modelData
+
+            readonly property string resolvedIcon: {
+                let itemId = trayItem.modelData.id.toLowerCase()
+                for (let i = 0; i < trayRules.length; i++) {
+                    if (itemId.includes(trayRules[i].match)) return trayRules[i].icon
+                }
+                return trayItem.modelData.icon
+            }
 
             onClicked: (button) => {
                 if (button === Qt.RightButton && trayItem.modelData.hasMenu) {
@@ -29,17 +45,18 @@ Module {
             onWheeled: (isUp) => trayItem.modelData.scroll(isUp ? 1 : -1, false)
 
             ContextMenu {
-                id:         trayMenu
-                open:       false
-                anchorItem: trayItem
-                menuHandle: trayItem.modelData.menu
-                menuWidth:  220
+                id:          trayMenu
+                open:        false
+                anchorItem:  trayItem
+                menuHandle:  trayItem.modelData.menu
+                menuWidth:   220
                 onDismissed: trayMenu.open = false
             }
 
             IconLabel {
-                icon:     trayItem.modelData.icon
+                icon:     trayItem.resolvedIcon
                 iconSize: Theme.fontSizeSmall
+                colorize: false
             }
         }
     }
