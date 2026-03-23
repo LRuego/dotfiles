@@ -1,4 +1,4 @@
-// components/menus/TailscalePopup.qml
+// components/popups/TailscalePopup.qml
 import QtQuick
 import Quickshell
 import Quickshell.Widgets

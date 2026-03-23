@@ -1,4 +1,4 @@
-// components/menus/CalendarPopup.qml
+// components/popups/CalendarPopup.qml
 import QtQuick
 import Quickshell
 import qs.components.base
