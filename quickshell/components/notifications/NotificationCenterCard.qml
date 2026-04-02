@@ -121,7 +121,7 @@ Rectangle {
 
             // --- TEXT ---
             Column {
-                width:                  parent.width - 28 - dismissButton.width - 20
+                width:                  parent.width - 28 - 10
                 spacing:                2
                 anchors.verticalCenter: parent.verticalCenter
 
@@ -155,29 +155,6 @@ Rectangle {
                 }
             }
 
-            // --- DISMISS BUTTON ---
-            Rectangle {
-                id:                     dismissButton
-                width:                  24
-                height:                 24
-                radius:                 12
-                color:                  dismissArea.containsMouse ? ThemeState.border : "transparent"
-                anchors.verticalCenter: parent.verticalCenter
-
-                Text {
-                    anchors.centerIn: parent
-                    text:             "✕"
-                    color:            Theme.subtext
-                    font.pixelSize:   Theme.fontSizeSmall
-                }
-
-                MouseArea {
-                    id:           dismissArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked:    NotificationService.dismissHistory(root.appName)
-                }
-            }
         }
 
         // --- IMAGE PREVIEW ---
@@ -220,6 +197,31 @@ Rectangle {
                 font.pixelSize: Theme.fontSizeSmall
                 font.italic:    true
             }
+        }
+    }
+
+    // --- HOVER TINT ---
+    Rectangle {
+        anchors.fill: parent
+        radius:       Theme.cornerRadius
+        color:        cardArea.containsMouse ? Qt.rgba(1, 1, 1, 0.03) : "transparent"
+        border.width: 0
+
+        Behavior on color { ColorAnimation { duration: 100 } }
+    }
+
+    // --- INTERACTIONS ---
+    // Left click: no-op (reserved for future default action)
+    // Right click: dismiss this app's notifications
+    MouseArea {
+        id:              cardArea
+        anchors.fill:    parent
+        hoverEnabled:    true
+        acceptedButtons: Qt.RightButton
+        cursorShape:     Qt.ArrowCursor
+        onClicked: (mouse) => {
+            if (mouse.button === Qt.RightButton)
+                NotificationService.dismissHistory(root.appName)
         }
     }
 }
