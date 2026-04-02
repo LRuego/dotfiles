@@ -47,6 +47,7 @@ rules = [
 	{ name = "*.txt", use = "edit" },
 	{ name = "*.json", use = "edit" },
 	{ name = "*.js", use = "edit" },
+  { mime = "image/svg+xml", use = ["edit", "image"] },
 
 	# 2. Broader Mime Types
 	{ mime = "text/*", use = "edit" },
