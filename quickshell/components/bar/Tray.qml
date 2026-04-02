@@ -9,6 +9,10 @@ import qs.components.base
 Module {
     id: root
 
+    // --- SCALE (set by Bar) ---
+    // Tray is icon-only, so it exposes iconSize rather than textSize.
+    property int iconSize: Theme.fontSizeLarge
+
     property var trayRules: []
 
     Component.onCompleted: {
@@ -55,8 +59,8 @@ Module {
 
             IconLabel {
                 icon:     trayItem.resolvedIcon
-                iconSize: Theme.fontSizeSmall
                 colorize: false
+                size:     root.iconSize
             }
         }
     }

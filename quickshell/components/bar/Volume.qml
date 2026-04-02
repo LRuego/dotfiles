@@ -9,6 +9,8 @@ import qs.services.ui
 Module {
     id: root
 
+    // --- SCALE (set by Bar) ---
+    property int    iconSize: Theme.fontSizeLarge
     property int    textSize: Theme.fontSizeSmall
     property string textFont: Theme.fontFamilyAlt
 
@@ -25,48 +27,48 @@ Module {
     readonly property string micIcon: AudioService.isMicMuted ? Assets.microphoneMute : Assets.microphone
 
     readonly property color micColor: {
-        if (AudioService.isMicMuted)       return Theme.urgent
-        if (PrivacyService.micActive)      return Theme.warning
+        if (AudioService.isMicMuted)  return Theme.urgent
+        if (PrivacyService.micActive) return Theme.warning
         return ThemeState.text
     }
 
     ModuleItem {
         id: volItem
-        onClicked: AudioService.toggleMute()
+        onClicked:  AudioService.toggleMute()
         onWheeled: (isUp) => AudioService.adjustVolume(isUp)
 
         IconLabel {
             labelBold:  true
             icon:       root.speakerIcon
             iconColor:  root.speakerColor
+            iconSize:   root.iconSize
             colorize:   true
-            iconSize:   root.textSize
-            iconWidth:  root.textSize
+
             text:       AudioService.volume + "%"
             textColor:  root.speakerColor
             textFont:   root.textFont
-            textSize:   root.textSize
             textWidth:  AudioService.volume < 100 ? 24 : 32
+            textSize:   root.textSize
         }
     }
 
     ModuleItem {
         isHidden: !(volItem.hovered || hovered || PrivacyService.micActive || BarState.peekMode)
-        onClicked: AudioService.toggleMic()
+        onClicked:  AudioService.toggleMic()
         onWheeled: (isUp) => AudioService.adjustMicVolume(isUp)
 
         IconLabel {
             labelBold:  true
             icon:       root.micIcon
             iconColor:  root.micColor
+            iconSize:   root.iconSize
             colorize:   true
-            iconSize:   root.textSize
-            iconWidth:  root.textSize
+
             text:       AudioService.micVolume + "%"
             textColor:  root.micColor
             textFont:   root.textFont
-            textSize:   root.textSize
             textWidth:  AudioService.micVolume < 100 ? 24 : 32
+            textSize:   root.textSize
         }
     }
 }

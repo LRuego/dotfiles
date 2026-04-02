@@ -10,9 +10,14 @@ import qs.services.ui
 Module {
     id: root
 
+    // --- SCALE (set by Bar) ---
+    property int    iconSize: Theme.fontSizeLarge
+    property int    textSize: Theme.fontSizeSmall
+    property string textFont: Theme.fontFamilyAlt
+
     // --- HELPERS ---
     readonly property string netIcon: {
-        if (NetworkService.statusText === "Eth") return Assets.networkWired
+        if (NetworkService.statusText === "Eth")  return Assets.networkWired
         if (NetworkService.statusText === "WiFi") return Assets.networkWireless
         return Assets.networkOff
     }
@@ -20,8 +25,8 @@ Module {
     readonly property color netColor: NetworkService.statusText === "Off" ? Theme.urgent : ThemeState.accent
 
     readonly property color btColor: {
-        if (!BluetoothService.powered) return Theme.subtext
-        if (BluetoothService.connected) return ThemeState.accent
+        if (!BluetoothService.powered)   return Theme.subtext
+        if (BluetoothService.connected)  return ThemeState.accent
         return ThemeState.text
     }
 
@@ -41,8 +46,10 @@ Module {
         }
 
         IconLabel {
-            id: tsIcon
-            icon: TailscaleService.active ? Assets.tailscaleOn : Assets.tailscaleOff
+            id:       tsIcon
+            icon:     TailscaleService.active ? Assets.tailscaleOn : Assets.tailscaleOff
+            iconSize: root.iconSize
+            textSize: root.textSize
 
             SequentialAnimation on opacity {
                 running: TailscaleService.transitioning
@@ -59,11 +66,13 @@ Module {
             labelBold:  true
             icon:       root.netIcon
             iconColor:  root.netColor
+            iconSize:   root.iconSize
             colorize:   true
-            iconWidth:  Theme.fontSize
             showText:   parent.hovered || BarState.peekMode
             text:       NetworkService.ssid
             textColor:  root.netColor
+            textFont:   root.textFont
+            textSize:   root.textSize
         }
     }
 
@@ -79,7 +88,9 @@ Module {
             labelBold: true
             icon:      BluetoothService.powered ? Assets.bluetooth : Assets.bluetoothOff
             iconColor: root.btColor
+            iconSize:  root.iconSize
             colorize:  true
+            textSize:  root.textSize
         }
     }
 }

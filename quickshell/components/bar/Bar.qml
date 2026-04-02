@@ -7,19 +7,23 @@ import qs.components.base
 PanelWindow {
     id: root
 
-    // --- PROPERTIES ---
-    property int    textSize:     Theme.fontSizeSmall
-    property string textFont:     Theme.fontFamilyAlt
+    // --- SCALE PROPERTIES ---
+    // These are the single source of truth for all bar module sizing.
+    // Modules do not define their own textSize/textFont defaults —
+    // they receive these explicitly from here.
+    property int    iconSize: Theme.fontSizeLarge
+    property int    textSize: Theme.fontSizeSmall
+    property string textFont: Theme.fontFamily
 
     // --- WINDOW CONFIG ---
     anchors {
-        top:                      true
-        left:                     true
-        right:                    true
+        top:   true
+        left:  true
+        right: true
     }
 
-    implicitHeight:               24
-    color:                        Theme.barBackground
+    implicitHeight: 24
+    color:          Theme.barBackground
 
     Item {
         anchors.fill: parent
@@ -27,41 +31,41 @@ PanelWindow {
         // --- LEFT ---
         Row {
             anchors {
-                left: parent.left
+                left:       parent.left
                 leftMargin: 15
-                top: parent.top
-                bottom: parent.bottom
+                top:        parent.top
+                bottom:     parent.bottom
             }
             spacing: 10
 
-            DateTime {}
-            Workspaces {
-                enclosed: true
-                indicatorStyle: "pills"
-            }
+            DateTime    { iconSize: root.iconSize; textSize: root.textSize; textFont: root.textFont }
+
+            Workspaces  { enclosed: true; indicatorStyle: "pills" }
         }
 
         // --- ABSOLUTE CENTER ---
         WindowTitle {
             anchors.horizontalCenter: parent.horizontalCenter
-            height: parent.height
+            height:   parent.height
+            textSize: root.textSize
+            textFont: root.textFont
         }
 
         // --- RIGHT ---
         Row {
             anchors {
-                right: parent.right
+                right:       parent.right
                 rightMargin: 15
-                top: parent.top
-                bottom: parent.bottom
+                top:         parent.top
+                bottom:      parent.bottom
             }
             spacing: 10
 
-            Tray {}
-            SystemResources {}
-            Volume {}
-            Connectivity {}
-            Notifications {}
+            Tray            { iconSize: root.iconSize }
+            SystemResources { iconSize: root.iconSize; textSize: root.textSize; textFont: root.textFont }
+            Volume          { iconSize: root.iconSize; textSize: root.textSize; textFont: root.textFont }
+            Connectivity    { iconSize: root.iconSize; textSize: root.textSize; textFont: root.textFont }
+            Notifications   { iconSize: root.iconSize }
         }
     }
 }

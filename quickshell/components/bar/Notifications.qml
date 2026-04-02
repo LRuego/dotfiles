@@ -7,6 +7,10 @@ import qs.components.base
 Module {
     id: root
 
+    // --- SCALE (set by Bar) ---
+    // Notifications is icon-only, so it exposes iconSize rather than textSize.
+    property int    iconSize: Theme.fontSizeLarge
+
     ModuleItem {
         onClicked: NotificationService.centerVisible = !NotificationService.centerVisible
 
@@ -19,6 +23,7 @@ Module {
                 icon:      Assets.inbox
                 colorize:  true
                 iconColor: NotificationService.dnd ? Theme.subtext : ThemeState.text
+                size:      root.iconSize
             }
 
             Rectangle {

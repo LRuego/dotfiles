@@ -10,6 +10,11 @@ import qs.components.base
 Module {
     id: root
 
+    // --- SCALE (set by Bar) ---
+    property int    iconSize: Theme.fontSizeLarge
+    property int    textSize: Theme.fontSizeSmall
+    property string textFont: Theme.fontFamilyAlt
+
     // --- CONFIGURATION ---
     property bool   enclosed:       true
     property string indicatorStyle: "pills" // "pills" | "circles" | "numbers"
@@ -134,8 +139,8 @@ Module {
             Text {
                 text: modelData.id
                 color: root.numberColor(numberItem.isFocused, numberItem.hovered)
-                font.family: Theme.fontFamilyAlt
-                font.pixelSize: Theme.fontSizeSmall
+                font.family: root.textFont
+                font.pixelSize: root.fontSize
                 font.bold: numberItem.isFocused
 
                 Behavior on color { ColorAnimation { duration: 150 } }

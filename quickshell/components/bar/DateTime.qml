@@ -9,8 +9,10 @@ import qs.services.system
 Module {
     id: root
 
-    property int    textSize:     Theme.fontSizeSmall
-    property string textFont:     Theme.fontFamilyAlt
+    // --- SCALE (set by Bar) ---
+    property int    iconSize: Theme.fontSizeLarge
+    property int    textSize: Theme.fontSizeSmall
+    property string textFont: Theme.fontFamily
 
     ModuleItem {
         id: timeItem
@@ -29,15 +31,16 @@ Module {
         }
 
         IconLabel {
-            labelBold:    true
-            icon:         Assets.clock
-            iconSize:     root.textSize
-            colorize:     true
-            text:         ClockService.time
-            textFont:     root.textFont
-            textSize:     root.textSize
+            labelBold: true
+            icon:      Assets.clock
+            iconSize:  root.iconSize
+            colorize:  true
+            text:      ClockService.time
+            textFont:  root.textFont
+            textSize:  root.textSize
         }
     }
+
     ModuleItem {
         id: calendarItem
 
@@ -47,15 +50,15 @@ Module {
         }
 
         IconLabel {
-            labelBold:    true
-            icon:         Assets.calendar
-            iconSize:     Theme.fontSizeTiny
-            colorize:     true
-            text:         ClockService.date
-            textFont:     root.textFont
-            textSize:     root.textSize
+            labelBold: true
+            icon:      Assets.calendar
+            iconSize:  root.iconSize
+            colorize:  true
+            text:      ClockService.date
+            textFont:  root.textFont
+            textSize:  root.textSize
         }
-        
+
         CalendarPopup {
             id:         calendarPopup
             anchorItem: calendarItem

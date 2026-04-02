@@ -10,6 +10,8 @@ import qs.services.ui
 Module {
     id: root
 
+    // --- SCALE (set by Bar) ---
+    property int    iconSize: Theme.fontSizeLarge
     property int    textSize: Theme.fontSizeSmall
     property string textFont: Theme.fontFamilyAlt
 
@@ -38,13 +40,14 @@ Module {
             labelBold:  true
             icon:       Assets.cpu
             iconColor:  root.usageColor(ResourceService.cpuUsage, ResourceService.cpuTemp)
+            iconSize:   root.iconSize
             colorize:   true
-            iconSize:   Theme.fontSize
+
             text:       root.cpuDisplay
             textColor:  iconColor
             textFont:   root.textFont
-            textSize:   root.textSize
             textWidth:  root.cpuDisplay.length <= 3 ? 24 : 32
+            textSize:   root.textSize
         }
     }
 
@@ -55,51 +58,50 @@ Module {
             labelBold:  true
             icon:       Assets.ram
             iconColor:  root.memColor(ResourceService.memUsagePercent)
+            iconSize:   root.iconSize
             colorize:   true
-            iconSize:   Theme.fontSize
+
             text:       root.memDisplay
             textColor:  iconColor
             textFont:   root.textFont
-            textSize:   root.textSize
             textWidth:  root.memDisplay.length <= 2 ? 16 : root.memDisplay.length <= 4 ? 32 : 40
+            textSize:   root.textSize
         }
     }
 
     ModuleItem {
         id: gpuItem
-        property bool shouldShow: BarState.gamingMode || BarState.peekMode
-        isHidden: !shouldShow
+        isHidden: !(BarState.gamingMode || BarState.peekMode)
         IconLabel {
             labelBold:  true
             icon:       Assets.gpu
             iconColor:  root.usageColor(ResourceService.gpuUsage, ResourceService.gpuTemp)
+            iconSize:   root.iconSize
             colorize:   true
-            iconSize:   Theme.fontSize
+
             text:       root.gpuDisplay
             textColor:  iconColor
             textFont:   root.textFont
-            textSize:   root.textSize
             textWidth:  root.gpuDisplay.length <= 3 ? 24 : 32
+            textSize:   root.textSize
         }
     }
 
     ModuleItem {
         id: vramItem
-        property bool gamemodeVisible: BarState.gamingMode || BarState.peekMode
-        property bool shouldShow:      gpuItem.hovered || hovered || BarState.peekMode || BarState.gamingMode
-        isHidden: !gamemodeVisible || !shouldShow
+        isHidden: !(BarState.gamingMode || BarState.peekMode) || !(gpuItem.hovered || hovered || BarState.peekMode || BarState.gamingMode)
         IconLabel {
             labelBold:  true
             icon:       Assets.ram
             iconColor:  root.memColor(ResourceService.vramUsagePercent)
+            iconSize:   root.iconSize
             colorize:   true
-            iconSize:   Theme.fontSize
+
             text:       root.vramDisplay
             textColor:  iconColor
             textFont:   root.textFont
+            textWidth:  root.vramDisplay.length <= 2 ? 16 : root.vramDisplay.length <= 4 ? 32 : 40
             textSize:   root.textSize
-            textWidth:  root.vramDisplay.length <= 2 ? 16 : root.memDisplay.length <= 4 ? 32 : 40
-
         }
     }
 }
