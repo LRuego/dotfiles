@@ -20,13 +20,13 @@ QtObject {
     // Icons from Phosphor Icons (https://phosphoricons.com) — MIT License
 
     // --- UTIL ---
-    readonly property string placeholder:           _resolve("icons/placeholder.svg")
-    readonly property string packageIcon:           _resolve("icons/package.svg")
+    readonly property string placeholder:           _resolve("icons/placeholder-fill.svg")
+    readonly property string packageIcon:           _resolve("icons/package-fill.svg")
 
     // --- UI ELEMENTS ---
-    readonly property string reload:                _resolve("icons/arrows-clockwise.svg")
-    readonly property string caretDown:             _resolve("icons/caret-down.svg")
-    readonly property string caretLeft:             _resolve("icons/caret-left.svg")
+    readonly property string reload:                _resolve("icons/arrows-clockwise-fill.svg")
+    readonly property string caretDown:             _resolve("icons/caret-down-fill.svg")
+    readonly property string caretLeft:             _resolve("icons/caret-left-fill.svg")
 
     // --- LOGOS / CUSTOM ---
     readonly property string quickshell:            _resolve("app/quickshell.svg")
@@ -42,26 +42,26 @@ QtObject {
     readonly property string smartphone:            _resolve("icons/device-mobile.svg")
 
     // --- DATE & TIME ---
-    readonly property string clock:                 _resolve("icons/clock.svg")
-    readonly property string calendar:              _resolve("icons/calendar-dots.svg")
+    readonly property string clock:                 _resolve("icons/clock-fill.svg")
+    readonly property string calendar:              _resolve("icons/calendar-dots-fill.svg")
 
     // --- AUDIO ---
-    readonly property string volume:                _resolve("icons/speaker-none.svg")
-    readonly property string volumeMute:            _resolve("icons/speaker-slash.svg")
-    readonly property string volumeLow:             _resolve("icons/speaker-low.svg")
-    readonly property string volumeHigh:            _resolve("icons/speaker-high.svg")
-    readonly property string microphone:            _resolve("icons/microphone.svg")
-    readonly property string microphoneMute:        _resolve("icons/microphone-mute.svg")
+    readonly property string volume:                _resolve("icons/speaker-none-fill.svg")
+    readonly property string volumeMute:            _resolve("icons/speaker-slash-fill.svg")
+    readonly property string volumeLow:             _resolve("icons/speaker-low-fill.svg")
+    readonly property string volumeHigh:            _resolve("icons/speaker-high-fill.svg")
+    readonly property string microphone:            _resolve("icons/microphone-fill.svg")
+    readonly property string microphoneMute:        _resolve("icons/microphone-mute-fill.svg")
 
     // --- CONNECTIVITY ---
     readonly property string bluetooth:             _resolve("icons/bluetooth.svg")
     readonly property string bluetoothConnected:    _resolve("icons/bluetooth-connected.svg")
     readonly property string bluetoothOff:          _resolve("icons/bluetooth-slash.svg")
-    readonly property string networkOff:            _resolve("icons/plugs.svg")
-    readonly property string networkWired:          _resolve("icons/network-wired.svg")
-    readonly property string networkWiFiHigh:       _resolve("icons/wifi-high.svg")
-    readonly property string networkWiFiMed:        _resolve("icons/wifi-medium.svg")
-    readonly property string networkWiFiLow:        _resolve("icons/wifi-low.svg")
+    readonly property string networkOff:            _resolve("icons/plugs-fill.svg")
+    readonly property string networkWired:          _resolve("icons/network-wired-fill.svg")
+    readonly property string networkWiFiHigh:       _resolve("icons/wifi-high-fill.svg")
+    readonly property string networkWiFiMed:        _resolve("icons/wifi-medium-fill.svg")
+    readonly property string networkWiFiLow:        _resolve("icons/wifi-low-fill.svg")
 
     // --- SYSTEM RESOURCES ---
     readonly property string cpu:                   _resolve("icons/cpu.svg")
@@ -69,6 +69,8 @@ QtObject {
     readonly property string gpu:                   _resolve("icons/gpu.svg")
 
     // --- NOTIFICATIONS ---
-    readonly property string notificationFallback:  _resolve("icons/bell-ringing.svg")
+    readonly property string bell:                  _resolve("icons/bell-fill.svg")
+    readonly property string bellRinging:           _resolve("icons/bell-ringing-fill.svg")
+    readonly property string notificationFallback:  _resolve("icons/bell-ringing-fill.svg")
     readonly property string inbox:                 _resolve("icons/tray.svg")
 }

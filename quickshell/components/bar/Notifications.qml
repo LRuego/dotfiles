@@ -20,7 +20,7 @@ Module {
 
             IconLabel {
                 id:        iconLabel
-                icon:      Assets.inbox
+                icon:      Assets.bell
                 colorize:  true
                 iconColor: NotificationService.dnd ? Theme.subtext : ThemeState.text
                 size:      root.iconSize
