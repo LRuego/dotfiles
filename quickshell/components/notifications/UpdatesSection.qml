@@ -137,11 +137,7 @@ Column {
             spacing: 8
 
             IconImage {
-                source:                 UpdateService.checking
-                                        ? Assets.packageSearch
-                                        : UpdateService.totalCount > 0
-                                          ? Assets.packagePlus
-                                          : Assets.packageCheck
+                source:                 Assets.packageIcon
                 implicitSize:           Theme.fontSizeIcon
                 anchors.verticalCenter: parent.verticalCenter
                 layer.enabled:          true
@@ -198,7 +194,7 @@ Column {
 
                 IconImage {
                     anchors.centerIn: parent
-                    source:           Assets.placeholder
+                    source:           Assets.reload
                     implicitSize:     Theme.fontSizeSmall
                     layer.enabled:    true
                     layer.effect: MultiEffect {
@@ -206,14 +202,6 @@ Column {
                         colorizationColor: refreshArea.containsMouse
                                            ? Theme.primary
                                            : Theme.subtext
-                    }
-
-                    RotationAnimator on rotation {
-                        running:  UpdateService.checking
-                        from:     0
-                        to:       360
-                        duration: 900
-                        loops:    Animation.Infinite
                     }
                 }
 
@@ -233,7 +221,7 @@ Column {
 
                 IconImage {
                     anchors.centerIn: parent
-                    source:           Assets.placeholder
+                    source:           Assets.caretDown
                     implicitSize:     Theme.fontSizeSmall
                     layer.enabled:    true
                     layer.effect: MultiEffect {

@@ -10,15 +10,15 @@ Module {
     id: root
 
     // --- SCALE (set by Bar) ---
-    property int    iconSize: Theme.fontSizeLarge
+    property int    iconSize: Theme.fontSizeIcon
     property int    textSize: Theme.fontSizeSmall
     property string textFont: Theme.fontFamilyAlt
 
     // --- HELPERS ---
     readonly property string speakerIcon: {
         if (AudioService.isMuted)        return Assets.volumeMute
-        if (AudioService.volume >= 60)   return Assets.volumeUp
-        if (AudioService.volume >= 30)   return Assets.volumeDown
+        if (AudioService.volume >= 60)   return Assets.volumeHigh
+        if (AudioService.volume >= 30)   return Assets.volumeLow
         return Assets.volume
     }
 

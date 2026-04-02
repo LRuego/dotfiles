@@ -11,7 +11,7 @@ Module {
 
     // --- SCALE (set by Bar) ---
     // Tray is icon-only, so it exposes iconSize rather than textSize.
-    property int iconSize: Theme.fontSizeLarge
+    property int iconSize: Theme.fontSizeIcon
 
     property var trayRules: []
 

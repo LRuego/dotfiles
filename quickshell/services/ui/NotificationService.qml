@@ -25,7 +25,6 @@ Item {
     Component.onCompleted: {
         appRules = [
             { match: "satty",    transient: true, icon: "satty" },
-            { match: "hamr-gtk", transient: true, icon: Assets.hamr }
         ]
         mkdirProcess.running = true
     }

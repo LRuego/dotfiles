@@ -203,10 +203,8 @@ MenuPopup {
 
         IconLabel {
             icon:      Assets.tailscaleIcon
-            iconSize:  Theme.fontSizeSmall
-            iconWidth: Theme.fontSizeSmall
-            colorize:  true
-            iconColor: Theme.subtext
+            iconSize:  Theme.fontSizeLarge
+
             text:      "Open Admin Console"
             textSize:  Theme.fontSizeSmall
             textColor: Theme.subtext

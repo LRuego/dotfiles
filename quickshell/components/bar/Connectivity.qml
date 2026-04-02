@@ -11,14 +11,18 @@ Module {
     id: root
 
     // --- SCALE (set by Bar) ---
-    property int    iconSize: Theme.fontSizeLarge
+    property int    iconSize: Theme.fontSizeIcon
     property int    textSize: Theme.fontSizeSmall
     property string textFont: Theme.fontFamilyAlt
 
     // --- HELPERS ---
     readonly property string netIcon: {
-        if (NetworkService.statusText === "Eth")  return Assets.networkWired
-        if (NetworkService.statusText === "WiFi") return Assets.networkWireless
+        if (NetworkService.statusText === "Eth") return Assets.networkWired
+        if (NetworkService.statusText === "WiFi") {
+            if (NetworkService.signal >= 75) return Assets.networkWiFiHigh
+            if (NetworkService.signal >= 45) return Assets.networkWiFiMed
+            return Assets.networkWiFiLow
+        }
         return Assets.networkOff
     }
 
@@ -48,8 +52,7 @@ Module {
         IconLabel {
             id:       tsIcon
             icon:     TailscaleService.active ? Assets.tailscaleOn : Assets.tailscaleOff
-            iconSize: root.iconSize
-            textSize: root.textSize
+            iconSize: 14
 
             SequentialAnimation on opacity {
                 running: TailscaleService.transitioning
@@ -90,7 +93,6 @@ Module {
             iconColor: root.btColor
             iconSize:  root.iconSize
             colorize:  true
-            textSize:  root.textSize
         }
     }
 }

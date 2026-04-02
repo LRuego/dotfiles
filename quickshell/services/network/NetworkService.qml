@@ -13,6 +13,7 @@ Item {
     // --- STATE ---
     property string statusText: "Off"
     property string ssid: ""
+    property int    signal: 0
     property int    restartAttempts: 0
 
     // --- MONITORING ---
@@ -74,6 +75,29 @@ Item {
         }
     }
 
+    // --- SIGNAL FETCH ---
+    Process {
+        id: signalProc
+        property string fullOutput: ""
+        command: ["nmcli", "-t", "-f", "ACTIVE,SIGNAL", "dev", "wifi", "list", "--rescan", "no"]
+        stdout: SplitParser {
+            onRead: data => signalProc.fullOutput += data + "\n"
+        }
+        onRunningChanged: {
+            if (running) {
+                fullOutput = ""
+            } else {
+                const lines = fullOutput.trim().split("\n")
+                for (let line of lines) {
+                    if (line.startsWith("yes:")) {
+                        root.signal = parseInt(line.split(":")[1])
+                        break
+                    }
+                }
+            }
+        }
+    }
+
     // --- PARSER ---
     function parseStatus(data) {
         const lines = data.trim().split('\n')
@@ -106,12 +130,17 @@ Item {
         if (ethActive) {
             root.statusText = "Eth"
             root.ssid = ethName
+            root.signal = 100
+	    if (signalProc.running) signalProc.running = false
         } else if (wifiActive) {
             root.statusText = "WiFi"
             root.ssid = wifiName
+            if (!signalProc.running) signalProc.start()
         } else {
             root.statusText = "Off"
             root.ssid = ""
+            root.signal = 0
+	    if (signalProc.running) signalProc.running = false
         }
     }
 

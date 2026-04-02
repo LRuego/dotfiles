@@ -11,7 +11,7 @@ PanelWindow {
     // These are the single source of truth for all bar module sizing.
     // Modules do not define their own textSize/textFont defaults —
     // they receive these explicitly from here.
-    property int    iconSize: Theme.fontSizeLarge
+    property int    iconSize: Theme.fontSizeIcon
     property int    textSize: Theme.fontSizeSmall
     property string textFont: Theme.fontFamily
 
@@ -61,7 +61,7 @@ PanelWindow {
             }
             spacing: 10
 
-            Tray            { iconSize: root.iconSize }
+            Tray            { iconSize: 14 } // Hardcode Tray Size depending on root.iconSize
             SystemResources { iconSize: root.iconSize; textSize: root.textSize; textFont: root.textFont }
             Volume          { iconSize: root.iconSize; textSize: root.textSize; textFont: root.textFont }
             Connectivity    { iconSize: root.iconSize; textSize: root.textSize; textFont: root.textFont }

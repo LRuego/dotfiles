@@ -10,7 +10,7 @@ Module {
     id: root
 
     // --- SCALE (set by Bar) ---
-    property int    iconSize: Theme.fontSizeLarge
+    property int    iconSize: Theme.fontSizeIcon
     property int    textSize: Theme.fontSizeSmall
     property string textFont: Theme.fontFamily
 

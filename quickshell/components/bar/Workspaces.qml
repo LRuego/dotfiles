@@ -11,7 +11,6 @@ Module {
     id: root
 
     // --- SCALE (set by Bar) ---
-    property int    iconSize: Theme.fontSizeLarge
     property int    textSize: Theme.fontSizeSmall
     property string textFont: Theme.fontFamilyAlt
 
@@ -140,7 +139,7 @@ Module {
                 text: modelData.id
                 color: root.numberColor(numberItem.isFocused, numberItem.hovered)
                 font.family: root.textFont
-                font.pixelSize: root.fontSize
+                font.pixelSize: root.textSize
                 font.bold: numberItem.isFocused
 
                 Behavior on color { ColorAnimation { duration: 150 } }
