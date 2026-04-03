@@ -219,8 +219,6 @@ PanelWindow {
                 right:        parent.right
                 topMargin:    12
                 bottomMargin: 12
-                leftMargin:   16
-                rightMargin:  16
             }
 
             ListView {
@@ -231,13 +229,16 @@ PanelWindow {
                 clip:         true
 
                 delegate: NotificationCenterCard {
-                    width:   ListView.view.width
-                    appName: model.appName
-                    summary: model.summary
-                    body:    model.body
-                    icon:    model.icon
-                    image:   model.image
-                    count:   model.count
+                    width:      ListView.view.width
+                    appName:    model.appName
+                    summary:    model.summary
+                    body:       model.body
+                    icon:       model.icon
+                    image:      model.image
+                    count:      model.count
+                    time:       model.time
+                    notifId:    model.notifId    ?? -1
+                    hasDefault: model.hasDefault ?? false
                 }
 
                 displaced: Transition {

@@ -4,7 +4,7 @@ import qs.core
 import qs.services.ui
 import qs.components.base
 
-Rectangle {
+Item {
     id: root
 
     // --- PROPERTIES ---
@@ -13,15 +13,14 @@ Rectangle {
     property string body:    ""
     property string icon:    ""
     property string image:   ""
-    property int    count:   1
+    property int    notifId:    -1
+    property int    count:      1
+    property bool   hasDefault: false
+    property var    time:       0
 
-    width:        parent?.width ?? 320
-    height:       Math.max(56, cardLayout.implicitHeight + 24)
-    radius:       Theme.cornerRadius
-    color:        Theme.surface0
-    border.color: ThemeState.border
-    border.width: 1
-    opacity:      0
+    width:  parent?.width ?? 320
+    height: Math.max(56, cardLayout.implicitHeight + 24)
+    opacity: 0
 
     Component.onCompleted: addAnim.start()
 
@@ -54,11 +53,23 @@ Rectangle {
         PropertyAction { target: root; property: "ListView.delayRemove"; value: false }
     }
 
+    // --- HOVER TINT (full bleed — card spans panel edge-to-edge) ---
+    Rectangle {
+        anchors.fill: parent
+        color:        cardArea.containsMouse ? Qt.rgba(1, 1, 1, 0.04) : "transparent"
+        Behavior on color { ColorAnimation { duration: 100 } }
+    }
+
     Column {
-        id:              cardLayout
-        anchors.fill:    parent
-        anchors.margins: 12
-        spacing:         8
+        id:      cardLayout
+        anchors {
+            fill:         parent
+            topMargin:    12
+            bottomMargin: 12
+            leftMargin:   16
+            rightMargin:  16
+        }
+        spacing: 8
 
         Row {
             width:   parent.width
@@ -95,20 +106,21 @@ Rectangle {
                     fillMode: Image.PreserveAspectFit
                 }
 
-                // --- BADGE ---
+                // --- BADGE (top-right of icon) ---
                 Rectangle {
-                    visible:            root.count > 1
-                    width:              16
-                    height:             16
-                    radius:             8
-                    color:              Theme.urgent
-                    anchors.top:        parent.top
-                    anchors.left:       parent.left
-                    anchors.topMargin:  -4
-                    anchors.leftMargin: -4
-                    z:                  10
+                    visible:             root.count > 1
+                    width:               Math.max(16, badgeText.implicitWidth + 6)
+                    height:              16
+                    radius:              8
+                    color:               Theme.urgent
+                    anchors.top:         parent.top
+                    anchors.right:       parent.right
+                    anchors.topMargin:   -4
+                    anchors.rightMargin: -6
+                    z:                   10
 
                     Text {
+                        id:               badgeText
                         anchors.centerIn: parent
                         text:             root.count > 99 ? "99+" : root.count
                         color:            Theme.base
@@ -125,14 +137,28 @@ Rectangle {
                 spacing:                2
                 anchors.verticalCenter: parent.verticalCenter
 
-                Text {
-                    text:           root.appName
-                    color:          ThemeState.text
-                    font.family:    Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeSmall
-                    font.bold:      true
-                    elide:          Text.ElideRight
-                    width:          parent.width
+                Row {
+                    width:   parent.width
+                    spacing: 6
+
+                    Text {
+                        text:           root.appName
+                        color:          ThemeState.text
+                        font.family:    Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeSmall
+                        font.bold:      true
+                        elide:          Text.ElideRight
+                        width:          parent.width - timeText.implicitWidth - 6
+                    }
+
+                    Text {
+                        id:             timeText
+                        text:           root.time > 0 ? _formatTime(root.time) : ""
+                        color:          Theme.subtext
+                        font.family:    Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeTiny
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
 
                 Text {
@@ -154,7 +180,6 @@ Rectangle {
                     maximumLineCount: 1
                 }
             }
-
         }
 
         // --- IMAGE PREVIEW ---
@@ -186,42 +211,66 @@ Rectangle {
                 }
             }
 
-            // --- IMAGE DELETED PLACEHOLDER ---
             Text {
-                id:             deletedLabel
+                id:               deletedLabel
                 anchors.centerIn: parent
-                visible:        imagePreview.status === Image.Error
-                text:           "Image deleted"
-                color:          Theme.subtext
-                font.family:    Theme.fontFamily
-                font.pixelSize: Theme.fontSizeSmall
-                font.italic:    true
+                visible:          imagePreview.status === Image.Error
+                text:             "Image deleted"
+                color:            Theme.subtext
+                font.family:      Theme.fontFamily
+                font.pixelSize:   Theme.fontSizeSmall
+                font.italic:      true
             }
         }
     }
 
-    // --- HOVER TINT ---
-    Rectangle {
-        anchors.fill: parent
-        radius:       Theme.cornerRadius
-        color:        cardArea.containsMouse ? Qt.rgba(1, 1, 1, 0.03) : "transparent"
-        border.width: 0
-
-        Behavior on color { ColorAnimation { duration: 100 } }
-    }
-
     // --- INTERACTIONS ---
-    // Left click: no-op (reserved for future default action)
-    // Right click: dismiss this app's notifications
     MouseArea {
         id:              cardArea
         anchors.fill:    parent
         hoverEnabled:    true
-        acceptedButtons: Qt.RightButton
-        cursorShape:     Qt.ArrowCursor
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        cursorShape:     root.hasDefault ? Qt.PointingHandCursor : Qt.ArrowCursor
         onClicked: (mouse) => {
-            if (mouse.button === Qt.RightButton)
+            if (mouse.button === Qt.LeftButton && root.hasDefault)
+                NotificationService.invokeDefault(root.notifId, root.appName)
+            else if (mouse.button === Qt.RightButton)
                 NotificationService.dismissHistory(root.appName)
         }
+    }
+
+    // --- HELPERS ---
+    function _formatTime(ts) {
+        let diff = Math.floor((Date.now() - ts) / 1000)
+
+        if (diff < 60)   return "just now"
+
+        if (diff < 3600) {
+            return Math.floor(diff / 60) + "m ago"
+        }
+
+        if (diff < 86400) {
+            let h = Math.floor(diff / 3600)
+            let m = Math.floor((diff % 3600) / 60)
+            return m > 0 ? h + "h " + m + "m ago" : h + "h ago"
+        }
+
+        // plain "Xd ago" for days 1–3, compound units kick in after 3 days
+        if (diff < 259200) {
+            return Math.floor(diff / 86400) + "d ago"
+        }
+
+        if (diff < 2592000) { // up to 30 days
+            let w = Math.floor(diff / 604800)
+            let d = Math.floor((diff % 604800) / 86400)
+            if (w > 0) return d > 0 ? w + "w " + d + "d ago" : w + "w ago"
+            return Math.floor(diff / 86400) + "d ago"
+        }
+
+        // older than 30 days → absolute date
+        let date     = new Date(ts)
+        let months   = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+        let sameYear = date.getFullYear() === new Date().getFullYear()
+        return months[date.getMonth()] + " " + date.getDate() + (sameYear ? "" : ", " + date.getFullYear())
     }
 }

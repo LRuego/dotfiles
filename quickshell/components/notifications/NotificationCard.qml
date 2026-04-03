@@ -92,20 +92,21 @@ Rectangle {
                     fillMode: Image.PreserveAspectFit
                 }
 
-                // --- BADGE ---
+                // --- BADGE (top-right of icon) ---
                 Rectangle {
-                    visible:            root.count > 1
-                    width:              16
-                    height:             16
-                    radius:             8
-                    color:              Theme.urgent
-                    anchors.top:        parent.top
-                    anchors.left:       parent.left
-                    anchors.topMargin:  -4
-                    anchors.leftMargin: -4
-                    z:                  10
+                    visible:             root.count > 1
+                    width:               badgeText.implicitWidth + 6
+                    height:              16
+                    radius:              8
+                    color:               Theme.urgent
+                    anchors.top:         parent.top
+                    anchors.right:       parent.right
+                    anchors.topMargin:   -4
+                    anchors.rightMargin: -6
+                    z:                   10
 
                     Text {
+                        id:               badgeText
                         anchors.centerIn: parent
                         text:             root.count > 99 ? "99+" : root.count
                         color:            Theme.base
@@ -173,7 +174,7 @@ Rectangle {
         cursorShape:     root.hasDefault ? Qt.PointingHandCursor : Qt.ArrowCursor
         onClicked: (mouse) => {
             if (mouse.button === Qt.LeftButton && root.hasDefault)
-                NotificationService.invokeDefault(root.notifId)
+                NotificationService.invokeDefault(root.notifId, root.appName)
             else
                 NotificationService.dismiss(root.notifId)
         }

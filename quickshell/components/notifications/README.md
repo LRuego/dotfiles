@@ -40,10 +40,13 @@ pacman -Sl    ┘                 → aurUpdates    ├─→ UpdatesSection →
 ### Notification Center
 - Right-side panel that slides in with a fade + spring animation
 - Grouped by app — each app shows its latest message, summary, and a count badge
+- **Newest-first history ordering** — newest notifications (or updates to existing ones) jump to the top of the list
 - Unread count badge in header — always live, reflects current history count
 - Scrollable list for large history
 - "Clear all" button wipes history and persists the change
-- Right-click a card to dismiss it — no dismiss button
+- **Left click** — invokes the notification's default action if one exists (with rule fallback for apps like Discord)
+- **Right click** — dismisses a history card immediately — no dismiss button
+- **Relative timestamps** — history cards show human-readable relative times (e.g. "5m ago", "2h ago")
 - Image preview with "Image deleted" fallback if the file no longer exists
 - Frosted glass background via Hyprland `layerrule` blur
 - Click-outside to close via `FocusService` / `HyprlandFocusGrab`
@@ -165,10 +168,13 @@ pacman -Sl    ┘                 → aurUpdates    ├─→ UpdatesSection →
 ### Notification Center
 - Right-side panel that slides in with a fade + spring animation
 - Grouped by app — each app shows its latest message, summary, and a count badge
+- **Newest-first history ordering** — newest notifications (or updates to existing ones) jump to the top of the list
 - Unread count badge in header — always live, reflects current history count
 - Scrollable list for large history
 - "Clear all" button wipes history and persists the change
-- Right-click a card to dismiss it — no dismiss button
+- **Left click** — invokes the notification's default action if one exists (with rule fallback for apps like Discord)
+- **Right click** — dismisses a history card immediately — no dismiss button
+- **Relative timestamps** — history cards show human-readable relative times (e.g. "5m ago", "2h ago")
 - Image preview with "Image deleted" fallback if the file no longer exists
 - Frosted glass background via Hyprland `layerrule` blur
 - Click-outside to close via `FocusService` / `HyprlandFocusGrab`

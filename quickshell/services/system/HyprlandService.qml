@@ -43,4 +43,12 @@ Item {
     function prevWorkspace() {
         Hyprland.dispatch("workspace m-1");
     }
+
+    function toggleSpecialWorkspace(name) {
+        Hyprland.dispatch(`togglespecialworkspace ${name}`);
+    }
+
+    function dispatch(command) {
+        Hyprland.dispatch(command);
+    }
 }
