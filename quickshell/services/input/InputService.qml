@@ -6,6 +6,8 @@ import Quickshell.Io
 
 Item {
     id: root
+    // --- DEBUG ---
+    readonly property bool debug: false
 
     // --- SIGNALS ---
     signal keyPressed(string key)
@@ -23,9 +25,23 @@ Item {
     readonly property bool superHeld: superCount > 0
 
     // --- INTERNAL STATE ---
-    property var holdTimers:    ({})
-    property var keyHandlers:   ({})
-    property int keyboardCount: 0
+    property var holdTimers:     ({})
+    property var keyHandlers:    ({})
+    property var monitoredPaths: ({})
+    property var activeWatchers: []
+    property int keyboardCount:  0
+
+    function refresh() {
+        if (debug) console.log("[InputService] Refreshing keyboards...")
+
+        for (let i = 0; i < activeWatchers.length; i++)
+            activeWatchers[i].destroy()
+
+        activeWatchers  = []
+        monitoredPaths  = {}
+        keyboardCount   = 0
+        discoverProcess.restart()
+    }
 
     // --- LOW LEVEL API ---
 
@@ -91,19 +107,19 @@ Item {
         )
     }
 
-    function onTap(key, interval, onTap) {
+    function onTap(key, interval, callback) {
         connectKey(key,
             () => startHold(key, interval, null),
             () => {
                 if (holdTimers[key]) {
                     cancelHold(key)
-                    onTap()
+                    callback()
                 }
             }
         )
     }
 
-    function onTapAndHold(key, interval, onTap, onHeld, onReleased) {
+    function onTapAndHold(key, interval, callback, onHeld, onReleased) {
         let held = false
         connectKey(key,
             () => {
@@ -118,7 +134,7 @@ Item {
                     onReleased()
                 } else {
                     cancelHold(key)
-                    onTap()
+                    callback()
                 }
             }
         )
@@ -135,14 +151,14 @@ Item {
         )
     }
 
-    function onDoubleTap(key, interval, onDoubleTap) {
+    function onDoubleTap(key, interval, callback) {
         let lastTap = 0
         connectKey(key,
             null,
             () => {
                 let now = Date.now()
                 if (now - lastTap < interval) {
-                    onDoubleTap()
+                    callback()
                     lastTap = 0
                 } else {
                     lastTap = now
@@ -152,7 +168,6 @@ Item {
     }
 
     // --- KEYBOARD DISCOVERY ---
-
     Process {
         id: discoverProcess
         command: [
@@ -172,31 +187,65 @@ Item {
 
                 if (isKeyboard) {
                     let path = devSys.replace("/sys/class/input/", "/dev/input/")
-                    // --- DEBUG ---
-                    // console.log("[InputService] Found keyboard:", path, "→", name)
-                    keyboardWatcher.createObject(root, { devicePath: path })
+                    if (root.monitoredPaths[path]) return
+
+                    if (debug) console.log("[InputService] Found keyboard:", path, "→", name)
+                    let w = keyboardWatcher.createObject(root, { devicePath: path })
+                    root.activeWatchers.push(w)
+                    root.monitoredPaths[path] = true
                     root.keyboardCount++
                 }
             }
         }
-        // --- DEBUG ---
-        // onRunningChanged: {
-        //     if (!running)
-        //         console.log("[InputService] Discovery complete —", root.keyboardCount, "keyboard devices found.")
-        // }
+
+        onRunningChanged: {
+            if (!running && debug)
+                console.log("[InputService] Discovery complete —", root.keyboardCount, "keyboard devices found.")
+        }
     }
 
     // --- PER-KEYBOARD WATCHER ---
-
     Component {
         id: keyboardWatcher
         Item {
             property string devicePath: ""
+            property int    retryCount: 0
+            readonly property int maxRetries:   5
+            readonly property int retryDelayMs: 2000
+
+            // Backoff timer — fires after retryDelayMs to restart evtest
+            Timer {
+                id: retryTimer
+                interval: parent.retryDelayMs
+                repeat:   false
+                onTriggered: {
+                    if (root.debug) console.log("[InputService] Retrying evtest for", devicePath, "(attempt", parent.retryCount + ")")
+                    proc.running = true
+                }
+            }
 
             Process {
                 id: proc
-                running: false
                 command: ["evtest", devicePath]
+
+                stderr: SplitParser {
+                    onRead: line => console.log("[InputService] evtest error (" + devicePath + "):", line)
+                }
+
+                onExited: (code, status) => {
+                    // Clean exit (code 0) means we killed it intentionally (e.g. refresh()), no retry needed
+                    if (code === 0) return
+
+                    console.log("[InputService] evtest exited with code " + code + " for " + devicePath)
+
+                    if (retryCount >= maxRetries) {
+                        console.log("[InputService] evtest for", devicePath, "failed", maxRetries, "times, giving up.")
+                        return
+                    }
+
+                    retryCount++
+                    retryTimer.start()
+                }
 
                 stdout: SplitParser {
                     onRead: line => {
@@ -242,12 +291,18 @@ Item {
             }
 
             Component.onCompleted: proc.running = true
+
+            Connections {
+                target: proc
+                function onRunningChanged() {
+                    if (proc.running) retryCount = 0
+                }
+            }
         }
     }
 
     Component.onCompleted: {
-        // --- DEBUG ---
-        // console.log("[InputService] Starting keyboard discovery...")
+        if (debug) console.log("[InputService] Starting keyboard discovery...")
         discoverProcess.running = true
     }
 }
