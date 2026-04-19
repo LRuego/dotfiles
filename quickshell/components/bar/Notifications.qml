@@ -9,7 +9,7 @@ Module {
 
     // --- SCALE (set by Bar) ---
     // Notifications is icon-only, so it exposes iconSize rather than textSize.
-    property int iconSize: Theme.fontSizeIcon
+    property int iconSize: Theme.iconSize
 
     ModuleItem {
         onClicked: NotificationService.centerVisible = !NotificationService.centerVisible

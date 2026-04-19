@@ -138,7 +138,7 @@ Column {
 
             IconImage {
                 source:                 Assets.packageIcon
-                implicitSize:           Theme.fontSizeIcon
+                implicitSize:           Theme.iconSize
                 anchors.verticalCenter: parent.verticalCenter
                 layer.enabled:          true
                 layer.effect: MultiEffect {
@@ -153,7 +153,7 @@ Column {
                 spacing:                2
                 anchors.verticalCenter: parent.verticalCenter
                 width:                  parent.width
-                                      - Theme.fontSizeIcon
+                                      - Theme.iconSize
                                       - refreshBtn.width
                                       - chevronBtn.width
                                       - 32

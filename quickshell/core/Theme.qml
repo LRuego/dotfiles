@@ -11,7 +11,7 @@ QtObject {
     readonly property int fontSizeSmall:    12
     readonly property int fontSize:         14
     readonly property int fontSizeLarge:    16
-    readonly property int fontSizeIcon:     16
+    readonly property int iconSize:         16
 
     // --- BASE LAYERS ---
     readonly property color base:           "#1a1b26"
