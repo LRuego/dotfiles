@@ -7,6 +7,9 @@ import qs.services.ui
 PanelWindow {
     id: root
 
+    required property var modelData
+    screen: modelData
+
     visible: NotificationService.popupList.count > 0
 
     WlrLayershell.layer:     WlrLayer.Overlay

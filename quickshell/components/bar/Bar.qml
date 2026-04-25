@@ -15,6 +15,10 @@ PanelWindow {
     property int    textSize: Theme.fontSizeSmall
     property string textFont: Theme.fontFamily
 
+    // --- SCREEN (injected by Variants in shell.qml) ---
+    property var modelData
+    screen: modelData
+
     // --- WINDOW CONFIG ---
     anchors {
         top:   true
@@ -40,7 +44,7 @@ PanelWindow {
 
             DateTime    { iconSize: root.iconSize; textSize: root.textSize; textFont: root.textFont }
 
-            Workspaces  { enclosed: true; indicatorStyle: "pills" }
+            Workspaces  { enclosed: true; indicatorStyle: "pills"; screen: root.modelData }
         }
 
         // --- ABSOLUTE CENTER ---

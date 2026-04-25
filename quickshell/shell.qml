@@ -17,8 +17,15 @@ ShellRoot {
     id: root
 
     // Main Windows
-    Bar {}
-    NotificationPopup {}
+    Variants {
+        model: Quickshell.screens
+        Bar {}
+    }
+
+    Variants {
+        model: Quickshell.screens
+        NotificationPopup {}
+    }
 
     Loader {
         active:          NotificationService.centerVisible
