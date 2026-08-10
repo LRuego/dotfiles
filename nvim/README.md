@@ -16,7 +16,7 @@ Below is a list of the plugins installed in this configuration, categorized by t
 - **[lualine.nvim](https://github.com/nvim-lualine/lualine.nvim)**: A fast and easy-to-configure statusline.
 - **[nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons)**: Adds file-type icons to Neovim.
 - **[which-key.nvim](https://github.com/folke/which-key.nvim)**: Displays a popup with possible keybindings.
-- **[neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim)**: A file explorer tree.
+- **[yazi.nvim](https://github.com/mikavilpas/yazi.nvim)**: A terminal-based file explorer seamlessly integrated.
 
 ### Development & Code Intelligence
 
