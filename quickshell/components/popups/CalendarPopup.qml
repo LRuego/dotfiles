@@ -16,15 +16,19 @@ MenuPopup {
     property int displayMonth: new Date().getMonth()
     property int displayYear:  new Date().getFullYear()
 
-    readonly property int today:      new Date().getDate()
-    readonly property int todayMonth: new Date().getMonth()
-    readonly property int todayYear:  new Date().getFullYear()
+    property int today:      new Date().getDate()
+    property int todayMonth: new Date().getMonth()
+    property int todayYear:  new Date().getFullYear()
 
     onVisibleChanged: {
         if (!visible) globalTooltip.hide(null)
         if (visible) {
-            displayMonth = new Date().getMonth()
-            displayYear  = new Date().getFullYear()
+            let now = new Date()
+            today = now.getDate()
+            todayMonth = now.getMonth()
+            todayYear = now.getFullYear()
+            displayMonth = todayMonth
+            displayYear  = todayYear
         }
     }
 

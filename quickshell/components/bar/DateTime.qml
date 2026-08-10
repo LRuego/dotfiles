@@ -17,6 +17,14 @@ Module {
     ModuleItem {
         id: timeItem
 
+        onHoveredChanged: {
+            if (hovered) {
+                globalTooltip.show(timeItem, ClockService.utcTime)
+            } else {
+                globalTooltip.hide(timeItem)
+            }
+        }
+
         onClicked: (button) => {
             if (button === Qt.RightButton) timeContextMenu.open = !timeContextMenu.open
         }
@@ -26,7 +34,7 @@ Module {
             anchorItem: timeItem
             model: [
                 { text: "Copy Time", action: () => UtilService.copyToClipboard(ClockService.time) },
-                { text: "Copy Date", action: () => UtilService.copyToClipboard(ClockService.date) }
+                { text: "Copy Date", action: () => UtilService.copyToClipboard(ClockService.fullDate) }
             ]
         }
 

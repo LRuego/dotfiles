@@ -5,7 +5,7 @@ import qs.services.ui
 import qs.core
 
 Item {
-    id: root
+    id: entryRoot
 
     required property var entry
     property int          menuWidth: 200
@@ -24,13 +24,13 @@ Item {
             console.log("[ContextMenuEntry] Failed to load ContextMenu:", comp.errorString())
             return
         }
-        subMenuInstance = comp.createObject(root, {
+        subMenuInstance = comp.createObject(entryRoot, {
             "open":       true,
-            "anchorItem": root,
-            "menuHandle": root.entry,
-            "menuWidth":  root.menuWidth
+            "anchorItem": entryRoot,
+            "menuHandle": entryRoot.entry,
+            "menuWidth":  entryRoot.menuWidth
         })
-        subMenuInstance.closedAll.connect(() => root.closeAll())
+        subMenuInstance.closedAll.connect(() => entryRoot.closeAll())
         subMenuInstance.dismissed.connect(() => {
             if (subMenuInstance) {
                 subMenuInstance.destroy()
@@ -71,7 +71,7 @@ Item {
                     openSubMenu()
                 } else {
                     entry.triggered()
-                    root.closeAll()
+                    entryRoot.closeAll()
                 }
             }
         }
@@ -119,7 +119,7 @@ Item {
             font.family:            Theme.fontFamily
             font.pixelSize:         Theme.fontSizeSmall
             anchors.verticalCenter: parent.verticalCenter
-            width:                  root.menuWidth - 60 - (entry.hasChildren ? 16 : 0)
+            width:                  entryRoot.menuWidth - 60 - (entry.hasChildren ? 16 : 0)
             elide:                  Text.ElideRight
         }
 

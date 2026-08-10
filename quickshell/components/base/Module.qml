@@ -39,6 +39,10 @@ Rectangle {
             id: internalRow
             height:               parent.height
             spacing:              0
+            
+            add: Transition {
+                NumberAnimation { property: "width"; from: 0; duration: 250; easing.type: Easing.OutQuart }
+            }
 
             onChildrenChanged:        updateProps()
             Component.onCompleted:    updateProps()

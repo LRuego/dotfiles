@@ -31,6 +31,73 @@ Item {
     property var activeWatchers: []
     property int keyboardCount:  0
 
+    // Debounce re-scans triggered by udev so a dongle reconnect (which fires
+    // several add events in quick succession) only causes one discoverProcess run.
+    Timer {
+        id: rescanDebounce
+        interval: 500
+        repeat:   false
+        onTriggered: {
+            if (root.debug) console.log("[InputService] Hotplug: running targeted re-scan...")
+            discoverProcess.restart()
+        }
+    }
+
+    // --- HOTPLUG MONITOR ---
+    // Watches udev for input subsystem events. When a keyboard is added we
+    // schedule a debounced re-scan. When a device is removed we clean its
+    // path out of monitoredPaths so the new event node won't be blocked.
+    Process {
+        id: udevMonitor
+        command: ["stdbuf", "-oL", "udevadm", "monitor", "--udev", "--subsystem-match=input"]
+
+        stdout: SplitParser {
+            onRead: line => {
+                // Lines look like:
+                //   UDEV  [timestamp] add      /devices/.../input/eventX (input)
+                //   UDEV  [timestamp] remove   /devices/.../input/eventX (input)
+                let addMatch    = line.match(/add.*\/input\/(event\d+)/)
+                let removeMatch = line.match(/remove.*\/input\/(event\d+)/)
+
+                if (removeMatch) {
+                    let removedPath = "/dev/input/" + removeMatch[1]
+                    if (root.debug) console.log("[InputService] Hotplug: device removed:", removedPath)
+                    // Free the slot so the new node can be picked up after reconnect.
+                    delete root.monitoredPaths[removedPath]
+                }
+
+                if (addMatch) {
+                    let addedPath = "/dev/input/" + addMatch[1]
+                    if (root.debug) console.log("[InputService] Hotplug: device added:", addedPath)
+                    // Debounce: a dongle reconnect fires multiple add events.
+                    rescanDebounce.restart()
+                }
+            }
+        }
+
+        stderr: SplitParser {
+            onRead: line => {
+                if (root.debug) console.log("[InputService] udevadm:", line)
+            }
+        }
+
+        // If udevadm dies for any reason, restart it after a short delay.
+        onExited: (code, status) => {
+            console.log("[InputService] udevadm monitor exited with code " + code + ", restarting...")
+            udevRestartTimer.start()
+        }
+    }
+
+    Timer {
+        id: udevRestartTimer
+        interval: 3000
+        repeat:   false
+        onTriggered: {
+            console.log("[InputService] Restarting udev monitor...")
+            udevMonitor.running = true
+        }
+    }
+
     function refresh() {
         if (debug) console.log("[InputService] Refreshing keyboards...")
 
@@ -172,7 +239,7 @@ Item {
         id: discoverProcess
         command: [
             "bash", "-c",
-            "grep -rH '' /sys/class/input/event*/device/name 2>/dev/null"
+            "for dev in /sys/class/input/event*; do if udevadm info -q property -p $dev 2>/dev/null | grep -q 'ID_INPUT_KEYBOARD=1'; then echo \"$dev/device/name:$(cat $dev/device/name 2>/dev/null)\"; fi; done"
         ]
         stdout: SplitParser {
             onRead: line => {
@@ -181,9 +248,12 @@ Item {
                 let devSys = parts[0].replace("/device/name", "")
                 let name = parts.slice(1).join(":")
 
-                let isKeyboard = name.includes("Keyboard") &&
-                                 !name.includes("Mouse") &&
-                                 !name.includes("Consumer Control")
+                // Udev already verified this hardware has KEYBOARD capabilities!
+                // We just ignore standard system buttons and mice.
+                let isKeyboard = !name.includes("Power Button") &&
+                                 !name.includes("virtual device") &&
+                                 !name.includes("Consumer Control") &&
+                                 !name.includes("Mouse")
 
                 if (isKeyboard) {
                     let path = devSys.replace("/sys/class/input/", "/dev/input/")
@@ -208,6 +278,7 @@ Item {
     Component {
         id: keyboardWatcher
         Item {
+            id: watcher
             property string devicePath: ""
             property int    retryCount: 0
             readonly property int maxRetries:   5
@@ -216,34 +287,43 @@ Item {
             // Backoff timer — fires after retryDelayMs to restart evtest
             Timer {
                 id: retryTimer
-                interval: parent.retryDelayMs
+                interval: watcher.retryDelayMs
                 repeat:   false
                 onTriggered: {
-                    if (root.debug) console.log("[InputService] Retrying evtest for", devicePath, "(attempt", parent.retryCount + ")")
+                    if (root.debug) console.log("[InputService] Retrying evtest for", watcher.devicePath, "(attempt", watcher.retryCount + ")")
                     proc.running = true
                 }
             }
 
             Process {
                 id: proc
-                command: ["evtest", devicePath]
+                command: ["stdbuf", "-oL", "evtest", watcher.devicePath]
 
                 stderr: SplitParser {
-                    onRead: line => console.log("[InputService] evtest error (" + devicePath + "):", line)
+                    onRead: line => console.log("[InputService] evtest error (" + watcher.devicePath + "):", line)
                 }
 
                 onExited: (code, status) => {
-                    // Clean exit (code 0) means we killed it intentionally (e.g. refresh()), no retry needed
+                    // Clean exit (code 0) means we killed it intentionally (e.g. refresh()), no retry needed.
                     if (code === 0) return
 
-                    console.log("[InputService] evtest exited with code " + code + " for " + devicePath)
+                    console.log("[InputService] evtest exited with code " + code + " for " + watcher.devicePath)
 
-                    if (retryCount >= maxRetries) {
-                        console.log("[InputService] evtest for", devicePath, "failed", maxRetries, "times, giving up.")
+                    // Always free the path slot on failure so that if udev assigns a
+                    // new event node for the same physical device, discoverProcess can
+                    // pick it up without being blocked by the stale entry.
+                    delete root.monitoredPaths[watcher.devicePath]
+
+                    if (watcher.retryCount >= watcher.maxRetries) {
+                        console.log("[InputService] evtest for", watcher.devicePath, "failed", watcher.maxRetries, "times, giving up.")
+                        // Remove this dead watcher from activeWatchers.
+                        let idx = root.activeWatchers.indexOf(watcher)
+                        if (idx !== -1) root.activeWatchers.splice(idx, 1)
+                        watcher.destroy()
                         return
                     }
 
-                    retryCount++
+                    watcher.retryCount++
                     retryTimer.start()
                 }
 
@@ -295,7 +375,7 @@ Item {
             Connections {
                 target: proc
                 function onRunningChanged() {
-                    if (proc.running) retryCount = 0
+                    if (proc.running) watcher.retryCount = 0
                 }
             }
         }
@@ -304,5 +384,6 @@ Item {
     Component.onCompleted: {
         if (debug) console.log("[InputService] Starting keyboard discovery...")
         discoverProcess.running = true
+        udevMonitor.running = true
     }
 }

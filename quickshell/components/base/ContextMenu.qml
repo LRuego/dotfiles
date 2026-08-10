@@ -5,7 +5,7 @@ import qs.services.ui
 import qs.core
 
 PopupWindow {
-    id: root
+    id: contextMenuRoot
 
     // --- API ---
     // For DBus tray menus pass a QsMenuHandle via menuHandle.
@@ -19,18 +19,18 @@ PopupWindow {
     signal dismissed()
     signal closedAll()
 
-    onDismissed: root.open = false
+    onDismissed: contextMenuRoot.open = false
 
     // --- WINDOW CONFIG ---
     anchor {
-        item:        root.anchorItem
+        item:        contextMenuRoot.anchorItem
         edges:       Edges.Bottom | Edges.Left
         gravity:     Edges.Bottom | Edges.Right
         adjustment:  PopupAdjustment.All
         margins.top: 5
     }
 
-    implicitWidth:  root.menuWidth
+    implicitWidth:  contextMenuRoot.menuWidth
     implicitHeight: contextColumn.implicitHeight + 16 + 5
     visible:        open && anchorItem !== null
     color:          "transparent"
@@ -39,7 +39,7 @@ PopupWindow {
     Timer {
         id:          focusDelay
         interval:    50
-        onTriggered: FocusService.registerMenu(root)
+        onTriggered: FocusService.registerMenu(contextMenuRoot)
     }
 
     onVisibleChanged: {
@@ -47,14 +47,14 @@ PopupWindow {
             focusDelay.start()
         } else {
             focusDelay.stop()
-            FocusService.unregisterMenu(root)
+            FocusService.unregisterMenu(contextMenuRoot)
         }
     }
 
     // Opens the DBus menu entries via QsMenuOpener
     QsMenuOpener {
         id:   menuOpener
-        menu: root.open ? root.menuHandle : null
+        menu: contextMenuRoot.open ? contextMenuRoot.menuHandle : null
     }
 
     // --- VISUALS ---
@@ -77,26 +77,28 @@ PopupWindow {
 
             // DBus menu entries
             Repeater {
-                model: root.menuHandle ? menuOpener.children : []
+                model: contextMenuRoot.menuHandle ? menuOpener.children : []
 
                 delegate: ContextMenuEntry {
                     required property var modelData
+                    readonly property var menu: contextMenuRoot
                     width:     contextColumn.width
                     entry:     modelData
-                    menuWidth: root.menuWidth
+                    menuWidth: menu.menuWidth
                     onCloseAll: {
-                        root.open = false
-                        root.closedAll()
+                        menu.open = false
+                        menu.closedAll()
                     }
                 }
             }
 
             // Static model entries
             Repeater {
-                model: root.menuHandle ? [] : root.model
+                model: contextMenuRoot.menuHandle ? [] : contextMenuRoot.model
 
                 delegate: Loader {
                     required property var modelData
+                    readonly property var menu: contextMenuRoot
                     width: contextColumn.width
 
                     sourceComponent: modelData.separator ? separatorComponent : staticItemComponent
@@ -117,7 +119,7 @@ PopupWindow {
                             onClicked: (button) => {
                                 if (button === Qt.LeftButton && modelData.action) {
                                     modelData.action()
-                                    root.open = false
+                                    menu.open = false
                                 }
                             }
                             IconLabel {

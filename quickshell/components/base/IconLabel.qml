@@ -45,7 +45,7 @@ Row {
     // --- SHOW/HIDE TEXT ---
     property bool showText: true
 
-    spacing: labelSpacing
+    spacing: 0
 
     readonly property bool isImageIcon: icon.includes("/") || icon.includes("://")
     readonly property bool isThemeIcon: icon !== "" && !isImageIcon && icon.length > 2
@@ -98,21 +98,27 @@ Row {
         font.family:    root.textFont
         font.pixelSize: root.textSize
         font.bold:      root.textBold
+        
+        leftPadding:    (root.icon !== "" && root.text !== "") ? root.labelSpacing : 0
 
         visible:  text !== ""
         clip:     true
         opacity:  root.showText ? 1 : 0
 
         width: (root.showText && text !== "")
-            ? (root.textWidth > 0 ? root.textWidth : contentWidth)
+            ? (root.textWidth > 0 ? root.textWidth + leftPadding : implicitWidth)
             : 0
 
         elide:               root.elide
-        horizontalAlignment: Text.AlignHCenter
+        horizontalAlignment: root.textWidth > 0 ? Text.AlignHCenter : Text.AlignLeft
         verticalAlignment:   Text.AlignVCenter
 
         Behavior on opacity {
             NumberAnimation { duration: 150 }
+        }
+        
+        Behavior on width {
+            NumberAnimation { duration: 250; easing.type: Easing.OutQuart }
         }
     }
 }

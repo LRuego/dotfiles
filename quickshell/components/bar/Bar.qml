@@ -66,6 +66,7 @@ PanelWindow {
             spacing: 10
 
             Tray            { iconSize: 14 } // Hardcode Tray Size depending on root.iconSize
+            TheTower        { iconSize: root.iconSize; textSize: root.textSize; textFont: root.textFont }
             SystemResources { iconSize: root.iconSize; textSize: root.textSize; textFont: root.textFont }
             Volume          { iconSize: root.iconSize; textSize: root.textSize; textFont: root.textFont }
             Connectivity    { iconSize: root.iconSize; textSize: root.textSize; textFont: root.textFont }

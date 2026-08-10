@@ -32,6 +32,8 @@ QtObject {
     readonly property string quickshell:            _resolve("app/quickshell.svg")
     readonly property string hyprland:              _resolve("app/hyprland.svg")
     readonly property string steam:                 _resolve("app/steam.svg")
+    readonly property string hexagon:               _resolve("app/hexagon.svg")
+    readonly property string theTower:              _resolve("app/the_tower.png")
     readonly property string tailscaleIcon:         _resolve("app/tailscale-icon.svg")
     readonly property string tailscaleOn:           _resolve("app/tailscale-on.svg")
     readonly property string tailscaleOff:          _resolve("app/tailscale-off.svg")

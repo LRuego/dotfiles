@@ -58,7 +58,7 @@ If this doesn't show any events when you type, the node is incorrect or the devi
 
 ## Permanent Fix: Udev Rules
 
-Ensure your `/etc/udev/rules.d/99-keyboards.rules` is correctly configured to apply the `uaccess` and `seat` tags:
+Ensure your `/etc/udev/rules.d/69-keyboards.rules` is correctly configured to apply the `uaccess` and `seat` tags:
 
 ```udev
 # Example Rule

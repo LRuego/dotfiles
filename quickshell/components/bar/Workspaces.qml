@@ -2,6 +2,7 @@
 import QtQuick
 import QtQuick.Effects
 import Quickshell
+import Quickshell.Hyprland
 import qs.core
 import qs.services.system
 import qs.services.ui
@@ -14,6 +15,9 @@ Module {
     property int    textSize: Theme.fontSizeSmall
     property string textFont: Theme.fontFamilyAlt
 
+    // --- SCREEN (passed from Bar) ---
+    property var screen: null
+
     // --- CONFIGURATION ---
     property bool   enclosed:       true
     property string indicatorStyle: "pills" // "pills" | "circles" | "numbers"
@@ -22,10 +26,18 @@ Module {
     borderColor: root.enclosed ? ThemeState.border  :  "transparent"
     hoverColor:  root.enclosed ? ThemeState.hover   :  "transparent"
 
+    // --- DATA ---
+    readonly property var filteredWorkspaces: HyprlandService.getWorkspacesForScreen(root.screen)
+    readonly property var _mon: Hyprland.monitorFor(root.screen)
+    
+    readonly property int activeWsId: {
+        let trigger = Hyprland.focusedWorkspace;
+        return _mon && _mon.activeWorkspace ? _mon.activeWorkspace.id : -1;
+    }
+
     // --- HELPERS ---
     function indicatorWidth(isFocused, isHovered) {
         if (root.indicatorStyle === "circles") return 10
-        // Pills
         if (isFocused) return 32
         if (isHovered) return 20
         return 12
@@ -50,6 +62,9 @@ Module {
         width: visible ? (shapeRow.width + (root.enclosed ? 24 : 0)) : 0
         height: parent.height
 
+        property real gliderX: 0
+        property real gliderWidth: 0
+
         MouseArea {
             anchors.fill: parent
             onWheel: (wheel) => {
@@ -62,21 +77,26 @@ Module {
             id: shapeRow
             anchors.centerIn: parent
             spacing: 8
+            
+            add: Transition {
+                NumberAnimation { property: "width"; from: 0; duration: 250; easing.type: Easing.OutQuart }
+            }
 
             Repeater {
-                model: root.indicatorStyle !== "numbers" ? HyprlandService.workspaces : 0
+                model: root.indicatorStyle !== "numbers" ? root.filteredWorkspaces : 0
 
                 Item {
                     id: shapeWsItem
                     visible: modelData.id >= 0
 
-                    readonly property bool isFocused: modelData.active
+                    readonly property bool isFocused: modelData.id === root.activeWsId
                     readonly property bool isHovered: mouseArea.containsMouse
 
                     width: root.indicatorWidth(isFocused, isHovered)
                     height: root.indicatorHeight()
                     anchors.verticalCenter: parent.verticalCenter
 
+                    // Smoothly animate the layout width as it stretches from dot to pill
                     Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutQuart } }
 
                     Rectangle {
@@ -85,7 +105,8 @@ Module {
                         width: parent.width
                         height: parent.height
                         radius: height / 2
-
+                        
+                        // Always visible, so it morphs seamlessly!
                         color: root.indicatorColor(shapeWsItem.isFocused, shapeWsItem.isHovered)
 
                         Behavior on color { ColorAnimation { duration: 150 } }
@@ -106,7 +127,7 @@ Module {
                         id: mouseArea
                         anchors.fill: parent
                         hoverEnabled: true
-                        cursorShape: modelData.active ? Qt.ArrowCursor : Qt.PointingHandCursor
+                        cursorShape: Qt.PointingHandCursor
 
                         onClicked: HyprlandService.goToWorkspace(modelData.id)
                         onWheel: (wheel) => {
@@ -120,14 +141,14 @@ Module {
     }
 
     Repeater {
-        model: root.indicatorStyle === "numbers" ? HyprlandService.workspaces : 0
+        model: root.indicatorStyle === "numbers" ? root.filteredWorkspaces : 0
 
         ModuleItem {
             id: numberItem
             visible: modelData.id >= 0
-            cursorShape: modelData.active ? Qt.ArrowCursor : Qt.PointingHandCursor
+            cursorShape: numberItem.isFocused ? Qt.ArrowCursor : Qt.PointingHandCursor
 
-            readonly property bool isFocused: modelData.active
+            readonly property bool isFocused: modelData.id === root.activeWsId
 
             onClicked: (button) => HyprlandService.goToWorkspace(modelData.id)
             onWheeled: (isUp) => {
@@ -136,7 +157,7 @@ Module {
             }
 
             Text {
-                text: modelData.id
+                text: ((modelData.id - 1) % 4) + 1
                 color: root.numberColor(numberItem.isFocused, numberItem.hovered)
                 font.family: root.textFont
                 font.pixelSize: root.textSize
