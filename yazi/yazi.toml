@@ -42,11 +42,11 @@ open = [
 rules = [
 	# 1. High Priority System/Code Types
 	{ mime = "inode/x-empty", use = "edit" },
-	{ name = "*.qml", use = "edit" },
-	{ name = "*.lua", use = "edit" },
-	{ name = "*.txt", use = "edit" },
-	{ name = "*.json", use = "edit" },
-	{ name = "*.js", use = "edit" },
+	{ url = "*.qml", use = "edit" },
+	{ url = "*.lua", use = "edit" },
+	{ url = "*.txt", use = "edit" },
+	{ url = "*.json", use = "edit" },
+	{ url = "*.js", use = "edit" },
   { mime = "image/svg+xml", use = ["edit", "image"] },
 
 	# 2. Broader Mime Types
@@ -56,7 +56,7 @@ rules = [
 	{ mime = "application/x-shellscript", use = "edit" },
 
 	# 3. Multimedia & Others
-	{ name = "*.html", use = "web" },
+	{ url = "*.html", use = "web" },
 	{ mime = "image/*", use = "image" },
 	{ mime = "video/*", use = "play" },
 	{ mime = "audio/*", use = "play" },
@@ -65,10 +65,10 @@ rules = [
 
 	# 4. Binary/Exec Safety
 	{ mime = "application/octet-stream", use = "open" },
-	{ name = "*", is = "exec", use = "open" },
+	{ url = "*", is = "exec", use = "open" },
 
 	# 5. Global Fallback
-	{ name = "*", use = "edit" },
+	{ url = "*", use = "edit" },
     { mime = "*", use = "edit" },
 ]
 
@@ -91,12 +91,12 @@ run  = "mediainfo"
 
 # --- GIT ---
 [[plugin.prepend_fetchers]]
-id  = "git"
+group = "git"
 url = "*"
 run = "git"
 
 [[plugin.prepend_fetchers]]
-id  = "git"
+group = "git"
 url = "*/"
 run = "git"
 
