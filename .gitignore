@@ -30,3 +30,5 @@ secrets.sh
 private.zsh
 *.local.lua
 .agents/
+yazi/plugins/
+yazi/flavors/
