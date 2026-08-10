@@ -126,9 +126,7 @@ eval "$(fzf --zsh)"
 # Zoxide
 eval "$(zoxide init zsh)"
 
-# NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "/usr/share/nvm/init-nvm.sh" ] && . "/usr/share/nvm/init-nvm.sh"
+
 
 ## Custom Functions
 
@@ -140,10 +138,7 @@ function y() {
 	rm -f -- "$tmp"
 }
 
-# Gemini CLI
-gem() {
-  cd /home/lruego/Gemini/ && gemini "$@"
-}
+
 
 # Load system-wide zsh plugins installed via pacman/paru
 # zsh-completions is loaded automatically from /usr/share/zsh/site-functions
@@ -161,3 +156,8 @@ export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"
 eval "$(starship init zsh)"
 export EDITOR="nvim"
 export VISUAL="nvim"
+export PATH="$HOME/.local/bin:$PATH"
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/lruego/.local/bin:$PATH"
