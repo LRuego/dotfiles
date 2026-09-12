@@ -100,7 +100,7 @@ Module {
 
     ModuleItem {
         id: hotplugModule
-        isHidden: !(tsModule.hovered || netItem.hovered || btItem.hovered || hovered || HotplugService.storageDevices.length > 0 || BarState.peekMode)
+        isHidden: !(tsModule.hovered || netItem.hovered || btItem.hovered || hovered || HotplugService.storageDevices.length > 0 || BarState.peekMode || hotplugPopup.open)
         onClicked: hotplugPopup.open = !hotplugPopup.open
 
         HotplugPopup {
