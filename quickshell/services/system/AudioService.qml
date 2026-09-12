@@ -13,8 +13,13 @@ Item {
     property PwNode source: Pipewire.defaultAudioSource
 
     // --- TRACKER ---
+    // Track the full node graph, not just the current sink/source: Quickshell's
+    // PipeWire default-node resolution only stays live for nodes it has bound,
+    // so tracking just [sink, source] leaves default changes (e.g. a bluetooth
+    // headset connecting mid-session) stuck on the old node until the whole
+    // quickshell process restarts.
     PwObjectTracker {
-        objects: [root.sink, root.source]
+        objects: Pipewire.nodes.values
     }
 
     // --- PUBLIC API ---
