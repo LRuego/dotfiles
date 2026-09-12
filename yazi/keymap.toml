@@ -9,7 +9,13 @@ on = ["g", "q"]
 run = "cd /home/lruego/Gemini/dotfiles/quickshell"
 desc = "Go to Quickshell Config"
 
-# N → open in Nemo
+# lazygit
+[[mgr.prepend_keymap]]
+on   = [ "g", "i" ]
+run  = "plugin lazygit"
+desc = "run lazygit"
+
+# open in Nemo
 [[mgr.prepend_keymap]]
 on = ["n"]
 run = "shell 'nemo \"$cwd\"' --block"
