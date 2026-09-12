@@ -39,9 +39,9 @@ QtObject {
     readonly property string tailscaleOff:          _resolve("app/tailscale-off.svg")
 
     // --- DEVICES ---
-    readonly property string desktop:               _resolve("icons/desktop.svg")
-    readonly property string server:                _resolve("icons/hard-drives.svg")
-    readonly property string smartphone:            _resolve("icons/device-mobile.svg")
+    readonly property string desktop:               _resolve("icons/devices/desktop.svg")
+    readonly property string server:                _resolve("icons/devices/hard-drives.svg")
+    readonly property string smartphone:            _resolve("icons/devices/device-mobile.svg")
 
     // --- DATE & TIME ---
     readonly property string clock:                 _resolve("icons/clock-fill.svg")
@@ -64,12 +64,12 @@ QtObject {
     readonly property string networkWiFiHigh:       _resolve("icons/wifi-high-fill.svg")
     readonly property string networkWiFiMed:        _resolve("icons/wifi-medium-fill.svg")
     readonly property string networkWiFiLow:        _resolve("icons/wifi-low-fill.svg")
-    readonly property string usb:                   _resolve("icons/usb.svg")
+    readonly property string usb:                   _resolve("icons/devices/usb.svg")
 
     // --- SYSTEM RESOURCES ---
-    readonly property string cpu:                   _resolve("icons/cpu.svg")
-    readonly property string ram:                   _resolve("icons/memory.svg")
-    readonly property string gpu:                   _resolve("icons/gpu.svg")
+    readonly property string cpu:                   _resolve("icons/devices/cpu.svg")
+    readonly property string ram:                   _resolve("icons/devices/memory.svg")
+    readonly property string gpu:                   _resolve("icons/devices/gpu.svg")
 
     // --- NOTIFICATIONS ---
     readonly property string bell:                  _resolve("icons/bell-fill.svg")
