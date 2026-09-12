@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
+import Quickshell.Widgets
 import qs.core
 import qs.components.base
 import qs.services.system
@@ -28,6 +29,64 @@ MenuPopup {
         property string target: ""
         command: ["udisksctl", "power-off", "-b", "/dev/" + target]
         onExited: NotificationService.notify("Safe to Remove", "The drive can now be unplugged.", "dialog-information")
+    }
+
+    readonly property int deviceCount: HotplugService.storageDevices.length + HotplugService.usbDevices.length
+
+    // --- HEADER ---
+    Item {
+        width:  parent.width
+        height: 36
+
+        Row {
+            anchors.verticalCenter: parent.verticalCenter
+            spacing:                10
+
+            IconImage {
+                source:       Assets.usb
+                implicitSize: 28
+                smooth:       true
+                mipmap:       true
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            Column {
+                Text {
+                    text:           "Hotplug"
+                    color:          ThemeState.accent
+                    font.family:    Theme.fontFamily
+                    font.pixelSize: Theme.fontSizeLarge
+                    font.bold:      true
+                }
+
+                Text {
+                    text:           root.deviceCount === 1 ? "1 device connected" : root.deviceCount + " devices connected"
+                    color:          Theme.subtext
+                    font.family:    Theme.fontFamily
+                    font.pixelSize: Theme.fontSizeSmall
+                }
+            }
+        }
+    }
+
+    // --- DIVIDER ---
+    Rectangle {
+        width:  parent.width
+        height: 1
+        color:  Theme.overlay
+    }
+
+    // --- EMPTY STATE ---
+    Text {
+        width:          parent.width
+        visible:        root.deviceCount === 0
+        text:           "No devices connected"
+        color:          Theme.subtext
+        font.family:    Theme.fontFamily
+        font.pixelSize: Theme.fontSizeSmall
+        horizontalAlignment: Text.AlignHCenter
+        topPadding:     8
+        bottomPadding:  8
     }
 
     // --- STORAGE SECTION ---

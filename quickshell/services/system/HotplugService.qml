@@ -63,12 +63,12 @@ Item {
                 
                 for (let name of newNames) {
                     if (!oldNames.includes(name)) {
-                        NotificationService.notify("Hardware Connected", "USB Device: " + name, "dialog-information")
+                        NotificationService.notify("Hardware Connected", "USB Device: " + name, "dialog-information", undefined, undefined, true)
                     }
                 }
                 for (let name of oldNames) {
                     if (!newNames.includes(name)) {
-                        NotificationService.notify("Hardware Disconnected", "USB Device: " + name, "dialog-warning")
+                        NotificationService.notify("Hardware Disconnected", "USB Device: " + name, "dialog-warning", undefined, undefined, true)
                     }
                 }
             }
@@ -128,13 +128,13 @@ Item {
                     for (let name of newNames) {
                         if (!oldNames.includes(name)) {
                             let drive = drives.find(d => d.name === name)
-                            NotificationService.notify("Storage Connected", drive.label + " (" + drive.size + ")", "drive-removable-media")
+                            NotificationService.notify("Storage Connected", drive.label + " (" + drive.size + ")", "drive-removable-media", undefined, undefined, true)
                         }
                     }
                     for (let name of oldNames) {
                         if (!newNames.includes(name)) {
                             let drive = root.storageDevices.find(d => d.name === name)
-                            NotificationService.notify("Storage Removed", drive.label + " (" + drive.size + ")", "dialog-warning")
+                            NotificationService.notify("Storage Removed", drive.label + " (" + drive.size + ")", "dialog-warning", undefined, undefined, true)
                         }
                     }
                 }
