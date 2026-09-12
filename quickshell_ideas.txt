@@ -1,0 +1,7 @@
+# Quickshell Future Ideas
+
+## Global Hotplug Notification Service
+Create a generic `HotplugService.qml` that listens for devices across multiple udev subsystems.
+- Command: `udevadm monitor --udev --subsystem-match=block --subsystem-match=sound --subsystem-match=bluetooth`
+- Logic: Parse the output for "add" and "remove" events.
+- Notification: Trigger a Quickshell popup notification saying "USB Drive Connected", "Bluetooth Headset Disconnected", etc.

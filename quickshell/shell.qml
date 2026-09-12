@@ -61,6 +61,7 @@ ShellRoot {
         GamemodeService
         InputService
         ThemeState
+        HotplugService
     }
 
     IpcHandler {

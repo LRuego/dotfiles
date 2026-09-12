@@ -64,6 +64,7 @@ QtObject {
     readonly property string networkWiFiHigh:       _resolve("icons/wifi-high-fill.svg")
     readonly property string networkWiFiMed:        _resolve("icons/wifi-medium-fill.svg")
     readonly property string networkWiFiLow:        _resolve("icons/wifi-low-fill.svg")
+    readonly property string usb:                   _resolve("icons/usb.svg")
 
     // --- SYSTEM RESOURCES ---
     readonly property string cpu:                   _resolve("icons/cpu.svg")

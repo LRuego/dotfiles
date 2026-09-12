@@ -6,6 +6,7 @@ import qs.components.base
 import qs.components.popups
 import qs.services.network
 import qs.services.ui
+import qs.services.system
 
 Module {
     id: root
@@ -65,6 +66,7 @@ Module {
     }
 
     ModuleItem {
+        id: netItem
         IconLabel {
             labelBold:  true
             icon:       root.netIcon
@@ -93,6 +95,24 @@ Module {
             iconColor: root.btColor
             iconSize:  root.iconSize
             colorize:  true
+        }
+    }
+
+    ModuleItem {
+        id: hotplugModule
+        isHidden: !(tsModule.hovered || netItem.hovered || btItem.hovered || hovered || HotplugService.storageDevices.length > 0 || BarState.peekMode)
+        onClicked: hotplugPopup.open = !hotplugPopup.open
+
+        HotplugPopup {
+            id:         hotplugPopup
+            anchorItem: hotplugModule
+        }
+
+        IconLabel {
+            icon:       Assets.usb
+            iconColor:  Theme.subtext
+            iconSize:   root.iconSize
+            colorize:   true
         }
     }
 }
