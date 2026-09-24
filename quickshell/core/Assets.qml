@@ -27,6 +27,7 @@ QtObject {
     readonly property string reload:                _resolve("icons/arrows-clockwise-fill.svg")
     readonly property string caretDown:             _resolve("icons/caret-down-fill.svg")
     readonly property string caretLeft:             _resolve("icons/caret-left-fill.svg")
+    readonly property string info:                  _resolve("icons/info.svg")
 
     // --- LOGOS / CUSTOM ---
     readonly property string quickshell:            _resolve("app/quickshell.svg")
@@ -40,8 +41,15 @@ QtObject {
 
     // --- DEVICES ---
     readonly property string desktop:               _resolve("icons/devices/desktop.svg")
-    readonly property string server:                _resolve("icons/devices/hard-drives.svg")
+    readonly property string server:                _resolve("icons/devices/server.svg")
     readonly property string smartphone:            _resolve("icons/devices/device-mobile.svg")
+    readonly property string mouse:                 _resolve("icons/devices/mouse.svg")
+    readonly property string keyboard:              _resolve("icons/devices/keyboard.svg")
+    readonly property string gamepad:               _resolve("icons/devices/gamepad.svg")
+    readonly property string speaker:                _resolve("icons/devices/speaker.svg")
+    readonly property string headphones:             _resolve("icons/devices/headphones.svg")
+    readonly property string hardDrive:              _resolve("icons/devices/hard-drive.svg")
+    readonly property string eject:                  _resolve("icons/devices/eject.svg")
 
     // --- DATE & TIME ---
     readonly property string clock:                 _resolve("icons/clock-fill.svg")
