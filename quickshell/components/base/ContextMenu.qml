@@ -8,18 +8,27 @@ PopupWindow {
     id: contextMenuRoot
 
     // --- API ---
-    // For DBus tray menus pass a QsMenuHandle via menuHandle.
-    // For custom static menus pass a model array via model.
+    // menuHandle: DBus tray menus. model: custom static menus.
     property var        menuHandle: null
     property var        model:      []
     property bool       open:       false
     property var        anchorItem: null
     property int        menuWidth:  200
+    // Set both (>=0) to anchor at a point within anchorItem instead of its
+    // whole bounding box — for right-click menus that should open at the cursor.
+    property real       anchorX:    -1
+    property real       anchorY:    -1
 
     signal dismissed()
     signal closedAll()
 
     onDismissed: contextMenuRoot.open = false
+
+    // Opening this one closes whatever other ContextMenu was open, anywhere in the shell.
+    onOpenChanged: {
+        if (open) FocusService.requestContextMenuOpen(contextMenuRoot)
+        else FocusService.clearContextMenu(contextMenuRoot)
+    }
 
     // --- WINDOW CONFIG ---
     anchor {
@@ -28,6 +37,13 @@ PopupWindow {
         gravity:     Edges.Bottom | Edges.Right
         adjustment:  PopupAdjustment.All
         margins.top: 5
+
+        rect: {
+            if (!anchorItem) return Qt.rect(0, 0, 0, 0)
+            if (contextMenuRoot.anchorX >= 0 && contextMenuRoot.anchorY >= 0)
+                return Qt.rect(contextMenuRoot.anchorX, contextMenuRoot.anchorY, 1, 1)
+            return Qt.rect(0, 0, anchorItem.width, anchorItem.height)
+        }
     }
 
     implicitWidth:  contextMenuRoot.menuWidth
@@ -115,21 +131,29 @@ PopupWindow {
                     Component {
                         id: staticItemComponent
                         MenuItem {
+                            id:    staticEntryItem
                             width: parent?.width ?? 0
                             onClicked: (button) => {
                                 if (button === Qt.LeftButton && modelData.action) {
                                     modelData.action()
-                                    menu.open = false
+                                    if (modelData.closeOnClick !== false) menu.open = false
                                 }
+                            }
+                            // Entry color vocabulary: inactive->subtext, disabled-on-hover->urgent, active->accent, default->text.
+                            readonly property color entryColor: {
+                                if (modelData.enabled === false) return Theme.subtext
+                                if (modelData.disabled && staticEntryItem.hovered) return Theme.urgent
+                                if (modelData.checked) return ThemeState.accent
+                                return ThemeState.text
                             }
                             IconLabel {
                                 icon:      modelData.icon ?? ""
                                 colorize:  true
                                 iconSize:  Theme.fontSizeSmall
-                                iconColor: modelData.enabled !== false ? ThemeState.text : Theme.subtext
+                                iconColor: staticEntryItem.entryColor
                                 text:      modelData.text ?? ""
                                 textSize:  Theme.fontSizeSmall
-                                textColor: modelData.enabled !== false ? ThemeState.text : Theme.subtext
+                                textColor: staticEntryItem.entryColor
                             }
                         }
                     }

@@ -1,4 +1,4 @@
-// components/popups/CalendarPopup.qml
+// components/menus/CalendarMenu.qml
 import QtQuick
 import Quickshell
 import qs.components.base
@@ -6,7 +6,7 @@ import qs.services.system
 import qs.services.ui
 import qs.core
 
-MenuPopup {
+Menu {
     id: root
 
     open:      false
@@ -75,12 +75,15 @@ MenuPopup {
     }
 
     // --- HEADER ---
+    // Bespoke month navigator, not MenuHeader's shape — still needs its own top padding.
     Item {
         width:  parent.width
-        height: 28
+        height: 28 + 12
 
         Row {
-            anchors.fill: parent
+            y:      12
+            width:  parent.width
+            height: 28
 
             Rectangle {
                 width:   28
@@ -294,4 +297,7 @@ MenuPopup {
             }
         }
     }
+
+    // Not a full-bleed row, so it needs its own bottom gap.
+    Item { width: parent.width; height: 8 }
 }

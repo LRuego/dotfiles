@@ -3,7 +3,7 @@ import QtQuick
 import Quickshell
 import qs.core
 import qs.components.base
-import qs.components.popups
+import qs.components.menus
 import qs.services.system
 
 Module {
@@ -67,7 +67,7 @@ Module {
             textSize:  root.textSize
         }
 
-        CalendarPopup {
+        CalendarMenu {
             id:         calendarPopup
             anchorItem: calendarItem
         }

@@ -4,7 +4,7 @@ import Quickshell
 import Quickshell.Io
 import qs.core
 import qs.components.base
-import qs.components.popups
+import qs.components.menus
 import qs.services.ui
 
 Module {
@@ -73,7 +73,7 @@ Module {
         }
     }
 
-    TheTowerPopup {
+    TheTowerMenu {
         id: towerPopup
         anchorItem: towerModule
     }

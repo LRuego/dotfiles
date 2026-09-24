@@ -1,4 +1,4 @@
-// components/popups/TheTowerPopup.qml
+// components/menus/TheTowerMenu.qml
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -7,7 +7,7 @@ import qs.components.base
 import qs.services.ui
 import qs.core
 
-MenuPopup {
+Menu {
     id: root
 
     menuWidth: 450
@@ -80,48 +80,22 @@ MenuPopup {
     }
 
     // --- HEADER ---
-    Item {
-        width:  parent.width
-        height: 36
+    MenuHeader {
+        icon:      Assets.hexagon
+        colorize:  true
+        iconColor: ThemeState.accent
 
-        Row {
-            anchors.verticalCenter: parent.verticalCenter
-            spacing:                10
-
-            IconLabel {
-                icon:      Assets.hexagon
-                iconSize:  28
-                colorize:  true
-                iconColor: ThemeState.accent
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            Column {
-                Text {
-                    text:           "The Tower"
-                    color:          ThemeState.accent
-                    font.family:    Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeLarge
-                    font.bold:      true
-                }
-
-                Text {
-                    text:           root.startTimeStr === "" 
-                                        ? "Inactive" 
-                                        : "Started: " + root.startTimeStr + "  |  Runs: " + root.runCount
-                    color:          Theme.subtext
-                    font.family:    Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeSmall
-                }
-            }
-        }
+        title:    "The Tower"
+        subtitle: root.startTimeStr === ""
+                      ? "Inactive"
+                      : "Started: " + root.startTimeStr + "  |  Runs: " + root.runCount
     }
 
     // --- DIVIDER ---
     Rectangle {
-        width:   parent.width
-        height:  1
-        color:   Theme.overlay
+        width:  parent.width
+        height: 1
+        color:  Theme.overlay
     }
 
     // --- LOG LIST ---
@@ -158,4 +132,7 @@ MenuPopup {
             font.pixelSize: Theme.fontSizeSmall
         }
     }
+
+    // Not a full-bleed row, so it needs its own bottom gap.
+    Item { width: parent.width; height: 8 }
 }

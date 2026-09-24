@@ -1,3 +1,4 @@
+// components/menus/UsbMenu.qml
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -8,10 +9,11 @@ import qs.components.base
 import qs.services.system
 import qs.services.ui
 
-MenuPopup {
+Menu {
     id: root
 
-    menuWidth: 340
+    menuWidth: 300
+    padded:    false
 
     // Eject command executor
     Process {
@@ -31,42 +33,13 @@ MenuPopup {
         onExited: NotificationService.notify("Safe to Remove", "The drive can now be unplugged.", "dialog-information")
     }
 
-    readonly property int deviceCount: HotplugService.storageDevices.length + HotplugService.usbDevices.length
+    readonly property int deviceCount: UsbService.storageDevices.length + UsbService.peripherals.length
 
     // --- HEADER ---
-    Item {
-        width:  parent.width
-        height: 36
-
-        Row {
-            anchors.verticalCenter: parent.verticalCenter
-            spacing:                10
-
-            IconImage {
-                source:       Assets.usb
-                implicitSize: 28
-                smooth:       true
-                mipmap:       true
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            Column {
-                Text {
-                    text:           "Hotplug"
-                    color:          ThemeState.accent
-                    font.family:    Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeLarge
-                    font.bold:      true
-                }
-
-                Text {
-                    text:           root.deviceCount === 1 ? "1 device connected" : root.deviceCount + " devices connected"
-                    color:          Theme.subtext
-                    font.family:    Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeSmall
-                }
-            }
-        }
+    MenuHeader {
+        icon:  Assets.usb
+        title: "USB"
+        subtitle: root.deviceCount === 1 ? "1 device connected" : root.deviceCount + " devices connected"
     }
 
     // --- DIVIDER ---
@@ -90,36 +63,34 @@ MenuPopup {
     }
 
     // --- STORAGE SECTION ---
+    // spacing:0 — cards get their own inner Column with spacing:8 for mutual gaps.
     Column {
         width: parent.width
-        spacing: 8
-        visible: HotplugService.storageDevices.length > 0
+        spacing: 0
+        visible: UsbService.storageDevices.length > 0
 
-        Text {
+        MenuSectionLabel {
             text: "Storage Drives"
-            color: Theme.subtext
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSizeSmall
-            font.bold: true
         }
 
-        Repeater {
-            model: HotplugService.storageDevices
-            
-            Rectangle {
-                width: parent.width
-                height: 54
-                color: Theme.surface0
-                radius: 8
-                
+        MenuList {
+            spacing:    8
+            maxVisible: 5
+            model:      UsbService.storageDevices
+
+            delegate: MenuItem {
+                width: ListView.view.width
+                implicitHeight: 54
+                color: hovered ? hoverColor : Theme.surface0
+                radius: 0
+
                 RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: 10
+                    width:   parent.width
                     spacing: 12
                     
                     IconLabel {
-                        icon: "image://icon/drive-removable-media"
-                        iconSize: 24
+                        icon: Assets.hardDrive
+                        iconSize: 20
                         colorize: true
                         iconColor: ThemeState.accent
                         Layout.alignment: Qt.AlignVCenter
@@ -132,12 +103,12 @@ MenuPopup {
                             text: modelData.label || "USB Drive"
                             color: Theme.text
                             font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSize
+                            font.pixelSize: Theme.fontSizeSmall
                             elide: Text.ElideRight
                             width: parent.width
                         }
                         Text {
-                            text: modelData.size + (modelData.isMounted ? " • Mounted" : " • Unmounted")
+                            text: modelData.size
                             color: Theme.subtext
                             font.family: Theme.fontFamilyAlt
                             font.pixelSize: Theme.fontSizeSmall
@@ -147,15 +118,15 @@ MenuPopup {
                     }
                     
                     Rectangle {
-                        Layout.preferredWidth: 32
-                        Layout.preferredHeight: 32
+                        Layout.preferredWidth: 16
+                        Layout.preferredHeight: 16
                         color: ejectMouse.containsMouse ? Theme.surface1 : "transparent"
                         radius: 4
                         
                         IconLabel {
                             anchors.centerIn: parent
-                            icon: "image://icon/media-eject"
-                            iconSize: 16
+                            icon: Assets.eject
+                            iconSize: 12
                             colorize: true
                             iconColor: Theme.text
                         }
@@ -176,51 +147,60 @@ MenuPopup {
             }
         }
     }
-    
-    // Divider
+
+    // --- DIVIDER ---
     Rectangle {
-        width: parent.width
-        height: 1
-        color: Theme.overlay
-        visible: HotplugService.storageDevices.length > 0 && HotplugService.usbDevices.length > 0
+        width:   parent.width
+        height:  1
+        color:   Theme.overlay
+        visible: UsbService.storageDevices.length > 0 && UsbService.peripherals.length > 0
     }
 
     // --- USB PERIPHERALS SECTION ---
+    // spacing:0 — MenuSectionLabel and the flush row list own their own breathing room.
     Column {
         width: parent.width
-        spacing: 8
-        visible: HotplugService.usbDevices.length > 0
+        spacing: 0
+        visible: UsbService.peripherals.length > 0
 
-        Text {
+        MenuSectionLabel {
             text: "Connected Peripherals"
-            color: Theme.subtext
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSizeSmall
-            font.bold: true
         }
 
-        Repeater {
-            model: HotplugService.usbDevices
-            
-            RowLayout {
-                width: parent.width
-                spacing: 12
-                
-                IconLabel {
-                    icon: Assets.usb
-                    iconSize: 16
-                    colorize: true
-                    iconColor: Theme.subtext
-                    Layout.alignment: Qt.AlignVCenter
-                }
-                
-                Text {
-                    Layout.fillWidth: true
-                    text: modelData.name
-                    color: Theme.text
-                    font.family: Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeSmall
-                    elide: Text.ElideRight
+        MenuList {
+            id:         peripheralList
+            spacing:    0
+            maxVisible: 5
+            model:      UsbService.peripherals
+
+            delegate: MenuItem {
+                width: ListView.view.width
+                radius: 0 // full-bleed row, no inset corners to round
+                // Last row is the actual bottom of the popup — round to match, like MenuFooter.
+                readonly property bool isLast: index === peripheralList.count - 1
+                bottomLeftRadius:  isLast ? Theme.cornerRadius : 0
+                bottomRightRadius: isLast ? Theme.cornerRadius : 0
+
+                RowLayout {
+                    width:   parent.width
+                    spacing: 12
+
+                    IconLabel {
+                        icon: Assets.usb
+                        iconSize: 20
+                        colorize: true
+                        iconColor: Theme.subtext
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+
+                    Text {
+                        Layout.fillWidth: true
+                        text: modelData.name
+                        color: Theme.text
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.fontSizeSmall
+                        elide: Text.ElideRight
+                    }
                 }
             }
         }

@@ -7,7 +7,7 @@ import Quickshell.Hyprland
 import qs.components.bar
 import qs.components.base
 import qs.components.notifications
-import qs.components.popups
+import qs.components.menus
 import qs.services.input
 import qs.services.system
 import qs.services.ui
@@ -61,7 +61,7 @@ ShellRoot {
         GamemodeService
         InputService
         ThemeState
-        HotplugService
+        UsbService
     }
 
     IpcHandler {

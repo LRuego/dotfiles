@@ -112,10 +112,12 @@ Item {
             opacity:                entry.enabled ? 1 : 0.4
         }
 
-        // Text
+        // Text — same entry color vocabulary as ContextMenu.qml's static entries.
         Text {
             text:                   entry.text
-            color:                  entry.enabled ? ThemeState.text : Theme.subtext
+            color:                  !entry.enabled
+                                         ? Theme.subtext
+                                         : (entry.checkState === Qt.Checked ? ThemeState.accent : ThemeState.text)
             font.family:            Theme.fontFamily
             font.pixelSize:         Theme.fontSizeSmall
             anchors.verticalCenter: parent.verticalCenter

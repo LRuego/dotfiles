@@ -1,5 +1,6 @@
-// components/popups/TailscalePopup.qml
+// components/menus/TailscaleMenu.qml
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Widgets
 import qs.components.base
@@ -8,59 +9,23 @@ import qs.services.system
 import qs.services.ui
 import qs.core
 
-MenuPopup {
+Menu {
     id: root
 
-    menuWidth:  260
+    menuWidth:  300
+    padded:     false
 
     // --- HEADER ---
-    Item {
-        width:  parent.width
-        height: 36
+    MenuHeader {
+        icon:          TailscaleService.active ? Assets.tailscaleOn : Assets.tailscaleOff
+        iconClickable: true
+        pulsing:       TailscaleService.transitioning
+        onIconClicked: TailscaleService.toggle()
 
-        Row {
-            anchors.verticalCenter: parent.verticalCenter
-            spacing:                10
-
-            IconImage {
-                id:          tsIcon
-                source:      TailscaleService.active ? Assets.tailscaleOn : Assets.tailscaleOff
-                implicitSize: 28
-                smooth:      true
-                mipmap:      true
-                anchors.verticalCenter: parent.verticalCenter
-
-                layer.enabled: true
-                layer.effect: null
-
-                MouseArea {
-                    width:       parent.width
-                    height:      parent.height
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked:   TailscaleService.toggle()
-                }
-            }
-
-            Column {
-
-                Text {
-                    text:           "Tailscale"
-                    color:          ThemeState.accent
-                    font.family:    Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeLarge
-                    font.bold:      true
-                }
-
-                Text {
-                    text:           TailscaleService.transitioning
-                                        ? "Connecting..."
-                                        : TailscaleService.active ? "Connected" : "Disconnected"
-                    color:          Theme.subtext
-                    font.family:    Theme.fontFamily
-                    font.pixelSize: Theme.fontSizeSmall
-                }
-            }
-        }
+        title:    "Tailscale"
+        subtitle: TailscaleService.transitioning
+                      ? "Connecting..."
+                      : (TailscaleService.active ? "Connected" : "Disconnected")
     }
 
     // --- DIVIDER ---
@@ -72,30 +37,26 @@ MenuPopup {
     }
 
     // --- PEER LIST ---
-    ListView {
-        id:      peerList
-        width:   parent.width
+    MenuSectionLabel {
         visible: TailscaleService.connected
-        clip:    true
-        spacing: 2
+        text:    "Tailnet"
+    }
 
-        property int maxVisible: 5
-        height: {
-            if (count <= maxVisible) return contentHeight
-            let item = contentItem.children[0]
-            if (!item) return maxVisible * 48
-            return (item.height * maxVisible) + (spacing * (maxVisible - 1))
-        }
+    MenuList {
+        id:      peerList
+        visible: TailscaleService.connected
+        spacing: 0
 
         model: TailscaleService.peers
 
         delegate: MenuItem {
             id:    peerItem
             width: ListView.view.width
+            radius: 0 // full-bleed row, no inset corners to round
 
             readonly property string lastSeenStr: {
-                if (modelData.online || modelData.lastSeen === "0001-01-01T00:00:00Z") return "Online"
-                return Qt.formatDateTime(new Date(modelData.lastSeen), "MMM d, h:mm AP")
+                if (modelData.online || modelData.lastSeen === "0001-01-01T00:00:00Z") return ""
+                return Qt.formatDateTime(new Date(modelData.lastSeen), "MM/dd/yyyy HH:mm")
             }
 
             readonly property string peerIcon: {
@@ -119,15 +80,8 @@ MenuPopup {
                 }
             }
 
-            onHoveredChanged: {
-                if (hovered) {
-                    globalTooltip.show(peerItem, lastSeenStr)
-                } else {
-                    globalTooltip.hide(peerItem)
-                }
-            }
-
-            Row {
+            RowLayout {
+                width:   parent.width
                 spacing: 10
 
                 IconLabel {
@@ -136,12 +90,13 @@ MenuPopup {
                     iconWidth: 20
                     colorize:  true
                     iconColor: modelData.online ? Theme.success : Theme.overlay
-                    anchors.verticalCenter: parent.verticalCenter
+                    Layout.alignment: Qt.AlignVCenter
                 }
 
                 Column {
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
                     spacing: 1
-                    anchors.verticalCenter: parent.verticalCenter
 
                     Row {
                         spacing: 6
@@ -174,11 +129,46 @@ MenuPopup {
                         }
                     }
 
-                    Text {
-                        text:           modelData.ip
-                        color:          Theme.subtext
-                        font.family:    Theme.fontFamily
-                        font.pixelSize: Theme.fontSizeTiny
+                    // Absolute positioning, not a fill-weighted RowLayout — keeps the bullet at a fixed x.
+                    Item {
+                        width:  parent.width
+                        height: ipText.implicitHeight
+
+                        Text {
+                            id: ipText
+                            anchors.left:           parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            text:           modelData.ip
+                            color:          Theme.subtext
+                            font.family:    Theme.fontFamily
+                            font.pixelSize: Theme.fontSizeTiny
+                            elide:          Text.ElideRight
+                        }
+
+                        Text {
+                            id: bulletText
+                            visible:                   peerItem.lastSeenStr !== ""
+                            anchors.horizontalCenter:  parent.horizontalCenter
+                            anchors.verticalCenter:    parent.verticalCenter
+                            text:           "•"
+                            color:          Theme.overlay
+                            font.family:    Theme.fontFamily
+                            font.pixelSize: Theme.fontSizeTiny
+                        }
+
+                        Text {
+                            visible:                 peerItem.lastSeenStr !== ""
+                            anchors.left:            bulletText.right
+                            anchors.leftMargin:      6
+                            anchors.right:           parent.right
+                            anchors.verticalCenter:  parent.verticalCenter
+                            horizontalAlignment:     Text.AlignHCenter
+                            text:           peerItem.lastSeenStr
+                            color:          Theme.subtext
+                            font.family:    Theme.fontFamily
+                            font.pixelSize: Theme.fontSizeTiny
+                            elide:          Text.ElideRight
+                        }
                     }
                 }
             }
@@ -193,21 +183,9 @@ MenuPopup {
     }
 
     // --- FOOTER ---
-    MenuItem {
-        width: parent.width
-
-        onClicked: (button) => {
-            if (button === Qt.LeftButton)
-                UtilService.openUrl("https://login.tailscale.com/admin")
-        }
-
-        IconLabel {
-            icon:      Assets.tailscaleIcon
-            iconSize:  Theme.fontSizeLarge
-
-            text:      "Open Admin Console"
-            textSize:  Theme.fontSizeSmall
-            textColor: Theme.subtext
-        }
+    MenuFooter {
+        icon:  Assets.tailscaleIcon
+        label: "Open Admin Console"
+        onActivated: UtilService.openUrl("https://login.tailscale.com/admin")
     }
 }

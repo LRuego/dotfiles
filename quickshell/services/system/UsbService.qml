@@ -1,3 +1,4 @@
+// services/system/UsbService.qml
 pragma Singleton
 import QtQuick
 import Quickshell
@@ -7,7 +8,7 @@ import qs.services.ui
 Item {
     id: root
 
-    property var usbDevices: []
+    property var peripherals: []
     property var storageDevices: []
 
     // --- TIMERS FOR DEBOUNCING UDEV EVENTS ---
@@ -58,8 +59,8 @@ Item {
             let newNames = usbQuery.tempNames
             
             // Compare for Notifications (skip if first run)
-            if (root.usbDevices.length > 0) {
-                let oldNames = root.usbDevices.map(d => d.name)
+            if (root.peripherals.length > 0) {
+                let oldNames = root.peripherals.map(d => d.name)
                 
                 for (let name of newNames) {
                     if (!oldNames.includes(name)) {
@@ -73,7 +74,7 @@ Item {
                 }
             }
 
-            root.usbDevices = list
+            root.peripherals = list
             usbQuery.tempList = []
             usbQuery.tempNames = []
         }

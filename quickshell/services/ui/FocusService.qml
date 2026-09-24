@@ -10,6 +10,18 @@ Item {
     // Use a list property for better reactivity
     property list<var> activeMenus: []
 
+    // Only one ContextMenu should ever be open at a time, app-wide.
+    property var openContextMenu: null
+
+    function requestContextMenuOpen(menu) {
+        if (openContextMenu && openContextMenu !== menu) openContextMenu.open = false
+        openContextMenu = menu
+    }
+
+    function clearContextMenu(menu) {
+        if (openContextMenu === menu) openContextMenu = null
+    }
+
     function registerMenu(window) {
         // console.log("[FocusService] Registering menu: " + window);
         let current = Array.from(activeMenus);

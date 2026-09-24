@@ -3,7 +3,7 @@ import QtQuick
 import Quickshell
 import qs.core
 import qs.components.base
-import qs.components.popups
+import qs.components.menus
 import qs.services.network
 import qs.services.ui
 import qs.services.system
@@ -45,7 +45,7 @@ Module {
             }
         }
 
-        TailscalePopup {
+        TailscaleMenu {
             id:         tsPopup
             anchorItem: tsModule
         }
@@ -83,10 +83,17 @@ Module {
 
     ModuleItem {
         id: btItem
-        onClicked: {
-            if (BluetoothService.adapter) {
-                BluetoothService.adapter.enabled = !BluetoothService.adapter.enabled
+        onClicked: (button) => {
+            if (button === Qt.LeftButton) {
+                BluetoothService.togglePower()
+            } else if (button === Qt.RightButton) {
+                btPopup.open = !btPopup.open
             }
+        }
+
+        BluetoothMenu {
+            id:         btPopup
+            anchorItem: btItem
         }
 
         IconLabel {
@@ -99,13 +106,13 @@ Module {
     }
 
     ModuleItem {
-        id: hotplugModule
-        isHidden: !(tsModule.hovered || netItem.hovered || btItem.hovered || hovered || HotplugService.storageDevices.length > 0 || BarState.peekMode || hotplugPopup.open)
-        onClicked: hotplugPopup.open = !hotplugPopup.open
+        id: usbModule
+        isHidden: !(UsbService.storageDevices.length > 0 || BarState.peekMode || usbMenu.open)
+        onClicked: usbMenu.open = !usbMenu.open
 
-        HotplugPopup {
-            id:         hotplugPopup
-            anchorItem: hotplugModule
+        UsbMenu {
+            id:         usbMenu
+            anchorItem: usbModule
         }
 
         IconLabel {
