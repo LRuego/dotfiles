@@ -1,0 +1,12 @@
+[Unit]
+Description=Bluetooth auth agent (auto-accepts pairing/authorization requests)
+After=bluetooth.service
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/bt-agent --capability=NoInputNoOutput
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
