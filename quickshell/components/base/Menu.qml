@@ -1,10 +1,13 @@
 // components/base/Menu.qml
 import QtQuick
 import Quickshell
+import Quickshell.Wayland
 import qs.services.ui
 import qs.core
 
-PopupWindow {
+// A top-layer surface, not a popup: Hyprland draws every layer popup above all layers,
+// so a popup menu would cover overlay notifications. As a layer, notifications stay on top.
+PanelWindow {
     id: root
 
     // --- API ---
@@ -22,12 +25,36 @@ PopupWindow {
     onDismissed: root.open = false
 
     // --- WINDOW CONFIG ---
-    anchor {
-        item:        root.anchorItem
-        edges:       Edges.Bottom | Edges.Left
-        gravity:     Edges.Bottom | Edges.Right
-        adjustment:  PopupAdjustment.All
-        margins.top: 5
+    WlrLayershell.layer:     WlrLayer.Top
+    WlrLayershell.namespace: "quickshell-menu"
+    exclusionMode:           ExclusionMode.Ignore // margins are measured from the screen edge, not below the bar
+
+    screen: root.anchorItem?.QsWindow.window?.screen ?? null
+
+    anchors {
+        top:  true
+        left: true
+    }
+
+    // Like the old popup placement: left-aligned under the anchor, flipped to right-aligned
+    // if that would run off the screen, then clamped as a last resort.
+    // Recomputed when the menu opens (the bar doesn't move while it's open).
+    property point _origin: Qt.point(0, 0)
+    onOpenChanged: if (open) _placeUnderAnchor()
+
+    function _placeUnderAnchor() {
+        if (!root.anchorItem) return
+        let p = root.anchorItem.mapToItem(null, 0, root.anchorItem.height)
+        let screenW = root.screen?.width ?? Infinity
+        let x = p.x
+        if (x + root.menuWidth > screenW) x = p.x + root.anchorItem.width - root.menuWidth
+        x = Math.max(4, Math.min(x, screenW - root.menuWidth - 4))
+        root._origin = Qt.point(x, p.y)
+    }
+
+    margins {
+        left: root._origin.x
+        top:  root._origin.y
     }
 
     implicitWidth:  root.menuWidth
