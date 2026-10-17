@@ -47,7 +47,7 @@ PopupWindow {
     }
 
     implicitWidth:  contextMenuRoot.menuWidth
-    implicitHeight: contextColumn.implicitHeight + 16 + 5
+    implicitHeight: contextColumn.implicitHeight + 10 + 5
     visible:        open && anchorItem !== null
     color:          "transparent"
 
@@ -79,17 +79,18 @@ PopupWindow {
         anchors.left:      parent.left
         anchors.right:     parent.right
         anchors.topMargin: 5
-        height:            contextColumn.implicitHeight + 16
-        color:             Theme.base
+        height:            contextColumn.implicitHeight + 10
+        // Same translucent panel as NotificationCenter; Hyprland blurs popups behind it.
+        color:             Qt.rgba(Theme.base.r, Theme.base.g, Theme.base.b, 0.8)
         radius:            Theme.cornerRadius
-        border.color:      Theme.overlay
+        border.color:      ThemeState.border
         border.width:      1
 
         Column {
             id:              contextColumn
             anchors.fill:    parent
-            anchors.margins: 8
-            spacing:         2
+            anchors.margins: 5
+            spacing:         0
 
             // DBus menu entries
             Repeater {
@@ -121,10 +122,16 @@ PopupWindow {
 
                     Component {
                         id: separatorComponent
-                        Rectangle {
+                        Item {
                             width:  parent?.width ?? 0
-                            height: 1
-                            color:  Theme.overlay
+                            height: 9
+
+                            Rectangle {
+                                anchors.centerIn: parent
+                                width:            parent.width - 20
+                                height:           1
+                                color:            Qt.rgba(Theme.text.r, Theme.text.g, Theme.text.b, 0.12)
+                            }
                         }
                     }
 
@@ -133,19 +140,35 @@ PopupWindow {
                         MenuItem {
                             id:    staticEntryItem
                             width: parent?.width ?? 0
+                            implicitHeight: 22
+                            contentSpacing: 4
+                            radius:         5
                             onClicked: (button) => {
                                 if (button === Qt.LeftButton && modelData.action) {
                                     modelData.action()
                                     if (modelData.closeOnClick !== false) menu.open = false
                                 }
                             }
-                            // Entry color vocabulary: inactive->subtext, disabled-on-hover->urgent, active->accent, default->text.
+                            // Entry color vocabulary: inactive->subtext, hovered->base on the accent pill, disabled-on-hover->urgent text.
                             readonly property color entryColor: {
                                 if (modelData.enabled === false) return Theme.subtext
                                 if (modelData.disabled && staticEntryItem.hovered) return Theme.urgent
-                                if (modelData.checked) return ThemeState.accent
+                                if (staticEntryItem.hovered) return Theme.base
                                 return ThemeState.text
                             }
+                            // Destructive entries keep a neutral pill so the red text stays readable.
+                            hoverColor: modelData.disabled ? Qt.rgba(Theme.text.r, Theme.text.g, Theme.text.b, 0.10) : ThemeState.accent
+
+                            // macOS-style checkmark gutter, always reserved so labels line up.
+                            Text {
+                                width:          14
+                                text:           modelData.checked ? "✓" : ""
+                                color:          staticEntryItem.entryColor
+                                font.pixelSize: Theme.fontSizeSmall
+                                font.bold:      true
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+
                             IconLabel {
                                 icon:      modelData.icon ?? ""
                                 colorize:  true

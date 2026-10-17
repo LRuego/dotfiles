@@ -13,7 +13,7 @@ Item {
     signal closeAll()
 
     width:          parent?.width ?? 200
-    implicitHeight: entry.isSeparator ? 9 : 32
+    implicitHeight: entry.isSeparator ? 9 : 22
 
     property var subMenuInstance: null
 
@@ -52,9 +52,9 @@ Item {
     Rectangle {
         visible:          entry.isSeparator
         anchors.centerIn: parent
-        width:            parent.width
+        width:            parent.width - 20
         height:           1
-        color:            Theme.overlay
+        color:            Qt.rgba(Theme.text.r, Theme.text.g, Theme.text.b, 0.12)
     }
 
     // --- MENU ITEM ---
@@ -62,7 +62,13 @@ Item {
         id:             entryItem
         visible:        !entry.isSeparator
         width:          parent.width
-        implicitHeight: 32
+        implicitHeight: 22
+        contentSpacing: 4
+        radius:         5
+        hoverColor:     ThemeState.accent
+
+        // Hovered rows sit on the accent pill, so their text flips to the base colour.
+        readonly property color textColor: !entry.enabled ? Theme.subtext : (hovered ? Theme.base : ThemeState.text)
 
         onClicked: (button) => {
             if (!entry.enabled) return
@@ -86,7 +92,7 @@ Item {
 
         // Check indicator
         Item {
-            width:                  14
+            width:                  14 // macOS-style gutter, always reserved
             height:                 parent.height
             anchors.verticalCenter: parent.verticalCenter
 
@@ -94,7 +100,7 @@ Item {
                 anchors.centerIn: parent
                 visible:          entry.checkState === Qt.Checked
                 text:             "✓"
-                color:            ThemeState.accent
+                color:            entryItem.textColor
                 font.pixelSize:   Theme.fontSizeSmall
                 font.bold:        true
             }
@@ -115,13 +121,11 @@ Item {
         // Text — same entry color vocabulary as ContextMenu.qml's static entries.
         Text {
             text:                   entry.text
-            color:                  !entry.enabled
-                                         ? Theme.subtext
-                                         : (entry.checkState === Qt.Checked ? ThemeState.accent : ThemeState.text)
+            color:                  entryItem.textColor
             font.family:            Theme.fontFamily
             font.pixelSize:         Theme.fontSizeSmall
             anchors.verticalCenter: parent.verticalCenter
-            width:                  entryRoot.menuWidth - 60 - (entry.hasChildren ? 16 : 0)
+            width:                  entryRoot.menuWidth - 50 - (entry.icon !== "" ? 20 : 0) - (entry.hasChildren ? 16 : 0)
             elide:                  Text.ElideRight
         }
 
@@ -129,7 +133,7 @@ Item {
         Text {
             visible:                entry.hasChildren
             text:                   "›"
-            color:                  entry.enabled ? ThemeState.text : Theme.subtext
+            color:                  entryItem.textColor
             font.pixelSize:         Theme.fontSizeLarge
             anchors.verticalCenter: parent.verticalCenter
         }

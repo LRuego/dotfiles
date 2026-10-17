@@ -14,6 +14,7 @@ Rectangle {
     signal clicked(int button)
     
     property bool hovered: mouseArea.containsMouse
+    property int  contentSpacing: 12 // gap between the row's icon/text items
     property color hoverColor: ThemeState.hover
 
     // --- TOOLTIP API ---
@@ -52,7 +53,7 @@ Rectangle {
             id: innerRow
             width: parent.width
             anchors.verticalCenter: parent.verticalCenter
-            spacing: 12
+            spacing: root.contentSpacing
         }
     }
 
