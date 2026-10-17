@@ -22,6 +22,10 @@ Item {
     property string subtitle:      ""
     property color  subtitleColor: Theme.subtext
 
+    // --- ACTIONS ---
+    // Buttons placed at the right edge, e.g. MenuHeaderButton.
+    default property alias actions: actionRow.data
+
     // --- LAYOUT ---
     // Owns its own inset regardless of the parent Menu's `padded` — a header is never a full-bleed row.
     property int inset:        12
@@ -35,6 +39,7 @@ Item {
         id:      contentRow
         x:       root.inset
         y:       root.topPadding
+        width:   root.width - root.inset * 2 - (actionRow.width > 0 ? actionRow.width + spacing : 0)
         spacing: 10
 
         Item {
@@ -85,5 +90,13 @@ Item {
                 font.pixelSize: Theme.fontSizeSmall
             }
         }
+    }
+
+    Row {
+        id:      actionRow
+        anchors.right:          parent.right
+        anchors.rightMargin:    root.inset - 4
+        anchors.verticalCenter: contentRow.verticalCenter
+        spacing: 2
     }
 }

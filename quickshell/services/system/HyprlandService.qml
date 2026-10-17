@@ -77,6 +77,53 @@ Item {
         Hyprland.dispatch(`hl.dsp.workspace.toggle_special(${root.luaString(name)})`);
     }
 
+    // Focuses the monitor under the cursor, then hyprsplit's first empty workspace on it.
+    readonly property string focusEmptyWorkspaceAtCursorExpr: 'function() local m = hl.get_monitor_at_cursor(); if m then hl.dispatch(hl.dsp.focus({ monitor = m.name })) end; hl.dispatch(hs.dsp.focus({ workspace = "empty" })) end'
+
+    function focusEmptyWorkspaceAtCursor() {
+        Hyprland.dispatch(root.focusEmptyWorkspaceAtCursorExpr);
+    }
+
+    // --- WINDOW HELPERS (address is hyprctl's "0x..." form) ---
+    function _win(address) {
+        return root.luaString(`address:${address}`);
+    }
+
+    function focusWindow(address) {
+        Hyprland.dispatch(`hl.dsp.focus({ window = ${root._win(address)} })`);
+    }
+
+    function moveWindowToWorkspace(address, workspaceId) {
+        Hyprland.dispatch(`hl.dsp.window.move({ window = ${root._win(address)}, workspace = ${Number(workspaceId)}, follow = false })`);
+    }
+
+    function tileWindow(address) {
+        Hyprland.dispatch(`hl.dsp.window.float({ window = ${root._win(address)}, action = "disable" })`);
+    }
+
+    function toggleGroup(address) {
+        Hyprland.dispatch(`hl.dsp.group.toggle({ window = ${root._win(address)} })`);
+    }
+
+    // direction: "left" | "right" | "up" | "down"
+    function moveWindowIntoGroup(address, direction) {
+        Hyprland.dispatch(`hl.dsp.window.move({ window = ${root._win(address)}, into_group = ${root.luaString(direction)} })`);
+    }
+
+    // Focuses the window, then sends a layout message to it, e.g. "togglesplit" (dwindle).
+    function layoutMessageOn(address, message) {
+        Hyprland.dispatch(`function() hl.dispatch(hl.dsp.focus({ window = ${root._win(address)} })); hl.dispatch(hl.dsp.layout(${root.luaString(message)})) end`);
+    }
+
+    // Grows/shrinks by a delta; works for either side of a dwindle split.
+    function resizeWindowBy(address, dx, dy) {
+        Hyprland.dispatch(`hl.dsp.window.resize({ window = ${root._win(address)}, x = ${Number(dx)}, y = ${Number(dy)}, relative = true })`);
+    }
+
+    function resizeWindow(address, width, height) {
+        Hyprland.dispatch(`hl.dsp.window.resize({ window = ${root._win(address)}, x = ${Number(width)}, y = ${Number(height)} })`);
+    }
+
     // Raw Lua dispatcher expression, e.g. 'hl.dsp.workspace.toggle_special("Discord")'.
     function dispatch(command) {
         Hyprland.dispatch(command);

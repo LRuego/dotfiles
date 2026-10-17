@@ -1,10 +1,10 @@
 // components/bar/TheTower.qml
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import qs.core
 import qs.components.base
 import qs.components.menus
+import qs.services.system
 import qs.services.ui
 
 Module {
@@ -14,67 +14,41 @@ Module {
     property int    textSize: Theme.fontSizeSmall
     property string textFont: Theme.fontFamily
 
-    property bool isActive: false
-
-    Process {
-        id: statusProcess
-        command: ["bash", "-c", "systemctl --user is-active the-tower-auto-run.service || echo inactive"]
-        stdout: SplitParser {
-            onRead: data => {
-                root.isActive = (data.trim() === "active")
-            }
-        }
-    }
-
-    Process {
-        id: toggleProcess
-        command: ["bash", "-c", "if systemctl --user is-active --quiet the-tower-auto-run.service; then systemctl --user stop the-tower-auto-run.service; echo stopped; else systemctl --user start the-tower-auto-run.service; echo started; fi; systemctl --user is-active the-tower-auto-run.service || echo inactive"]
-        stdout: SplitParser {
-            onRead: data => {
-                let trimmed = data.trim()
-                if (trimmed === "started") {
-                    NotificationService.notify("The Tower", "Service started", Assets.theTower, 1500, "", true)
-                } else if (trimmed === "stopped") {
-                    NotificationService.notify("The Tower", "Service stopped", Assets.theTower, 1500, "", true)
-                } else if (trimmed === "active" || trimmed === "inactive") {
-                    root.isActive = (trimmed === "active")
-                }
-            }
-        }
-    }
-
-    Timer {
-        interval: 3000
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: statusProcess.running = true
-    }
-
     ModuleItem {
         id: towerModule
         onClicked: (button) => {
             if (button === Qt.LeftButton) {
-                toggleProcess.running = true
+                TheTowerService.togglePart("run")
             } else if (button === Qt.RightButton) {
-                towerPopup.open = !towerPopup.open
+                towerMenu.open = !towerMenu.open
             }
         }
 
         IconLabel {
+            id:        towerIcon
             icon:      Assets.hexagon
-            iconSize:  root.iconSize
+            // hexagon.svg is cropped to its edges, so it renders smaller to match the other bar icons.
+            iconSize:  root.iconSize - 2
             colorize:  true
-            iconColor: root.isActive ? ThemeState.accent : Theme.subtext
+            iconColor: TheTowerService.scriptsEnabled || TheTowerService.launching ? ThemeState.accent : Theme.subtext
 
             Behavior on iconColor {
                 ColorAnimation { duration: 200 }
+            }
+
+            // Pulses while launching or while a script is mid-action.
+            SequentialAnimation on opacity {
+                running: TheTowerService.launching || TheTowerService.scriptsBusy
+                loops:   Animation.Infinite
+                onRunningChanged: if (!running) towerIcon.opacity = 1.0
+                NumberAnimation { from: 1.0; to: 0.4; duration: 800; easing.type: Easing.InOutQuad }
+                NumberAnimation { from: 0.4; to: 1.0; duration: 800; easing.type: Easing.InOutQuad }
             }
         }
     }
 
     TheTowerMenu {
-        id: towerPopup
+        id:         towerMenu
         anchorItem: towerModule
     }
 }

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="86" viewBox="2 12 96 86" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Outer Outline -->
+  <polygon points="50,95 5,40 25,15 75,15 95,40" />
+
+  <!-- Middle Horizontal Line -->
+  <line x1="5" y1="40" x2="95" y2="40" />
+
+  <!-- Main Inner Lines (Bottom V and Top Side Facets) -->
+  <polyline points="25,15 35,40 50,95 65,40 75,15" />
+
+  <!-- The 2 Missing Top Inner Strokes (Central Triangle) -->
+  <polyline points="35,40 50,15 65,40" />
+</svg>

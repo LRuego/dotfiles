@@ -28,7 +28,7 @@ Repo paths (relative to this directory) and where they are linked on the system.
 | `eza/theme.yml` | `~/.config/eza/theme.yml` |
 | `systemd/user/bt-agent.service` | `~/.config/systemd/user/bt-agent.service` |
 | `systemd/user/taildrop.service` | `~/.config/systemd/user/taildrop.service` |
-| `systemd/user/the-tower-auto-run.service` | `~/.config/systemd/user/the-tower-auto-run.service` |
+| `systemd/user/the-tower.service` | `~/.config/systemd/user/the-tower.service` |
 
 Enabling a unit (`systemctl --user enable <unit>`) creates its own links in `~/.config/systemd/user/*.wants/`. Those are generated state and are not tracked.
 

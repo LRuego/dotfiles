@@ -2,6 +2,7 @@
 // Copy this file to UserConfig.qml and fill in your values before running.
 pragma Singleton
 import QtQuick
+import Quickshell
 
 Item {
     // Holiday calendar ICS URL from Google Calendar
@@ -23,4 +24,16 @@ Item {
 
     // Temperature unit: "celsius" or "fahrenheit"
     property string temperatureUnit: "fahrenheit"
+
+    // The Tower — automation daemon (Auto-Run, Auto-Gem) and the apps the launcher opens
+    property string towerService:        "the-tower.service"
+    property string towerDaemon:         Quickshell.env("HOME") + "/Agents/towerd/the_tower.py"
+    property string towerStatusFile:     Quickshell.env("XDG_RUNTIME_DIR") + "/the-tower/status.json"
+    property string towerPackage:        "com.TechTreeGames.TheTower"
+    property string towerRendPath:       Quickshell.env("HOME") + "/Applications/RendAppLatest.AppImage"
+    property string towerHeliumLauncher: Quickshell.env("HOME") + "/.config/hypr/scripts/helium-safe-launch"
+    property string towerHeliumProfile:  "Profile 1"
+
+    // Waydroid tile width (fix layout restores it; Auto-Run's retry_button.png is matched at this size)
+    property int towerWaydroidWidth:  450
 }

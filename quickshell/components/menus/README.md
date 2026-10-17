@@ -6,14 +6,15 @@ Interactive dropdown panels anchored to bar modules. All of them extend `Menu` a
 
 ### Files
 - `Menu.qml` — base component in `components/base/`, handles focus, dismiss, and anchor.
-- `MenuHeader.qml` — shared icon + title + subtitle header, in `components/base/`.
+- `MenuHeader.qml` — shared icon + title + subtitle header, in `components/base/`. Children go into a right-aligned `actions` row.
+- `MenuHeaderButton.qml` — icon button for a header's `actions` row (`clicked(button)` passes left/right), in `components/base/`.
 - `MenuFooter.qml` — shared single trailing-action row (icon + label), in `components/base/`. Always the last thing in a menu by convention — rounds its own bottom corners to match the popup.
 - `MenuSectionLabel.qml` — shared bold section-header text (e.g. "My Devices"), in `components/base/`.
 - `CalendarMenu.qml` — interactive calendar with holiday integration
 - `TailscaleMenu.qml` — Tailscale peer browser and connection manager
 - `BluetoothMenu.qml` — paired-device manager and new-device scanner
 - `UsbMenu.qml` — connected USB/storage device manager
-- `TheTowerMenu.qml` — The Tower game stats popup
+- `TheTowerMenu.qml` — The Tower: script switches (Auto-Run, Auto-Gem) plus a Layout page; pages swap in place via a `page` property
 
 ### Padding model
 `Menu`'s content column reserves **no** structural space of its own by default — no vertical margin, `spacing: 0`. Every element is responsible for its own breathing room:

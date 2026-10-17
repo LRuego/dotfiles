@@ -28,6 +28,10 @@ QtObject {
     readonly property string caretDown:             _resolve("icons/caret-down-fill.svg")
     readonly property string caretLeft:             _resolve("icons/caret-left-fill.svg")
     readonly property string info:                  _resolve("icons/info.svg")
+    readonly property string panelLeft:             _resolve("icons/panel-left.svg")
+    readonly property string play:                  _resolve("icons/play.svg")
+    readonly property string settings:              _resolve("icons/settings.svg")
+    readonly property string flask:                 _resolve("icons/flask-conical.svg")
 
     // --- LOGOS / CUSTOM ---
     readonly property string quickshell:            _resolve("app/quickshell.svg")
@@ -35,6 +39,8 @@ QtObject {
     readonly property string steam:                 _resolve("app/steam.svg")
     readonly property string hexagon:               _resolve("app/hexagon.svg")
     readonly property string theTower:              _resolve("app/the_tower.png")
+    readonly property string towerAutoRestart:      _resolve("icons/the_tower/auto-restart.svg")
+    readonly property string towerGem:              _resolve("icons/the_tower/gem.svg")
     readonly property string tailscaleIcon:         _resolve("app/tailscale-icon.svg")
     readonly property string tailscaleOn:           _resolve("app/tailscale-on.svg")
     readonly property string tailscaleOff:          _resolve("app/tailscale-off.svg")
