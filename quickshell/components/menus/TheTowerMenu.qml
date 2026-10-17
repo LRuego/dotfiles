@@ -66,6 +66,14 @@ Menu {
         return s.counters.map(c => `${c.label} ${root._count(s.part, scope, c)}`).join("  |  ")
     }
 
+    // Every successful tap today, summed across all scripts' counters.
+    function _todayTaps() {
+        let total = 0
+        for (let s of root.scripts)
+            for (let c of s.counters) total += root._count(s.part, "today", c)
+        return total
+    }
+
     // Row detail: never repeats the badge.
     function _detail(s) {
         let p = s.part
@@ -180,8 +188,8 @@ Menu {
             subtitle: {
                 if (TheTowerService.launching) return TheTowerService.launchStep + "..."
                 if (!TheTowerService.daemonActive) return "Service stopped"
-                let on = root.scripts.filter(s => s.part.enabled).map(s => s.name)
-                return on.length > 0 ? on.join(" + ") + " on" : "Scripts off"
+                let on = root.scripts.filter(s => s.part.enabled).length
+                return `${on}/${root.scripts.length} on  ·  ${root._todayTaps()} taps today`
             }
 
             // Click: launch (Waydroid closed) or fix the layout. Shift-click / right-click: layout page.
