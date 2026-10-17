@@ -18,7 +18,7 @@ desc = "run lazygit"
 # open in Nemo
 [[mgr.prepend_keymap]]
 on = ["n"]
-run = "shell 'nemo \"$cwd\"' --block"
+run = "shell 'nemo .' --orphan"
 desc = "Open in Nemo"
 
 # jump-to-char
