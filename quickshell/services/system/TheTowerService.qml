@@ -237,15 +237,26 @@ Item {
         NotificationService.notify("The Tower", `${what} failed: ${reason}`, Assets.theTower, 4000, "", true)
     }
 
-    // Fix mode: Waydroid's current workspace is the target.
+    // Fix mode: Waydroid's workspace is the target. Without Waydroid, Rend's workspace is,
+    // and Waydroid is started there; with neither open it falls back to a normal launch.
     function _fixFromWaydroid() {
-        root._step("Finding Waydroid")
-        root._waitFor("Waydroid", 3000, () => root._findWaydroid(), (win) => {
-            root.targetWorkspace = win.workspace.id
-            root._place(win.address)
-            // Full UI only, so bring the game to the front.
-            if (!/^waydroid\./i.test(win["class"])) Quickshell.execDetached(["waydroid", "app", "launch", root.towerPackage])
-            root._startRend()
+        root._step("Finding the apps")
+        // Always truthy: just waits for one fresh client list.
+        root._waitFor("the apps", 3000, () => ({ waydroid: root._findWaydroid(), rend: root._find("rendapp") }), (found) => {
+            if (found.waydroid) {
+                let win = found.waydroid
+                root.targetWorkspace = win.workspace.id
+                root._place(win.address)
+                // Full UI only, so bring the game to the front.
+                if (!/^waydroid\./i.test(win["class"])) Quickshell.execDetached(["waydroid", "app", "launch", root.towerPackage])
+                root._startRend()
+            } else if (found.rend) {
+                root.targetWorkspace = found.rend.workspace.id
+                root._startWaydroid()
+            } else {
+                root.mode = "launch"
+                root._pickWorkspace()
+            }
         })
     }
 

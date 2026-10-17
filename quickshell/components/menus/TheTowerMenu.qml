@@ -47,9 +47,9 @@ Menu {
     ]
 
     readonly property var apps: [
-        { name: "Waydroid",     detail: "The Tower",                   address: TheTowerService.waydroidAddress },
-        { name: "Project Rend", detail: "Grouped with Helium",         address: TheTowerService.rendAddress },
-        { name: "Helium",       detail: UserConfig.towerHeliumProfile, address: TheTowerService.heliumAddress }
+        { name: "Waydroid",     detail: "The Tower",                   icon: Assets.waydroid, address: TheTowerService.waydroidAddress },
+        { name: "Project Rend", detail: "Grouped with Helium",         icon: Assets.rendApp,  address: TheTowerService.rendAddress },
+        { name: "Helium",       detail: UserConfig.towerHeliumProfile, icon: Assets.helium,   address: TheTowerService.heliumAddress }
     ]
 
     readonly property bool waydroidOpen: TheTowerService.waydroidAddress !== ""
@@ -321,13 +321,24 @@ Menu {
                 readonly property var win: TheTowerService.client(modelData.address)
 
                 inactive: !win
+                // Running: jump to it. Closed: start it and fix the layout around it.
                 onClicked: (button) => {
-                    if (button === Qt.LeftButton && win) HyprlandService.focusWindow(modelData.address)
+                    if (button !== Qt.LeftButton) return
+                    if (win) HyprlandService.focusWindow(modelData.address)
+                    else TheTowerService.fixLayout()
                 }
 
                 RowLayout {
                     width:   parent.width
                     spacing: 10
+
+                    // App logos stay in full colour; MenuItem's `inactive` dims them when the app isn't running.
+                    IconLabel {
+                        icon:      modelData.icon
+                        iconSize:  20
+                        iconWidth: 20
+                        Layout.alignment: Qt.AlignVCenter
+                    }
 
                     Column {
                         Layout.fillWidth: true
