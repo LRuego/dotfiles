@@ -489,6 +489,7 @@ hl.config({
     dwindle = {
         preserve_split = true,
         smart_resizing = true,
+        force_split    = 2, -- always split right/bottom, keeps hyprsplit swaps predictable
     },
 
     -- See https://wiki.hypr.land/Configuring/Layouts/Master-Layout/
@@ -686,8 +687,25 @@ end
 bind("CTRL + L", hl.dsp.window.move({ monitor = "+1" }))
 bind("CTRL + H", hl.dsp.window.move({ monitor = "-1" }))
 
--- Swap the active workspaces between DP-2 and HDMI-A-1
-bind("S", hs.dsp.workspace.swap_monitors({ monitor1 = "DP-2", monitor2 = "HDMI-A-1" }))
+-- Swap the active workspaces between DP-2 and HDMI-A-1, keeping each layout
+-- Native swap moves whole workspaces, then the ids are swapped back so hyprsplit numbering stays per-monitor
+local function swap_monitors_keep_layout(name1, name2)
+    return function()
+        local m1, m2 = hl.get_monitor(name1), hl.get_monitor(name2)
+        if not (m1 and m2 and m1.active_workspace and m2.active_workspace) then
+            return
+        end
+        local id1, id2 = m1.active_workspace.id, m2.active_workspace.id
+        local tmp = 999999
+
+        hl.dispatch(hl.dsp.workspace.swap_monitors({ monitor1 = name1, monitor2 = name2 }))
+        hl.dispatch(hl.dsp.workspace.change_id({ workspace = tostring(id1), id = tmp }))
+        hl.dispatch(hl.dsp.workspace.change_id({ workspace = tostring(id2), id = id1 }))
+        hl.dispatch(hl.dsp.workspace.change_id({ workspace = tostring(tmp), id = id2 }))
+    end
+end
+
+bind("S", swap_monitors_keep_layout("DP-2", "HDMI-A-1"))
 
 -- Scroll through existing workspaces with mainMod + scroll
 bind("mouse_down", hs.dsp.focus({ workspace = "m+1" }))
