@@ -13,6 +13,7 @@
 
 -- hyprsplit (Lua library, replaces the old hyprpm plugin)
 local hs = require("hyprsplit")
+_G.hs = hs -- reachable from IPC dispatches (quickshell)
 
 
 ------------------

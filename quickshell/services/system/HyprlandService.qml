@@ -55,23 +55,29 @@ Item {
         return res.sort((a, b) => a.id - b.id);
     }
 
+    // Dispatches are Lua since the hyprland.lua migration; `hs` is hyprsplit, exposed from hyprland.lua.
+    function luaString(value) {
+        return JSON.stringify(String(value));
+    }
+
     function goToWorkspace(id) {
         if (root.focusedWorkspace?.id === id) return;
-        Hyprland.dispatch(`workspace ${id}`);
+        Hyprland.dispatch(`hl.dsp.focus({ workspace = ${Number(id)} })`);
     }
 
     function nextWorkspace() {
-        Hyprland.dispatch("split:workspace m+1");
+        Hyprland.dispatch(`hs.dsp.focus({ workspace = "m+1" })`);
     }
 
     function prevWorkspace() {
-        Hyprland.dispatch("split:workspace m-1");
+        Hyprland.dispatch(`hs.dsp.focus({ workspace = "m-1" })`);
     }
 
     function toggleSpecialWorkspace(name) {
-        Hyprland.dispatch(`togglespecialworkspace ${name}`);
+        Hyprland.dispatch(`hl.dsp.workspace.toggle_special(${root.luaString(name)})`);
     }
 
+    // Raw Lua dispatcher expression, e.g. 'hl.dsp.workspace.toggle_special("Discord")'.
     function dispatch(command) {
         Hyprland.dispatch(command);
     }

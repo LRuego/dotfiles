@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Services.SystemTray
 import qs.core
+import qs.services.system
 import qs.services.ui
 import qs.components.base
 
@@ -41,6 +42,8 @@ Module {
                     trayMenu.open = !trayMenu.open
                 } else if (button === Qt.LeftButton && !trayItem.modelData.onlyMenu) {
                     trayItem.modelData.activate()
+                    // Discord lives on special:Discord and focus_on_activate is off, so show the workspace too.
+                    if (trayItem.modelData.id.startsWith("discord")) HyprlandService.toggleSpecialWorkspace("Discord")
                 } else if (trayItem.modelData.hasMenu) {
                     trayMenu.open = !trayMenu.open
                 }

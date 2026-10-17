@@ -21,13 +21,13 @@ Item {
     // match:     matched against appName and summary (case-insensitive)
     // transient: if true, shows popup but never stores in history
     // icon:      overrides the resolved icon (use "" to keep default routing)
-    // action:    Hyprland dispatcher command to run if app lacks native click support
+    // action:    Lua dispatcher expression to run if app lacks native click support
     property var appRules: []
 
     Component.onCompleted: {
         appRules = [
             { match: "satty", transient: true, icon: "satty" },
-            { match: "discord", icon: "discord", action: "togglespecialworkspace Discord" },
+            { match: "discord", icon: "discord", action: 'hl.dsp.workspace.toggle_special("Discord")' },
         ]
         mkdirProcess.running = true
     }
