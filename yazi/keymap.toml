@@ -1,12 +1,12 @@
 # Shortcuts
 [[mgr.prepend_keymap]]
-on = ["g", "G"]
-run = "cd /home/lruego/Gemini"
-desc = "Go to Gemini"
+on = ["g", "A"]
+run = "cd /home/lruego/Agents"
+desc = "Go to Agents"
 
 [[mgr.prepend_keymap]]
 on = ["g", "q"]
-run = "cd /home/lruego/Gemini/dotfiles/quickshell"
+run = "cd /home/lruego/Agents/dotfiles/quickshell"
 desc = "Go to Quickshell Config"
 
 # lazygit
