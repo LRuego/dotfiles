@@ -208,6 +208,14 @@ hl.layer_rule({
     ignore_alpha = 0.5,
 })
 
+-- Context menus (popups of the bar and of bar menus) are translucent like the notification center
+hl.layer_rule({
+    name         = "quickshell-popups-blur",
+    match        = { namespace = "^quickshell(-menu)?$" },
+    blur_popups  = true,
+    ignore_alpha = 0.5, -- popups take the cutoff from this rule; keeps the blur inside the rounded corners
+})
+
 
 ----------------------
 ---- WINDOW RULES ----
