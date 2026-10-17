@@ -349,10 +349,10 @@ hl.window_rule({
     center = true,
 })
 
--- Neovim
+-- Floating terminal: launch anything as `ghostty --title=term-float -e <cmd>`
 hl.window_rule({
-    name   = "nvim-floating",
-    match  = { initial_title = "^nvim-float$" },
+    name   = "term-float",
+    match  = { initial_title = "^term-float$" },
     float  = true,
     center = true,
     size   = { "monitor_w*0.75", "monitor_h*0.75" },
