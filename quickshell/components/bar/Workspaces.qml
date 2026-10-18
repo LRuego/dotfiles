@@ -27,12 +27,38 @@ Module {
     hoverColor:  root.enclosed ? ThemeState.hover   :  "transparent"
 
     // --- DATA ---
-    readonly property var filteredWorkspaces: HyprlandService.getWorkspacesForScreen(root.screen)
+    readonly property var _liveWorkspaces: HyprlandService.getWorkspacesForScreen(root.screen)
     readonly property var _mon: Hyprland.monitorFor(root.screen)
-    
-    readonly property int activeWsId: {
+
+    readonly property int _liveActiveWsId: {
         let trigger = Hyprland.focusedWorkspace;
         return _mon && _mon.activeWorkspace ? _mon.activeWorkspace.id : -1;
+    }
+
+    // Frozen while a swap settles, so its in-between states don't flash on the bar.
+    property var filteredWorkspaces: []
+    property int activeWsId: -1
+
+    // Applied a tick later: Quickshell updates workspaces before the event that starts settling arrives.
+    function _apply() {
+        if (HyprlandService.settling) return
+        root.filteredWorkspaces = root._liveWorkspaces
+        root.activeWsId = root._liveActiveWsId
+    }
+
+    on_LiveWorkspacesChanged: Qt.callLater(root._apply)
+    on_LiveActiveWsIdChanged: Qt.callLater(root._apply)
+    Component.onCompleted:    root._apply()
+
+    Connections {
+        target: HyprlandService
+        function onSettlingChanged() { root._apply() }
+    }
+
+    // Keeps existing pills when the list changes instead of rebuilding them all.
+    ScriptModel {
+        id: wsModel
+        values: root.filteredWorkspaces
     }
 
     // --- HELPERS ---
@@ -83,7 +109,7 @@ Module {
             }
 
             Repeater {
-                model: root.indicatorStyle !== "numbers" ? root.filteredWorkspaces : 0
+                model: root.indicatorStyle !== "numbers" ? wsModel : 0
 
                 Item {
                     id: shapeWsItem
@@ -141,7 +167,7 @@ Module {
     }
 
     Repeater {
-        model: root.indicatorStyle === "numbers" ? root.filteredWorkspaces : 0
+        model: root.indicatorStyle === "numbers" ? wsModel : 0
 
         ModuleItem {
             id: numberItem

@@ -17,6 +17,11 @@ Item {
     Connections {
         target: Hyprland
         function onRawEvent(event) {
+            // Super+S moves workspaces, then renumbers them with an event Quickshell 0.3.2 ignores.
+            if (event.name === "moveworkspacev2" || event.name === "changeworkspaceid") {
+                root.settling = true;
+                refreshDelay.restart();
+            }
             if (event.name === "configreloaded") {
                 NotificationService.notify(
                     "Hyprland",
@@ -28,6 +33,27 @@ Item {
                 );
             }
         }
+    }
+
+    // --- WORKSPACE RESYNC ---
+    // True while workspaces are being moved/renumbered; the bar holds its last state until it clears.
+    property bool settling: false
+
+    Timer {
+        id: refreshDelay
+        interval: 50
+        onTriggered: {
+            Hyprland.refreshWorkspaces();
+            Hyprland.refreshMonitors();
+            settleDelay.restart();
+        }
+    }
+
+    // The refresh replies arrive asynchronously, so wait for them before releasing the bar.
+    Timer {
+        id: settleDelay
+        interval: 250
+        onTriggered: root.settling = false
     }
 
     // --- PUBLIC API ---
