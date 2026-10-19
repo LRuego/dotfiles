@@ -179,9 +179,14 @@ Menu {
         visible: root.page === "main"
 
         MenuHeader {
-            icon:      Assets.hexagon
-            colorize:  true
-            iconColor: TheTowerService.scriptsEnabled || TheTowerService.launching ? ThemeState.accent : Theme.subtext
+            // Same as the bar emblem, but the rainbow one once today's Ad Claims hit the daily 60.
+            readonly property bool active:    TheTowerService.scriptsEnabled || TheTowerService.launching
+            readonly property bool adsMaxed:  root._count(TheTowerService.gem, "today", { name: "rewards" }) >= 60
+            icon:      adsMaxed ? Assets.towerEmblemRainbow : Assets.towerEmblem
+            colorize:  !adsMaxed
+            iconColor: active ? ThemeState.accent : Theme.subtext
+            iconGlow:  adsMaxed || active ? 10 : 0
+            iconScale: adsMaxed ? 1.27 : 1 // the rainbow's canvas is taller for its spikes; this keeps the hexagon the same size
             pulsing:   TheTowerService.launching
 
             title:    "The Tower"

@@ -15,6 +15,9 @@ Item {
     property bool   pulsing:       false // e.g. a "connecting..." indicator
     onPulsingChanged: if (!pulsing) headerIcon.opacity = 1.0
     signal iconClicked()
+    // Glow radius and size factor for the icon; the slot stays iconSize, so a bigger icon overflows it.
+    property int  iconGlow:  0
+    property real iconScale: 1
 
     // --- TEXT ---
     property string title:         ""
@@ -44,17 +47,19 @@ Item {
 
         Item {
             visible:        root.icon !== ""
-            implicitWidth:  headerIcon.implicitWidth
-            implicitHeight: headerIcon.implicitHeight
+            implicitWidth:  headerIcon.implicitWidth / root.iconScale
+            implicitHeight: headerIcon.implicitHeight / root.iconScale
             // Center against the row's height, not top-align, so it spans title-to-subtitle.
             anchors.verticalCenter: parent.verticalCenter
 
             IconLabel {
-                id:        headerIcon
-                icon:      root.icon
-                iconSize:  root.iconSize
-                colorize:  root.colorize
-                iconColor: root.iconColor
+                id:         headerIcon
+                anchors.centerIn: parent
+                icon:       root.icon
+                iconSize:   Math.round(root.iconSize * root.iconScale)
+                glowRadius: root.iconGlow
+                colorize:   root.colorize
+                iconColor:  root.iconColor
 
                 SequentialAnimation on opacity {
                     running: root.pulsing

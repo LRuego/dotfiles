@@ -45,10 +45,57 @@ Row {
     // --- SHOW/HIDE TEXT ---
     property bool showText: true
 
+    // --- GLOW ---
+    // Blur radius (px) of a glow drawn behind image icons, spilling past their bounds; 0 = off.
+    property int glowRadius: 0
+
     spacing: 0
 
     readonly property bool isImageIcon: icon.includes("/") || icon.includes("://")
     readonly property bool isThemeIcon: icon !== "" && !isImageIcon && icon.length > 2
+
+    // --- GLOW ---
+    // A near-zero-width slot (Row hides zero-width children) so the icon doesn't move; the glow draws behind it.
+    // It blurs its own copy of the image: pointing an effect at the real icon changes its size.
+    Item {
+        visible: glowLoader.active
+        width:   0.01
+        height:  imageIconItem.height
+        anchors.verticalCenter: parent.verticalCenter
+
+        Loader {
+            id:     glowLoader
+            active: root.glowRadius > 0 && imageIconItem.visible
+
+            // A padded copy of the image, blurred in place; the padding gives the blur room to spread.
+            sourceComponent: Item {
+                readonly property int pad: root.glowRadius * 2
+                x:      -pad
+                y:      -pad
+                width:  imageIconItem.width + pad * 2
+                height: imageIconItem.height + pad * 2
+
+                layer.enabled: true
+                layer.effect: MultiEffect {
+                    blurEnabled:       true
+                    blur:              1.0
+                    blurMax:           Math.max(1, root.glowRadius)
+                    brightness:        0.3
+                    colorization:      root.colorize ? 1.0 : 0.0
+                    colorizationColor: root.iconColor
+                }
+
+                IconImage {
+                    x:            parent.pad
+                    y:            parent.pad
+                    width:        imageIconItem.width
+                    height:       imageIconItem.height
+                    source:       imageIconItem.source
+                    implicitSize: imageIconItem.implicitSize
+                }
+            }
+        }
+    }
 
     // --- IMAGE / THEME ICON ---
     IconImage {

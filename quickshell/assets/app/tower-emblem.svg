@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="16.75 19.38 66.50 61.23" width="66.50" height="61.23">
+  <defs>
+    <linearGradient id="ink" gradientUnits="userSpaceOnUse" x1="22" y1="18" x2="78" y2="82">
+      <stop offset="0.00" stop-color="#ffffff"/>
+      <stop offset="0.25" stop-color="#d6d6d6"/>
+      <stop offset="0.50" stop-color="#ffffff"/>
+      <stop offset="0.75" stop-color="#c4c4c4"/>
+      <stop offset="1.00" stop-color="#ffffff"/>
+    </linearGradient>
+    <radialGradient id="haze" gradientUnits="userSpaceOnUse" cx="50" cy="50" r="21.08">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.02"/>
+      <stop offset="0.6" stop-color="#ffffff" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.18"/>
+    </radialGradient>
+  </defs>
+  <polygon points="71.08,50.00 60.54,69.29 39.46,69.29 28.92,50.00 39.46,30.71 60.54,30.71" fill="url(#haze)"/>
+  <g fill="none" stroke="url(#ink)" stroke-linejoin="round">
+    <polygon points="81.00,50.00 65.50,78.37 34.50,78.37 19.00,50.00 34.50,21.63 65.50,21.63" stroke-width="4.5"/>
+    <polygon points="71.08,50.00 60.54,69.29 39.46,69.29 28.92,50.00 39.46,30.71 60.54,30.71" stroke-width="4"/>
+    <polygon points="63.33,50.00 56.66,62.20 43.34,62.20 36.67,50.00 43.33,37.80 56.66,37.80" stroke-width="3.5"/>
+  </g>
+</svg>

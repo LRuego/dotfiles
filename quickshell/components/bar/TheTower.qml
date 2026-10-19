@@ -14,6 +14,9 @@ Module {
     property int    textSize: Theme.fontSizeSmall
     property string textFont: Theme.fontFamily
 
+    // Accent + glow while a script is on (or the game is launching); grey without glow when all off.
+    readonly property bool active: TheTowerService.scriptsEnabled || TheTowerService.launching
+
     ModuleItem {
         id: towerModule
         onClicked: (button) => {
@@ -25,12 +28,13 @@ Module {
         }
 
         IconLabel {
-            id:        towerIcon
-            icon:      Assets.hexagon
-            // hexagon.svg is cropped to its edges, so it renders smaller to match the other bar icons.
-            iconSize:  root.iconSize - 2
-            colorize:  true
-            iconColor: TheTowerService.scriptsEnabled || TheTowerService.launching ? ThemeState.accent : Theme.subtext
+            id:         towerIcon
+            icon:       Assets.towerEmblem
+            // The emblem is cropped to its edges, so it renders smaller to match the other bar icons.
+            iconSize:   root.iconSize - 2
+            colorize:   true
+            iconColor:  root.active ? ThemeState.accent : Theme.subtext
+            glowRadius: root.active ? 6 : 0
 
             Behavior on iconColor {
                 ColorAnimation { duration: 200 }
