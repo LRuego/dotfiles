@@ -66,6 +66,12 @@ Item {
         root.setPart(key, !root._part(key).enabled)
     }
 
+    // Starts or stops the-tower.service; the started/stopped notification comes from the status poll.
+    function toggleService() {
+        serviceToggle.command = ["systemctl", "--user", root.daemonActive ? "stop" : "start", root.serviceName]
+        serviceToggle.running = true
+    }
+
     // Opens the part's full log in the floating terminal (term-float window rule).
     // key: "run" | "gem"; dryRun detects and logs without tapping. Works while the part is off.
     function runOnce(key, dryRun) {
@@ -537,7 +543,22 @@ Item {
         id:      statusProcess
         command: ["systemctl", "--user", "is-active", root.serviceName]
         stdout: StdioCollector {
-            onStreamFinished: root.daemonActive = (text.trim() === "active")
+            onStreamFinished: {
+                let active = text.trim() === "active"
+                // Only on a real change: the first check after a reload just learns the state.
+                if (root._statusKnown && active !== root.daemonActive)
+                    NotificationService.notify("The Tower", active ? "Service started" : "Service stopped", Assets.theTower, 1500, "", true)
+                root.daemonActive = active
+                root._statusKnown = true
+            }
         }
+    }
+
+    property bool _statusKnown: false
+
+    // Re-checks right away so the bar and the notification don't wait for the next poll.
+    Process {
+        id:        serviceToggle
+        onExited:  root.refresh()
     }
 }

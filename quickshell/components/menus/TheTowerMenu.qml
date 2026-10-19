@@ -187,6 +187,8 @@ Menu {
             iconColor: active ? ThemeState.accent : Theme.subtext
             iconGlow:  adsMaxed || active ? 10 : 0
             iconScale: adsMaxed ? 1.27 : 1 // the rainbow's canvas is taller for its spikes; this keeps the hexagon the same size
+            iconClickable: true
+            onIconClicked: TheTowerService.toggleService() // same as clicking the bar module
             pulsing:   TheTowerService.launching
 
             title:    "The Tower"
@@ -219,7 +221,11 @@ Menu {
         }
 
         Repeater {
-            model: root.scripts
+            model: ScriptModel {
+                // Matched by key so status updates refresh rows in place; recreated rows could pick up a stale hover.
+                values:     root.scripts
+                objectProp: "key"
+            }
 
             delegate: MenuItem {
                 id:     scriptItem

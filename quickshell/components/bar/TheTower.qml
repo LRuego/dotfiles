@@ -21,7 +21,7 @@ Module {
         id: towerModule
         onClicked: (button) => {
             if (button === Qt.LeftButton) {
-                TheTowerService.togglePart("run")
+                TheTowerService.toggleService()
             } else if (button === Qt.RightButton) {
                 towerMenu.open = !towerMenu.open
             }
