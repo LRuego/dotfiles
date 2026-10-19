@@ -24,6 +24,7 @@ Item {
     property color  titleColor:    ThemeState.accent
     property string subtitle:      ""
     property color  subtitleColor: Theme.subtext
+    property bool   subtitleMarquee: false // scrolls a cut-off subtitle instead of ending it with …
 
     // --- ACTIONS ---
     // Buttons placed at the right edge, e.g. MenuHeaderButton.
@@ -46,6 +47,7 @@ Item {
         spacing: 10
 
         Item {
+            id:             iconSlot
             visible:        root.icon !== ""
             implicitWidth:  headerIcon.implicitWidth / root.iconScale
             implicitHeight: headerIcon.implicitHeight / root.iconScale
@@ -78,17 +80,33 @@ Item {
             }
         }
 
+        // Takes the rest of the row so long text cuts off with … instead of running past the edge.
         Column {
+            width: contentRow.width - (iconSlot.visible ? iconSlot.width + contentRow.spacing : 0)
+
             Text {
+                width:          parent.width
                 text:           root.title
                 color:          root.titleColor
                 font.family:    Theme.fontFamily
                 font.pixelSize: Theme.fontSizeLarge
                 font.bold:      true
+                elide:          Text.ElideRight
             }
 
             Text {
-                visible:        root.subtitle !== ""
+                width:          parent.width
+                visible:        root.subtitle !== "" && !root.subtitleMarquee
+                text:           root.subtitle
+                color:          root.subtitleColor
+                font.family:    Theme.fontFamily
+                font.pixelSize: Theme.fontSizeSmall
+                elide:          Text.ElideRight
+            }
+
+            MarqueeText {
+                width:          parent.width
+                visible:        root.subtitle !== "" && root.subtitleMarquee
                 text:           root.subtitle
                 color:          root.subtitleColor
                 font.family:    Theme.fontFamily

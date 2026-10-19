@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import qs.core
 import qs.components.base
+import qs.components.menus
 import qs.services.system
 import qs.services.ui
 
@@ -34,7 +35,11 @@ Module {
 
     ModuleItem {
         id: volItem
-        onClicked:  AudioService.toggleMute()
+        // Left: mute. Right: the mixer menu.
+        onClicked: (button) => {
+            if (button === Qt.LeftButton) AudioService.toggleMute()
+            else if (button === Qt.RightButton) root.openMenu("playback")
+        }
         onWheeled: (isUp) => AudioService.adjustVolume(isUp)
 
         IconLabel {
@@ -54,7 +59,11 @@ Module {
 
     ModuleItem {
         isHidden: !(volItem.hovered || hovered || PrivacyService.micActive || BarState.peekMode)
-        onClicked:  AudioService.toggleMic()
+        // Left: mute the mic. Right: the mixer menu on its Input tab.
+        onClicked: (button) => {
+            if (button === Qt.LeftButton) AudioService.toggleMic()
+            else if (button === Qt.RightButton) root.openMenu("input")
+        }
         onWheeled: (isUp) => AudioService.adjustMicVolume(isUp)
 
         IconLabel {
@@ -70,5 +79,16 @@ Module {
             textWidth:  AudioService.micVolume < 100 ? 24 : 32
             textSize:   root.textSize
         }
+    }
+
+    // Toggles the mixer; opening from the mic starts on the Input tab.
+    function openMenu(tab) {
+        if (!volumeMenu.open) volumeMenu.tab = tab
+        volumeMenu.open = !volumeMenu.open
+    }
+
+    VolumeMenu {
+        id:         volumeMenu
+        anchorItem: volItem
     }
 }

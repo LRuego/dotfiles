@@ -29,6 +29,50 @@ Item {
     readonly property int micVolume: Math.round((root.source?.audio?.volume ?? 0) * 100)
     readonly property bool isMicMuted: root.source?.audio?.muted ?? true
 
+    // --- NODE LISTS (volume menu) ---
+    // Grouped by PipeWire media.class, like pavucontrol's tabs.
+    function mediaClass(node) {
+        return node?.properties?.["media.class"] ?? ""
+    }
+
+    readonly property var _audioNodes: Pipewire.nodes.values.filter(n => n && n.audio)
+    readonly property var outputs:   _audioNodes.filter(n => !n.isStream && root.mediaClass(n).startsWith("Audio/Sink"))
+    readonly property var inputs:    _audioNodes.filter(n => !n.isStream && root.mediaClass(n).startsWith("Audio/Source"))
+    readonly property var playback:  _audioNodes.filter(n => n.isStream && root.mediaClass(n) === "Stream/Output/Audio")
+    // Level-meter streams (ours and pavucontrol's) are capture streams too; they aren't apps recording.
+    readonly property var recording: _audioNodes.filter(n => n.isStream && root.mediaClass(n) === "Stream/Input/Audio"
+                                                         && n.properties["stream.monitor"] !== "true")
+
+    // Device: its description. Stream: the app's name.
+    function nodeTitle(node) {
+        if (!node) return ""
+        if (node.isStream) return node.properties["application.name"] || node.description || node.name
+        return node.description || node.nickname || node.name
+    }
+
+    // Stream: what it's playing/recording (e.g. a tab title). Devices have none.
+    function nodeDetail(node) {
+        return node?.isStream ? (node.properties["media.name"] ?? "") : ""
+    }
+
+    // Stream: the app's icon, from its desktop entry when one matches (the stream's own icon name can be wrong,
+    // e.g. Helium says "helium" but its icon is "helium-browser"), else the name the stream gives. "" if none.
+    function appIconName(node) {
+        let p = node?.properties ?? {}
+        let entry = DesktopEntries.heuristicLookup(p["application.process.binary"] || p["application.name"] || "")
+        return entry?.icon || p["application.icon-name"] || p["application.process.binary"] || ""
+    }
+
+    function isDefault(node) {
+        return node !== null && (node === root.sink || node === root.source)
+    }
+
+    function setDefault(node) {
+        if (!node) return
+        if (node.isSink) Pipewire.preferredDefaultAudioSink = node
+        else Pipewire.preferredDefaultAudioSource = node
+    }
+
     // --- ACTIONS ---
     function toggleMute() {
         if (root.sink?.audio) root.sink.audio.muted = !root.sink.audio.muted

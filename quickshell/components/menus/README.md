@@ -15,6 +15,8 @@ Interactive dropdown panels anchored to bar modules. All of them extend `Menu` a
 - `BluetoothMenu.qml` — paired-device manager and new-device scanner
 - `UsbMenu.qml` — connected USB/storage device manager
 - `TheTowerMenu.qml` — The Tower: script switches (Auto-Run, Auto-Gem) plus a Layout page; pages swap in place via a `page` property
+- `VolumeMenu.qml` — pavucontrol-style mixer: Playback / Recording / Output / Input tabs with a slider per app or device
+- `MenuSlider.qml` — shared 0–1 slider (drag, click, scroll) with an optional level meter, in `components/base/`
 
 ### Padding model
 `Menu`'s content column reserves **no** structural space of its own by default — no vertical margin, `spacing: 0`. Every element is responsible for its own breathing room:
@@ -119,3 +121,16 @@ No additional Hyprland configuration required. Menus use `PopupWindow` which han
 3. Set `padded: false` if your rows should hover edge-to-edge; leave the default otherwise.
 4. Instantiate inside your bar module's `ModuleItem` and bind `anchorItem`
 5. No need to handle `onDismissed` — `Menu` closes itself by default
+
+### VolumeMenu
+
+**Opens from:** `Volume.qml` — left click mutes, right click opens the menu (right click on the mic opens it on the Input tab)
+
+- Tabs like pavucontrol's: Playback (apps playing), Recording (apps recording), Output (sinks), Input (sources), each with a count; the last tab is kept between opens
+- Each row: app icon (from its desktop entry) or device glyph, name and what it's playing, volume %, mute button, and a slider (drag, click or scroll in 5% steps)
+- Devices: click a row to make it the default; the default is highlighted and labelled "Default"; a live level meter runs under the slider while the menu is open
+- App streams get no meter: Quickshell 0.3.2's peak monitor errors on a stereo app playing into a 7.1 device
+- Level-meter capture streams (`stream.monitor`, ours and pavucontrol's) are filtered out of Recording
+- Header icon mutes the default output; footer "Open pavucontrol" opens it on the same tab
+- Not covered (use pavucontrol): moving an app to another device, per-channel balance, card profiles
+
