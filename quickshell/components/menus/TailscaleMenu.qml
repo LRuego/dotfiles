@@ -47,7 +47,8 @@ Menu {
         visible: TailscaleService.connected
         spacing: 0
 
-        model: TailscaleService.peers
+        // Keyed so updates refresh rows in place; recreated rows can pick up a stale hover.
+        model: ScriptModel { values: TailscaleService.peers; objectProp: "ip" }
 
         delegate: MenuItem {
             id:    peerItem

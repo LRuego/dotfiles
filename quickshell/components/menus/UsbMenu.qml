@@ -76,7 +76,8 @@ Menu {
         MenuList {
             spacing:    8
             maxVisible: 5
-            model:      UsbService.storageDevices
+            // Keyed so updates refresh rows in place; recreated rows can pick up a stale hover.
+            model:      ScriptModel { values: UsbService.storageDevices; objectProp: "name" }
 
             delegate: MenuItem {
                 width: ListView.view.width
@@ -171,7 +172,8 @@ Menu {
             id:         peripheralList
             spacing:    0
             maxVisible: 5
-            model:      UsbService.peripherals
+            // Keyed so updates refresh rows in place; recreated rows can pick up a stale hover.
+            model:      ScriptModel { values: UsbService.peripherals; objectProp: "name" }
 
             delegate: MenuItem {
                 width: ListView.view.width

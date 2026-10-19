@@ -57,8 +57,10 @@ PanelWindow {
         top:  root._origin.y
     }
 
+    // Fixed height so Hyprland never stretches a resize; only menuRect changes, the mask passes clicks through.
     implicitWidth:  root.menuWidth
-    implicitHeight: menuColumn.implicitHeight + menuRect.border.width * 2 + 5
+    implicitHeight: Math.max(1, (root.screen?.height ?? 1080) - root._origin.y)
+    mask:           Region { item: menuRect }
     visible:        open && anchorItem !== null
     color:          "transparent"
 

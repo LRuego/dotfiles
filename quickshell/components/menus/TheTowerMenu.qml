@@ -319,7 +319,8 @@ Menu {
         }
 
         Repeater {
-            model: root.apps
+            // Keyed so updates refresh rows in place; recreated rows can pick up a stale hover.
+            model: ScriptModel { values: root.apps; objectProp: "name" }
 
             delegate: MenuItem {
                 id:     appItem

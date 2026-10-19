@@ -75,7 +75,8 @@ Menu {
         MenuList {
             spacing:    0
             maxVisible: 5
-            model:      BluetoothService.savedDevices
+            // Same device objects each update, so they're matched as-is and rows aren't recreated (stale hover).
+            model:      ScriptModel { values: BluetoothService.savedDevices }
 
             delegate: MenuItem {
                 id:    deviceItem
@@ -215,7 +216,8 @@ Menu {
         MenuList {
             spacing:    0
             maxVisible: 5
-            model:      root.hasScanned ? BluetoothService.availableDevices : []
+            // Same device objects each update, so they're matched as-is and rows aren't recreated (stale hover).
+            model:      ScriptModel { values: root.hasScanned ? BluetoothService.availableDevices : [] }
 
             delegate: MenuItem {
                 width: ListView.view.width
