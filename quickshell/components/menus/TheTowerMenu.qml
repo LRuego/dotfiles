@@ -61,7 +61,7 @@ Menu {
         return p.counts?.[scope]?.[counter.name] ?? 0
     }
 
-    // "Bob 2  |  Ad Claim 1" for one scope (session / today).
+    // "Bob 2  |  Ad Claim 1" for one scope (today / lifetime).
     function _countsLine(s, scope) {
         return s.counters.map(c => `${c.label} ${root._count(s.part, scope, c)}`).join("  |  ")
     }
@@ -80,7 +80,7 @@ Menu {
         if (p.error) return p.error
         if (p.state === "busy") return p.detail || "Working" // includes a manual run while off
         if (p.enabled && p.state !== "idle") return p.detail || "Working"
-        if (p.enabled) return `Session: ${root._countsLine(s, "session")}`
+        if (p.enabled) return `Today: ${root._countsLine(s, "today")}`
         if (!TheTowerService.daemonActive) return "Service stopped"
         let anyToday = s.counters.some(c => root._count(p, "today", c) > 0)
         return anyToday ? `Today: ${root._countsLine(s, "today")}` : s.about
@@ -414,55 +414,63 @@ Menu {
             color:  Theme.overlay
         }
 
-        // --- STATS ROW (one line per counter: Session / Today / All) ---
+        // --- STATS ROW (one line per counter: Today / All) ---
+        // Full-bleed rows with alternating backgrounds, like the log table.
         Column {
-            x:             12
-            width:         parent.width - 24
-            topPadding:    6
-            bottomPadding: 6
-            spacing:       2
+            width: parent.width
 
             Repeater {
                 model: root.current.counters
 
-                delegate: Row {
-                    width: parent.width
+                delegate: Rectangle {
+                    id:     statRow
+                    width:  parent.width
+                    height: statCells.implicitHeight + 8
+                    color:  index % 2 === 1 ? Theme.mantle : "transparent"
 
-                    // Label column only when there's more than one counter (Auto-Gem).
-                    Text {
-                        visible:        root.current.counters.length > 1
-                        width:          visible ? 70 : 0
-                        text:           modelData.label
-                        color:          Theme.subtext
-                        font.family:    Theme.fontFamily
-                        font.pixelSize: Theme.fontSizeSmall
-                    }
+                    readonly property var counter: modelData
+                    readonly property bool labelled: root.current.counters.length > 1
 
-                    Repeater {
-                        model: [["Session", "session"], ["Today", "today"], ["All", "lifetime"]]
+                    Row {
+                        id:                     statCells
+                        x:                      12
+                        width:                  parent.width - 24
+                        anchors.verticalCenter: parent.verticalCenter
 
-                        delegate: Row {
-                            width:   (parent.width - (root.current.counters.length > 1 ? 70 : 0)) / 3
-                            spacing: 6
+                        // Label column only when there's more than one counter (Auto-Gem).
+                        Text {
+                            visible:        statRow.labelled
+                            width:          visible ? 70 : 0
+                            text:           statRow.counter.label
+                            color:          Theme.subtext
+                            font.family:    Theme.fontFamily
+                            font.pixelSize: Theme.fontSizeSmall
+                        }
 
-                            Text {
-                                text:           modelData[0]
-                                color:          Theme.subtext
-                                font.family:    Theme.fontFamily
-                                font.pixelSize: Theme.fontSizeSmall
-                            }
+                        Repeater {
+                            model: [["Today", "today"], ["All", "lifetime"]]
 
-                            Text {
-                                text:           root._count(root.current.part, modelData[1], parent.parent.counter)
-                                color:          Theme.text
-                                font.family:    Theme.fontFamily
-                                font.pixelSize: Theme.fontSizeSmall
-                                font.bold:      true
+                            delegate: Row {
+                                width:   (statCells.width - (statRow.labelled ? 70 : 0)) / 2
+                                spacing: 6
+
+                                Text {
+                                    text:           modelData[0]
+                                    color:          Theme.subtext
+                                    font.family:    Theme.fontFamily
+                                    font.pixelSize: Theme.fontSizeSmall
+                                }
+
+                                Text {
+                                    text:           root._count(root.current.part, modelData[1], statRow.counter)
+                                    color:          Theme.text
+                                    font.family:    Theme.fontFamily
+                                    font.pixelSize: Theme.fontSizeSmall
+                                    font.bold:      true
+                                }
                             }
                         }
                     }
-
-                    readonly property var counter: modelData
                 }
             }
         }
