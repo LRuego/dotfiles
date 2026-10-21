@@ -136,7 +136,7 @@ hl.config({
     },
 
     group = {
-        drag_into_group = 2,
+        drag_into_group = 1,
 
         col = {
             border_active          = accentGradient,
@@ -289,7 +289,6 @@ hl.window_rule({
 })
 
 hl.window_rule({ name = "openrgb",          match = { class = "^org.openrgb.OpenRGB$" }, float = true })
-hl.window_rule({ name = "twintaillauncher", match = { class = "^twintaillauncher$" },    float = true })
 
 hl.window_rule({
     name   = "satty",
@@ -389,23 +388,13 @@ hl.window_rule({
 })
 
 -- Steam
+
 hl.window_rule({
     name   = "steam-default",
     match  = { class = "^[Ss]team$" },
     float  = true,
     center = true,
     group  = "deny",
-})
-
--- Taskbar Hero
-hl.window_rule({
-    name        = "taskbar-hero",
-    match       = { class = "^(taskbarhero.exe|steam_app_3678970)$" },
-    float       = true,
-    no_shadow   = true,
-    no_blur     = true,
-    border_size = 0,
-    group       = "deny",
 })
 
 hl.window_rule({
@@ -429,6 +418,15 @@ hl.window_rule({
     match  = { class = "^timeshift-gtk$" },
     float  = true,
     center = true,
+})
+
+-- Waydroid
+hl.window_rule({
+    name     = "waydroid",
+    match    = { class = "^waydroid\\." },
+    min_size = { 450, 1017 },
+    max_size = { 450, 1017 },
+    group    = "barred deny",
 })
 
 -- Waydroid-helper
