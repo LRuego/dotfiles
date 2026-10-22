@@ -353,8 +353,28 @@ Item {
         return w.at[0] + w.size[0] <= r.at[0] + 4 || r.at[0] + r.size[0] <= w.at[0] + 4
     }
 
+    // Waydroid must be its own tile: a group (e.g. dragged into Rend's) makes the split check and resize act on the group.
+    function _ungroupWaydroid(then) {
+        let w = root._findWaydroid()
+        if (!w || w.grouped.length === 0) {
+            then()
+            return
+        }
+        root._step("Taking Waydroid out of the group")
+        if (w.grouped.length === 1) HyprlandService.toggleGroup(w.address) // a group of just Waydroid: dissolve it
+        else HyprlandService.moveWindowOutOfGroup(w.address, "left")
+        root._waitFor("Waydroid to leave the group", 2000, () => {
+            let c = root._byAddress(w.address)
+            return c && c.grouped.length === 0
+        }, () => then())
+    }
+
     function _arrangeTiles() {
         groupRetry.stop()
+        root._ungroupWaydroid(() => root._arrangeSplit())
+    }
+
+    function _arrangeSplit() {
         root._step("Arranging tiles")
         let waydroid = root._findWaydroid()
         if (!waydroid || root.rendAddress === "") {

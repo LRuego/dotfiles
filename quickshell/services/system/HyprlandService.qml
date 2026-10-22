@@ -136,6 +136,11 @@ Item {
         Hyprland.dispatch(`hl.dsp.window.move({ window = ${root._win(address)}, into_group = ${root.luaString(direction)} })`);
     }
 
+    // direction: where the window lands, "left" | "right" | "up" | "down"
+    function moveWindowOutOfGroup(address, direction) {
+        Hyprland.dispatch(`hl.dsp.window.move({ window = ${root._win(address)}, out_of_group = ${root.luaString(direction)} })`);
+    }
+
     // Focuses the window, then sends a layout message to it, e.g. "togglesplit" (dwindle).
     function layoutMessageOn(address, message) {
         Hyprland.dispatch(`function() hl.dispatch(hl.dsp.focus({ window = ${root._win(address)} })); hl.dispatch(hl.dsp.layout(${root.luaString(message)})) end`);
