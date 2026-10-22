@@ -1,0 +1,7 @@
+# wayvnc server config (wayvnc.service). Which monitor to capture is not set here: the Quickshell
+# VNC menu saves it to ~/.local/state/wayvnc/capture.env, which the service reads.
+
+# Tailscale IP only: reachable from the tailnet, not the LAN or internet. Tailscale handles
+# authentication, so wayvnc's own auth is off.
+address=100.102.146.45
+port=5900

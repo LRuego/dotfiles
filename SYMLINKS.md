@@ -14,6 +14,7 @@ Repo paths (relative to this directory) and where they are linked on the system.
 | `rofi/` | `~/.config/rofi` |
 | `satty/` | `~/.config/satty` |
 | `starship/` | `~/.config/starship` |
+| `wayvnc/` | `~/.config/wayvnc` |
 | `xdg-desktop-portal/` | `~/.config/xdg-desktop-portal` |
 | `xdg-desktop-portal-termfilechooser/` | `~/.config/xdg-desktop-portal-termfilechooser` |
 | `yazi/` | `~/.config/yazi` |
@@ -30,6 +31,7 @@ Repo paths (relative to this directory) and where they are linked on the system.
 | `systemd/user/bt-agent.service` | `~/.config/systemd/user/bt-agent.service` |
 | `systemd/user/taildrop.service` | `~/.config/systemd/user/taildrop.service` |
 | `systemd/user/the-tower.service` | `~/.config/systemd/user/the-tower.service` |
+| `systemd/user/wayvnc.service` | `~/.config/systemd/user/wayvnc.service` |
 
 `systemd/scripts/` holds scripts the units run in place (not linked anywhere).
 

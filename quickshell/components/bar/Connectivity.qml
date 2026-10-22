@@ -35,6 +35,11 @@ Module {
         return ThemeState.text
     }
 
+    // Reveals the VNC item while the pointer is anywhere on the module.
+    HoverHandler {
+        id: moduleHover
+    }
+
     ModuleItem {
         id: tsModule
         onClicked: (button) => {
@@ -102,6 +107,26 @@ Module {
             iconColor: root.btColor
             iconSize:  root.iconSize
             colorize:  true
+        }
+    }
+
+    // wayvnc: hidden until the module is hovered; stays out while someone's watching. Click opens the menu.
+    ModuleItem {
+        id: vncItem
+        isHidden: !(moduleHover.hovered || VncService.clients.length > 0 || VncService.transitioning || BarState.peekMode || vncMenu.open)
+        onClicked: vncMenu.open = !vncMenu.open
+
+        VncMenu {
+            id:         vncMenu
+            anchorItem: vncItem
+        }
+
+        IconLabel {
+            icon:      Assets.vnc
+            iconSize:  root.iconSize
+            colorize:  true
+            iconColor: !VncService.active ? Theme.subtext
+                           : (VncService.clients.length > 0 ? ThemeState.accent : ThemeState.text)
         }
     }
 

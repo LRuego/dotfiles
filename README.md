@@ -28,6 +28,7 @@ Built with a custom QML-based shell for high-performance and deep system integra
 ### 📡 Tailscale & Taildrop
 *   **Peer Browser:** Custom QML menu listing peers, their OS (with icons), and "Last Seen" status.
 *   **Taildrop Previews:** Integration with your Taildrop service to show image previews directly in notifications when receiving files.
+*   **VNC over Tailscale:** `wayvnc.service` listens on the Tailscale IP only (no LAN exposure). A bar icon and menu show viewers (named from Tailscale peers), let you disconnect them, and pick what's captured (all monitors or one).
 
 ## Structure
 
@@ -41,6 +42,7 @@ Built with a custom QML-based shell for high-performance and deep system integra
 *   `.zshrc`: Shell configuration.
 *   `yazi/`: TUI file manager config.
 *   `zathura/`: PDF viewer config.
+*   `wayvnc/`: VNC server config (address/port) for `systemd/user/wayvnc.service`.
 *   [`SYMLINKS.md`](SYMLINKS.md): where each of these is linked on the system.
 
 ## Acknowledgements

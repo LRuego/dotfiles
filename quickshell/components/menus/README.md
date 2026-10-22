@@ -15,6 +15,7 @@ Interactive dropdown panels anchored to bar modules. All of them extend `Menu` a
 - `BluetoothMenu.qml` — paired-device manager and new-device scanner
 - `UsbMenu.qml` — connected USB/storage device manager
 - `TheTowerMenu.qml` — The Tower: script switches (Auto-Run, Auto-Gem) plus a Layout page; pages swap in place via a `page` property
+- `VncMenu.qml` — wayvnc server: on/off, capture (all monitors or one), connected viewers
 - `VolumeMenu.qml` — pavucontrol-style mixer: Playback / Recording / Output / Input tabs with a slider per app or device
 - `MenuSlider.qml` — shared 0–1 slider (drag, click, scroll) with an optional level meter, in `components/base/`
 
@@ -133,4 +134,15 @@ No additional Hyprland configuration required. Menus use `PopupWindow` which han
 - Level-meter capture streams (`stream.monitor`, ours and pavucontrol's) are filtered out of Recording
 - Header icon mutes the default output; footer "Open pavucontrol" opens it on the same tab
 - Not covered (use pavucontrol): moving an app to another device, per-channel balance, card profiles
+
+### VncMenu
+
+**Opens from:** `Connectivity.qml` — the VNC icon, right of Bluetooth; shown while hovering the connectivity group, while a viewer is connected, or in peek mode; either click opens the menu
+
+- Header icon starts/stops `wayvnc.service`; subtitle shows Off, `Listening on <tailscale ip>:5900`, or the viewer count
+- Capture: All monitors or a single output, saved to `~/.local/state/wayvnc/capture.env` (read by the service). One monitor to another switches live (`wayvncctl output-set`); to or from All monitors restarts wayvnc, which reconnects viewers
+- Viewers: from `wayvncctl client-list`, named after their Tailscale peer when the address matches; the button disconnects one
+- Notifications when a viewer connects or disconnects (live from `wayvncctl event-receive`)
+- Footer copies the address
+- `VncService.qml` (`services/network/`) holds the state; the server config is `dotfiles/wayvnc/config`
 

@@ -1,0 +1,18 @@
+[Unit]
+Description=wayvnc VNC server (Tailscale only)
+# Address and port: ~/.config/wayvnc/config. Capture (all monitors or one): set from the Quickshell
+# VNC menu, saved to ~/.local/state/wayvnc/capture.env as WAYVNC_CAPTURE.
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+Environment=WAYVNC_CAPTURE=--desktop
+EnvironmentFile=-%h/.local/state/wayvnc/capture.env
+ExecStart=/usr/bin/wayvnc --config=%h/.config/wayvnc/config $WAYVNC_CAPTURE
+# Also covers login before Tailscale is up: binding its IP fails until then.
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=graphical-session.target

@@ -48,6 +48,8 @@ QtObject {
     readonly property string tailscaleIcon:         _resolve("app/tailscale-icon.svg")
     readonly property string tailscaleOn:           _resolve("app/tailscale-on.svg")
     readonly property string tailscaleOff:          _resolve("app/tailscale-off.svg")
+    readonly property string vnc:                   _resolve("icons/monitor-arrow-up-fill.svg")
+    readonly property string disconnect:            _resolve("icons/x-circle-fill.svg")
 
     // --- DEVICES ---
     readonly property string desktop:               _resolve("icons/devices/desktop.svg")
