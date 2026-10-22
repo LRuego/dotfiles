@@ -1,0 +1,13 @@
+[Unit]
+Description=ADB bridge to the laptop emulator (only while it's reachable)
+After=network-online.target
+
+[Service]
+Type=simple
+# Checks 192.168.69.15:5555 every 30 s: bridges + adb connects while it answers, tears down + adb disconnects when not
+ExecStart=%h/Agents/dotfiles/systemd/scripts/adb-emulator-bridge
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target
