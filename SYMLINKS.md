@@ -27,10 +27,8 @@ Repo paths (relative to this directory) and where they are linked on the system.
 | `zathura/zathurarc` | `~/.config/zathura/zathurarc` |
 | `zathura/atheme` | `~/.config/zathura/atheme` |
 | `eza/theme.yml` | `~/.config/eza/theme.yml` |
-| `systemd/user/adb-emulator-bridge.service` | `~/.config/systemd/user/adb-emulator-bridge.service` |
 | `systemd/user/bt-agent.service` | `~/.config/systemd/user/bt-agent.service` |
 | `systemd/user/taildrop.service` | `~/.config/systemd/user/taildrop.service` |
-| `systemd/user/the-tower.service` | `~/.config/systemd/user/the-tower.service` |
 | `systemd/user/wayvnc.service` | `~/.config/systemd/user/wayvnc.service` |
 
 `systemd/scripts/` holds scripts the units run in place (not linked anywhere).
