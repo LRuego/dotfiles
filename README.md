@@ -30,6 +30,10 @@ Built with a custom QML-based shell for high-performance and deep system integra
 *   **Taildrop Previews:** Integration with your Taildrop service to show image previews directly in notifications when receiving files.
 *   **VNC over Tailscale:** `wayvnc.service` listens on the Tailscale IP only (no LAN exposure). A bar icon and menu show viewers (named from Tailscale peers), let you disconnect them, and pick what's captured (all monitors or one).
 
+### 🗼 The Tower module
+*   **Tower menu:** a bar icon and menu for The Tower (Android idle game in Waydroid): Auto-Run / Auto-Gem toggles, run status and the daemon's logs.
+*   **Requires towersuite:** the menu is only the front end. It needs `towerd.service` from the separate `~/Agents/towersuite` repo running; the paths it uses are set in `quickshell/core/UserConfig.qml` (`towerService`, `towerDaemon`, `towerStatusFile`). That repo's README ("Used by Quickshell") lists the values.
+
 ## Structure
 
 *   **Architectural Standard:** All Quickshell logic follows a strict "Pure Data Service" layer (raw data only) and a "Component Helper" layer (UI mapping), ensuring the system is modular and maintainable.

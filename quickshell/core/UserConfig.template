@@ -26,9 +26,9 @@ Item {
     property string temperatureUnit: "fahrenheit"
 
     // The Tower — automation daemon (Auto-Run, Auto-Gem) and the apps the launcher opens
-    property string towerService:        "the-tower.service"
-    property string towerDaemon:         Quickshell.env("HOME") + "/Agents/towerd/the_tower.py"
-    property string towerStatusFile:     Quickshell.env("XDG_RUNTIME_DIR") + "/the-tower/status.json"
+    property string towerService:        "towerd.service"
+    property string towerDaemon:         Quickshell.env("HOME") + "/Agents/towersuite/towerd/towerd.py"
+    property string towerStatusFile:     Quickshell.env("XDG_RUNTIME_DIR") + "/towersuite/towerd/status.json"
     property string towerPackage:        "com.TechTreeGames.TheTower"
     property string towerRendPath:       Quickshell.env("HOME") + "/Applications/RendAppLatest.AppImage"
     property string towerHeliumLauncher: Quickshell.env("HOME") + "/.config/hypr/scripts/helium-safe-launch"

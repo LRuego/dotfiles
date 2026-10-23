@@ -20,7 +20,7 @@ Item {
     readonly property string heliumProfile:  UserConfig.towerHeliumProfile
     readonly property int    waydroidWidth:  UserConfig.towerWaydroidWidth
 
-    // --- DAEMON STATE (from the-tower.service's status.json) ---
+    // --- DAEMON STATE (from towerd.service's status.json) ---
     property bool daemonActive: false
     property var  status:       ({})
 
@@ -29,7 +29,7 @@ Item {
     readonly property var gem: _part("gem")
 
     // --- LOGS (one file per part, written by the daemon) ---
-    readonly property string logDir: root.status.logDir ?? (Quickshell.env("HOME") + "/.local/state/the-tower/logs")
+    readonly property string logDir: root.status.logDir ?? (Quickshell.env("HOME") + "/.local/state/towersuite/towerd/logs")
     // Part whose log is loaded ("" = none); set while its page is open, so nothing is read in the background.
     property string logPart: ""
     // true: load <part>.debug.log (everything, incl. DEBUG) instead of <part>.log (INFO and up).
@@ -66,7 +66,7 @@ Item {
         root.setPart(key, !root._part(key).enabled)
     }
 
-    // Starts or stops the-tower.service; the started/stopped notification comes from the status poll.
+    // Starts or stops towerd.service; the started/stopped notification comes from the status poll.
     function toggleService() {
         serviceToggle.command = ["systemctl", "--user", root.daemonActive ? "stop" : "start", root.serviceName]
         serviceToggle.running = true
