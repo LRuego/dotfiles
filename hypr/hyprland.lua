@@ -429,6 +429,13 @@ hl.window_rule({
     group    = "barred deny",
 })
 
+-- Waydroid opens on workspace 5 (full UI "Waydroid" and app windows "waydroid.<package>"), without switching to it
+hl.window_rule({
+    name      = "waydroid-workspace",
+    match     = { class = "^[Ww]aydroid(\\..*)?$" },
+    workspace = "5 silent",
+})
+
 -- Waydroid-helper
 hl.window_rule({
     name   = "waydroid-helper",
