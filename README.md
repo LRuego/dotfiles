@@ -33,6 +33,7 @@ Built with a custom QML-based shell for high-performance and deep system integra
 ### 🗼 The Tower module
 *   **Tower menu:** a bar icon and menu for The Tower (Android idle game in Waydroid): Auto-Run / Auto-Gem toggles, run status and the daemon's logs.
 *   **Requires towersuite:** the menu is only the front end. It needs `towerd.service` from the separate `~/Agents/towersuite` repo running; the paths it uses are set in `quickshell/core/UserConfig.qml` (`towerService`, `towerDaemon`, `towerStatusFile`). That repo's README ("Used by Quickshell") lists the values.
+*   **Workspace 5:** the launcher and layout fix always put Waydroid, Rend and Helium on workspace 5 (`towerWorkspace`), and a Hyprland rule opens Waydroid there. towerd's crash recovery re-runs the layout with `qs ipc call tower layout`.
 
 ## Structure
 

@@ -19,6 +19,7 @@ Item {
     readonly property string heliumLauncher: UserConfig.towerHeliumLauncher
     readonly property string heliumProfile:  UserConfig.towerHeliumProfile
     readonly property int    waydroidWidth:  UserConfig.towerWaydroidWidth
+    readonly property int    workspace:      UserConfig.towerWorkspace
 
     // --- DAEMON STATE (from towerd.service's status.json) ---
     property bool daemonActive: false
@@ -116,7 +117,7 @@ Item {
         root.status = next
     }
 
-    // Opens Waydroid, Rend and Helium on an empty workspace under the cursor.
+    // Opens Waydroid, Rend and Helium on the tower workspace.
     function launch() {
         root._begin("launch")
     }
@@ -131,6 +132,15 @@ Item {
         else root.fixLayout()
     }
 
+    // `qs ipc call tower layout`: towerd runs this after its crash recovery restarts Waydroid.
+    IpcHandler {
+        target: "tower"
+
+        function layout(): void {
+            root.launchOrFix()
+        }
+    }
+
     // Hyprland client object for an address, or null; reactive to the 3s client poll.
     function client(address) {
         return address ? root._byAddress(address) : null
@@ -141,7 +151,7 @@ Item {
         root.launching       = true
         root.mode            = mode
         root.launchError     = ""
-        root.targetWorkspace = -1
+        root.targetWorkspace = root.workspace
         root._step("Checking apps")
         prereqProcess.running = true
     }
@@ -243,48 +253,24 @@ Item {
         NotificationService.notify("The Tower", `${what} failed: ${reason}`, Assets.theTower, 4000, "", true)
     }
 
-    // Fix mode: Waydroid's workspace is the target. Without Waydroid, Rend's workspace is,
-    // and Waydroid is started there; with neither open it falls back to a normal launch.
+    // Fix mode: pulls whatever is open onto the tower workspace; with neither open it falls back to a normal launch.
     function _fixFromWaydroid() {
         root._step("Finding the apps")
         // Always truthy: just waits for one fresh client list.
         root._waitFor("the apps", 3000, () => ({ waydroid: root._findWaydroid(), rend: root._find("rendapp") }), (found) => {
             if (found.waydroid) {
                 let win = found.waydroid
-                root.targetWorkspace = win.workspace.id
                 root._place(win.address)
                 // Full UI only, so bring the game to the front.
                 if (!/^waydroid\./i.test(win["class"])) Quickshell.execDetached(["waydroid", "app", "launch", root.towerPackage])
                 root._startRend()
             } else if (found.rend) {
-                root.targetWorkspace = found.rend.workspace.id
                 root._startWaydroid()
             } else {
                 root.mode = "launch"
-                root._pickWorkspace()
+                root._startWaydroid()
             }
         })
-    }
-
-    function _pickWorkspace() {
-        root._step("Finding an empty workspace")
-        activeWorkspaceProcess.running = true
-    }
-
-    function _onActiveWorkspace(text) {
-        let ws
-        try {
-            ws = JSON.parse(text)
-        } catch (e) {
-            root._fail("Could not read the active workspace")
-            return
-        }
-        if (ws.windows > 0) {
-            root._fail(`No empty workspace on ${ws.monitor}`)
-            return
-        }
-        root.targetWorkspace = ws.id
-        root._startWaydroid()
     }
 
     function _startWaydroid() {
@@ -535,15 +521,6 @@ Item {
         }
     }
 
-    Process {
-        id:      activeWorkspaceProcess
-        // Focus then read in one process, so the read always sees the new workspace.
-        command: ["sh", "-c", "hyprctl dispatch \"$1\" >/dev/null && hyprctl activeworkspace -j", "sh", HyprlandService.focusEmptyWorkspaceAtCursorExpr]
-        stdout: StdioCollector {
-            onStreamFinished: if (root.launching) root._onActiveWorkspace(text)
-        }
-    }
-
     // Prints whatever is missing, one per line; empty output means all good.
     Process {
         id:      prereqProcess
@@ -554,7 +531,7 @@ Item {
                 let missing = text.trim()
                 if (missing !== "") root._fail("Missing " + missing.split("\n").join(", "))
                 else if (root.mode === "fix") root._fixFromWaydroid()
-                else root._pickWorkspace()
+                else root._startWaydroid()
             }
         }
     }

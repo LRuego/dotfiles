@@ -36,4 +36,5 @@ Item {
 
     // Waydroid tile width (fix layout restores it; Auto-Run's retry_button.png is matched at this size)
     property int towerWaydroidWidth:  450
+    property int towerWorkspace:      5    // the launcher and layout fix always put the apps here
 }
